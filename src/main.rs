@@ -7,9 +7,9 @@ use ntfy_windows_client::{
 };
 use slint::{ComponentHandle, Model, VecModel};
 use std::sync::{
+    Arc, Mutex,
     atomic::{AtomicBool, AtomicU64, Ordering},
     mpsc,
-    Arc, Mutex,
 };
 
 slint::include_modules!();
@@ -33,11 +33,7 @@ fn main() -> Result<(), slint::PlatformError> {
         event_sender.clone(),
     );
 
-    configure_connect_callback(
-        &ui,
-        Arc::clone(&generation),
-        Arc::clone(&active_connection),
-    );
+    configure_connect_callback(&ui, Arc::clone(&generation), Arc::clone(&active_connection));
     configure_publish_callback(
         &ui,
         Arc::clone(&active_connection),
@@ -202,7 +198,9 @@ fn handle_event(ui: &MainWindow, event: Event) {
             ui.set_connected(true);
             ui.set_status("Connected".into());
         }
-        Event::Status { message: status, .. } => {
+        Event::Status {
+            message: status, ..
+        } => {
             ui.set_connected(false);
             ui.set_status(status.into());
         }
