@@ -9,8 +9,10 @@ mod winhttp;
 use config::Settings;
 use notification::Presenter;
 use protocol::{Message, truncate, truncate_owned};
-use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, VecModel};
-use std::{cell::RefCell, rc::Rc};
+use slint::{
+    CloseRequestResponse, ComponentHandle, Model, ModelRc, Timer, TimerMode, VecModel,
+};
+use std::{cell::RefCell, ffi::OsStr, rc::Rc, time::Duration};
 use winhttp::{ClientConfig, Controller, Event};
 
 slint::include_modules!();
@@ -31,6 +33,8 @@ fn main() -> Result<(), slint::PlatformError> {
     })?;
     let controller = Rc::new(RefCell::new(Controller::default()));
     let settings = Settings::load();
+    let smoke_test = std::env::args_os()
+        .any(|argument| argument == OsStr::new("--smoke-test"));
 
     ui.set_server_url(settings.server_url.clone().into());
     ui.set_topic(settings.topic.clone().into());
@@ -55,6 +59,14 @@ fn main() -> Result<(), slint::PlatformError> {
 
     if settings.auto_connect && !settings.topic.is_empty() {
         ui.invoke_toggle_subscription();
+    }
+
+    if smoke_test {
+        let timer = Timer::default();
+        timer.start(TimerMode::SingleShot, Duration::from_secs(3), || {
+            let _ = slint::quit_event_loop();
+        });
+        return ui.run();
     }
 
     ui.run()
