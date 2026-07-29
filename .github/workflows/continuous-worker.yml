@@ -99,7 +99,7 @@ jobs:
           $repository = Join-Path $env:GITHUB_WORKSPACE 'repository'
           $watcher = Join-Path `
               $env:GITHUB_WORKSPACE `
-              '.worker-control/scripts/watch-input.ps1'
+              '.worker-control/scripts/watch-input-fixed.ps1'
 
           Set-Location -LiteralPath $repository
 
