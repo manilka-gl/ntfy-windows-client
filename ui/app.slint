@@ -17,64 +17,167 @@ export struct NotificationItem {
     priority: int,
 }
 
-component SectionTitle inherits Text {
-    font-size: 17px;
-    font-weight: 650;
-    color: #f3f4f6;
+global Theme {
+    out property <color> window: #0d1119;
+    out property <color> sidebar: #101620;
+    out property <color> panel: #151c28;
+    out property <color> panel-raised: #1a2331;
+    out property <color> line: #263244;
+    out property <color> line-strong: #34445c;
+    out property <color> text: #eef2f7;
+    out property <color> text-secondary: #a6b1c2;
+    out property <color> text-muted: #748197;
+    out property <color> accent: #4ade80;
+    out property <color> accent-soft: #173c2a;
+    out property <color> blue: #60a5fa;
+    out property <color> danger: #fb7185;
+}
+
+component PageTitle inherits Text {
+    font-size: 23px;
+    font-weight: 700;
+    color: Theme.text;
     vertical-alignment: center;
+}
+
+component PageHint inherits Text {
+    font-size: 12px;
+    color: Theme.text-secondary;
+    vertical-alignment: center;
+}
+
+component FieldLabel inherits Text {
+    font-size: 12px;
+    font-weight: 600;
+    color: Theme.text-secondary;
+    vertical-alignment: center;
+}
+
+component NavItem inherits Rectangle {
+    in property <string> label;
+    in property <string> detail;
+    in property <bool> selected;
+    callback activated();
+
+    height: 54px;
+    border-radius: 8px;
+    background: selected ? #1a2634 : nav-touch.has-hover ? #151e2a : #00000000;
+
+    Rectangle {
+        x: 0px;
+        y: 10px;
+        width: 3px;
+        height: parent.height - 20px;
+        border-radius: 2px;
+        background: root.selected ? Theme.accent : #00000000;
+    }
+    Text {
+        x: 14px;
+        y: 9px;
+        width: parent.width - 24px;
+        height: 20px;
+        text: root.label;
+        color: root.selected ? Theme.text : Theme.text-secondary;
+        font-size: 13px;
+        font-weight: root.selected ? 700 : 550;
+        vertical-alignment: center;
+    }
+    Text {
+        x: 14px;
+        y: 29px;
+        width: parent.width - 24px;
+        height: 16px;
+        text: root.detail;
+        color: Theme.text-muted;
+        font-size: 10px;
+        overflow: elide;
+        vertical-alignment: center;
+    }
+    nav-touch := TouchArea {
+        clicked => { root.activated(); }
+    }
+}
+
+component StatusDot inherits Rectangle {
+    in property <bool> active;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: active ? Theme.accent : Theme.text-muted;
 }
 
 component MessageCard inherits Rectangle {
     in property <NotificationItem> item;
-    height: content.preferred-height + 20px;
-    background: #151f31;
-    border-color: item.priority >= 5 ? #ef4444 : item.priority == 4 ? #f59e0b : #2b3a51;
+    height: 98px;
+    background: message-touch.has-hover ? Theme.panel-raised : Theme.panel;
+    border-color: item.priority >= 5 ? Theme.danger : item.priority == 4 ? #fbbf24 : Theme.line;
     border-width: 1px;
-    border-radius: 8px;
+    border-radius: 9px;
 
-    content := VerticalBox {
-        x: 10px;
-        y: 9px;
-        width: parent.width - 20px;
-        spacing: 4px;
-        HorizontalBox {
-            Text {
-                text: item.title;
-                font-size: 15px;
-                font-weight: 700;
-                color: #f9fafb;
-                overflow: elide;
-            }
-            Text {
-                text: item.topic;
-                font-size: 11px;
-                color: #91a4bd;
-                horizontal-alignment: right;
-                vertical-alignment: center;
-            }
-        }
-        Text {
-            text: item.message;
-            wrap: word-wrap;
-            color: #e5e7eb;
-        }
-        Text {
-            text: item.meta;
-            font-size: 11px;
-            color: #91a4bd;
-            overflow: elide;
-        }
+    Rectangle {
+        x: 0px;
+        width: 3px;
+        height: parent.height;
+        border-radius: 2px;
+        background: item.priority >= 5 ? Theme.danger : item.priority == 4 ? #fbbf24 : Theme.blue;
     }
+    Text {
+        x: 14px;
+        y: 10px;
+        width: parent.width - 120px;
+        height: 21px;
+        text: item.title;
+        color: Theme.text;
+        font-size: 14px;
+        font-weight: 700;
+        overflow: elide;
+        vertical-alignment: center;
+    }
+    Text {
+        x: parent.width - 100px;
+        y: 11px;
+        width: 86px;
+        height: 18px;
+        text: item.topic;
+        color: Theme.text-muted;
+        font-size: 10px;
+        horizontal-alignment: right;
+        overflow: elide;
+        vertical-alignment: center;
+    }
+    Text {
+        x: 14px;
+        y: 35px;
+        width: parent.width - 28px;
+        height: 36px;
+        text: item.message;
+        color: Theme.text-secondary;
+        font-size: 12px;
+        wrap: word-wrap;
+        overflow: elide;
+    }
+    Text {
+        x: 14px;
+        y: 76px;
+        width: parent.width - 28px;
+        height: 15px;
+        text: item.meta;
+        color: Theme.text-muted;
+        font-size: 10px;
+        overflow: elide;
+        vertical-alignment: center;
+    }
+    message-touch := TouchArea {}
 }
 
 export component AppWindow inherits Window {
     title: "ntfy for Windows";
     icon: @image-url("assets/icon.svg");
-    preferred-width: 860px;
-    preferred-height: 700px;
-    min-width: 650px;
-    min-height: 520px;
-    background: #0b1220;
+    preferred-width: 920px;
+    preferred-height: 650px;
+    min-width: 720px;
+    min-height: 620px;
+    background: Theme.window;
 
     in-out property <string> server-url: "https://ntfy.sh";
     in-out property <string> topic: "";
@@ -83,118 +186,320 @@ export component AppWindow inherits Window {
     in-out property <bool> sound-enabled: true;
     in-out property <bool> auto-connect: true;
     in-out property <int> placement-index: 2;
+    in-out property <int> audio-output-index: 0;
     in-out property <bool> connected: false;
-    in-out property <string> status-text: "Enter a topic and subscribe";
+    in-out property <string> status-text: "Ready";
+    in property <[string]> audio-outputs;
     in property <[NotificationItem]> notifications;
+    property <int> page: 0;
 
     callback toggle-subscription();
     callback publish(string, string);
     callback save-settings();
     callback clear-notifications();
+    callback refresh-audio-outputs();
     callback quit();
 
-    VerticalBox {
-        padding: 16px;
-        spacing: 12px;
+    Rectangle {
+        x: 0px;
+        y: 0px;
+        width: parent.width;
+        height: 70px;
+        background: #111722;
+        border-color: Theme.line;
+        border-width: 0px;
 
-        HorizontalBox {
-            vertical-stretch: 0;
-            spacing: 10px;
+        Text {
+            x: 22px;
+            y: 15px;
+            width: 54px;
+            height: 34px;
+            text: "ntfy";
+            color: Theme.accent;
+            font-size: 27px;
+            font-weight: 800;
+            vertical-alignment: center;
+        }
+        Text {
+            x: 83px;
+            y: 18px;
+            width: 260px;
+            height: 18px;
+            text: "Windows notification client";
+            color: Theme.text-secondary;
+            font-size: 12px;
+            vertical-alignment: center;
+        }
+        Text {
+            x: 83px;
+            y: 36px;
+            width: 320px;
+            height: 16px;
+            text: "Native WinHTTP · software-rendered UI";
+            color: Theme.text-muted;
+            font-size: 10px;
+            vertical-alignment: center;
+        }
+        Rectangle {
+            x: parent.width - 138px;
+            y: 20px;
+            width: 116px;
+            height: 30px;
+            border-radius: 15px;
+            background: root.connected ? Theme.accent-soft : #202a38;
+            StatusDot { x: 13px; y: 11px; active: root.connected; }
             Text {
-                text: "ntfy";
-                font-size: 28px;
-                font-weight: 800;
-                color: #4ade80;
+                x: 29px;
+                width: 76px;
+                height: parent.height;
+                text: root.connected ? "Connected" : "Offline";
+                color: root.connected ? #9af7ba : Theme.text-secondary;
+                font-size: 11px;
+                font-weight: 650;
                 vertical-alignment: center;
+                horizontal-alignment: center;
             }
-            Text {
-                text: "Native Windows client";
-                font-size: 14px;
-                color: #91a4bd;
-                vertical-alignment: center;
+        }
+        Rectangle {
+            y: parent.height - 1px;
+            width: parent.width;
+            height: 1px;
+            background: Theme.line;
+        }
+    }
+
+    Rectangle {
+        x: 0px;
+        y: 70px;
+        width: 190px;
+        height: parent.height - 100px;
+        background: Theme.sidebar;
+        border-color: Theme.line;
+        border-width: 0px;
+
+        VerticalBox {
+            x: 12px;
+            y: 14px;
+            width: parent.width - 24px;
+            height: parent.height - 28px;
+            spacing: 5px;
+            NavItem {
+                label: "Connection";
+                detail: "Server, topic and access";
+                selected: root.page == 0;
+                activated => { root.page = 0; }
             }
-            Rectangle { horizontal-stretch: 1; }
+            NavItem {
+                label: "Notifications";
+                detail: "Popup, sound and position";
+                selected: root.page == 1;
+                activated => { root.page = 1; }
+            }
+            NavItem {
+                label: "Publish";
+                detail: "Send a message";
+                selected: root.page == 2;
+                activated => { root.page = 2; }
+            }
+            NavItem {
+                label: "History";
+                detail: root.notifications.length + " recent messages";
+                selected: root.page == 3;
+                activated => { root.page = 3; }
+            }
+            Rectangle { vertical-stretch: 1; }
             Rectangle {
-                width: status-label.preferred-width + 22px;
-                height: 30px;
-                border-radius: 15px;
-                background: root.connected ? #163b2a : #2b3445;
-                status-label := Text {
-                    x: 11px;
-                    width: parent.width - 22px;
-                    height: parent.height;
-                    text: root.connected ? "Connected" : "Offline";
-                    color: root.connected ? #86efac : #cbd5e1;
+                height: 78px;
+                border-radius: 8px;
+                background: #151d29;
+                border-color: Theme.line;
+                border-width: 1px;
+                StatusDot { x: 12px; y: 15px; active: root.connected; }
+                Text {
+                    x: 29px;
+                    y: 8px;
+                    width: parent.width - 40px;
+                    height: 22px;
+                    text: root.connected ? "Listening" : "Not connected";
+                    color: Theme.text;
                     font-size: 12px;
                     font-weight: 650;
                     vertical-alignment: center;
-                    horizontal-alignment: center;
+                }
+                Text {
+                    x: 12px;
+                    y: 34px;
+                    width: parent.width - 24px;
+                    height: 32px;
+                    text: root.connected ? root.topic : "Open Connection to subscribe";
+                    color: Theme.text-muted;
+                    font-size: 10px;
+                    wrap: word-wrap;
+                    overflow: elide;
+                }
+            }
+        }
+        Rectangle {
+            x: parent.width - 1px;
+            width: 1px;
+            height: parent.height;
+            background: Theme.line;
+        }
+    }
+
+    Rectangle {
+        x: 190px;
+        y: 70px;
+        width: parent.width - 190px;
+        height: parent.height - 100px;
+        background: Theme.window;
+
+        if root.page == 0: Rectangle {
+            x: 24px;
+            y: 18px;
+            width: parent.width - 48px;
+            height: parent.height - 36px;
+            background: #00000000;
+
+            PageTitle { x: 0px; y: 0px; width: parent.width; height: 32px; text: "Connection"; }
+            PageHint { x: 0px; y: 34px; width: parent.width; height: 20px; text: "Configure one lightweight streaming subscription."; }
+
+            Rectangle {
+                x: 0px;
+                y: 70px;
+                width: parent.width;
+                height: 254px;
+                border-radius: 11px;
+                background: Theme.panel;
+                border-color: Theme.line;
+                border-width: 1px;
+
+                VerticalBox {
+                    x: 18px;
+                    y: 16px;
+                    width: parent.width - 36px;
+                    height: parent.height - 32px;
+                    spacing: 8px;
+                    FieldLabel { height: 18px; text: "SERVER"; }
+                    LineEdit { height: 38px; text <=> root.server-url; placeholder-text: "https://ntfy.sh"; }
+                    HorizontalBox {
+                        height: 66px;
+                        spacing: 12px;
+                        VerticalBox {
+                            spacing: 5px;
+                            FieldLabel { height: 18px; text: "TOPIC"; }
+                            LineEdit { height: 38px; text <=> root.topic; placeholder-text: "alerts"; }
+                        }
+                        VerticalBox {
+                            spacing: 5px;
+                            FieldLabel { height: 18px; text: "ACCESS TOKEN"; }
+                            LineEdit {
+                                height: 38px;
+                                text <=> root.token;
+                                input-type: password;
+                                placeholder-text: "Optional · never saved";
+                            }
+                        }
+                    }
+                    HorizontalBox {
+                        height: 38px;
+                        spacing: 8px;
+                        CheckBox { text: "Connect automatically at launch"; checked <=> root.auto-connect; }
+                        Rectangle { horizontal-stretch: 1; }
+                        Button { text: "Save"; clicked => { root.save-settings(); } }
+                        Button {
+                            text: root.connected ? "Disconnect" : "Subscribe";
+                            clicked => { root.toggle-subscription(); }
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                x: 0px;
+                y: 340px;
+                width: parent.width;
+                height: 102px;
+                border-radius: 11px;
+                background: #121925;
+                border-color: Theme.line;
+                border-width: 1px;
+                StatusDot { x: 18px; y: 22px; active: root.connected; }
+                Text {
+                    x: 38px;
+                    y: 12px;
+                    width: parent.width - 56px;
+                    height: 26px;
+                    text: root.connected ? "Subscription active" : "Background listener idle";
+                    color: Theme.text;
+                    font-size: 14px;
+                    font-weight: 700;
+                    vertical-alignment: center;
+                }
+                Text {
+                    x: 18px;
+                    y: 45px;
+                    width: parent.width - 36px;
+                    height: 38px;
+                    text: root.connected
+                        ? "Closing this window releases the main UI while the tray listener stays active."
+                        : "Enter a valid topic and subscribe. The application remains available from the tray.";
+                    color: Theme.text-secondary;
+                    font-size: 11px;
+                    wrap: word-wrap;
                 }
             }
         }
 
-        Rectangle {
-            vertical-stretch: 0;
-            height: connection-content.preferred-height + 24px;
-            background: #111a2a;
-            border-color: #26364d;
-            border-width: 1px;
-            border-radius: 10px;
-            connection-content := VerticalBox {
-                x: 12px;
-                y: 12px;
-                width: parent.width - 24px;
-                spacing: 9px;
-                SectionTitle { text: "Connection"; }
-                HorizontalBox {
-                    spacing: 8px;
-                    Text { text: "Server"; width: 70px; color: #cbd5e1; vertical-alignment: center; }
-                    LineEdit { text <=> root.server-url; placeholder-text: "https://ntfy.sh"; }
-                }
-                HorizontalBox {
-                    spacing: 8px;
-                    Text { text: "Topic"; width: 70px; color: #cbd5e1; vertical-alignment: center; }
-                    LineEdit { text <=> root.topic; placeholder-text: "alerts"; }
-                    Text { text: "Token"; width: 52px; color: #cbd5e1; vertical-alignment: center; }
-                    LineEdit {
-                        text <=> root.token;
-                        input-type: password;
-                        placeholder-text: "optional; never saved";
-                    }
-                }
-                HorizontalBox {
-                    spacing: 8px;
-                    CheckBox { text: "Auto-connect on launch"; checked <=> root.auto-connect; }
-                    Rectangle { horizontal-stretch: 1; }
-                    Button { text: "Save"; clicked => { root.save-settings(); } }
-                    Button {
-                        text: root.connected ? "Disconnect" : "Subscribe";
-                        clicked => { root.toggle-subscription(); }
-                    }
-                }
-            }
-        }
+        if root.page == 1: Rectangle {
+            x: 24px;
+            y: 18px;
+            width: parent.width - 48px;
+            height: parent.height - 36px;
+            background: #00000000;
 
-        Rectangle {
-            vertical-stretch: 0;
-            height: notification-content.preferred-height + 24px;
-            background: #111a2a;
-            border-color: #26364d;
-            border-width: 1px;
-            border-radius: 10px;
-            notification-content := VerticalBox {
-                x: 12px;
-                y: 12px;
-                width: parent.width - 24px;
-                spacing: 8px;
-                SectionTitle { text: "Desktop notifications"; }
-                HorizontalBox {
+            PageTitle { x: 0px; y: 0px; width: parent.width; height: 32px; text: "Notifications"; }
+            PageHint { x: 0px; y: 34px; width: parent.width; height: 20px; text: "Opaque, instant popups with no GPU effects or idle animation."; }
+
+            Rectangle {
+                x: 0px;
+                y: 70px;
+                width: parent.width;
+                height: 322px;
+                border-radius: 11px;
+                background: Theme.panel;
+                border-color: Theme.line;
+                border-width: 1px;
+
+                VerticalBox {
+                    x: 18px;
+                    y: 16px;
+                    width: parent.width - 36px;
+                    height: parent.height - 32px;
                     spacing: 10px;
-                    CheckBox { text: "Show custom popup"; checked <=> root.notifications-enabled; }
-                    CheckBox { text: "Play system sound"; checked <=> root.sound-enabled; }
-                    Text { text: "Position"; color: #cbd5e1; vertical-alignment: center; }
+                    HorizontalBox {
+                        height: 38px;
+                        CheckBox { text: "Show custom popup"; checked <=> root.notifications-enabled; }
+                        Rectangle { horizontal-stretch: 1; }
+                        CheckBox { text: "Play notification sound"; checked <=> root.sound-enabled; }
+                    }
+                    Rectangle { height: 1px; background: Theme.line; }
+                    FieldLabel { height: 18px; text: "AUDIO OUTPUT"; }
+                    HorizontalBox {
+                        height: 38px;
+                        spacing: 8px;
+                        ComboBox {
+                            horizontal-stretch: 1;
+                            model: root.audio-outputs;
+                            current-index <=> root.audio-output-index;
+                            enabled: root.sound-enabled;
+                        }
+                        Button { text: "Refresh"; clicked => { root.refresh-audio-outputs(); } }
+                    }
+                    PageHint { height: 18px; text: "System default uses the Windows notification sound. A selected device uses a short native tone."; }
+                    FieldLabel { height: 18px; text: "POPUP POSITION"; }
                     ComboBox {
-                        width: 190px;
+                        height: 38px;
                         model: [
                             "Top left", "Top centre", "Top right",
                             "Middle left", "Centre", "Middle right",
@@ -202,80 +507,153 @@ export component AppWindow inherits Window {
                         ];
                         current-index <=> root.placement-index;
                     }
+                    HorizontalBox {
+                        height: 38px;
+                        Rectangle { horizontal-stretch: 1; }
+                        Button { text: "Save notification settings"; clicked => { root.save_settings(); } }
+                    }
                 }
             }
         }
 
-        Rectangle {
-            vertical-stretch: 0;
-            height: publish-content.preferred-height + 24px;
-            background: #111a2a;
-            border-color: #26364d;
-            border-width: 1px;
-            border-radius: 10px;
-            publish-content := VerticalBox {
-                x: 12px;
-                y: 12px;
-                width: parent.width - 24px;
-                spacing: 8px;
-                SectionTitle { text: "Publish"; }
-                publish-title := LineEdit { placeholder-text: "Title (optional)"; }
-                publish-body := TextEdit {
-                    height: 72px;
-                    placeholder-text: "Message";
-                    wrap: word-wrap;
-                }
-                HorizontalBox {
-                    Text { text: root.status-text; color: #91a4bd; overflow: elide; }
-                    Rectangle { horizontal-stretch: 1; }
-                    Button {
-                        text: "Send";
-                        enabled: publish-body.text != "";
-                        clicked => {
-                            root.publish(publish-title.text, publish-body.text);
-                            publish-body.text = "";
+        if root.page == 2: Rectangle {
+            x: 24px;
+            y: 18px;
+            width: parent.width - 48px;
+            height: parent.height - 36px;
+            background: #00000000;
+
+            PageTitle { x: 0px; y: 0px; width: parent.width; height: 32px; text: "Publish"; }
+            PageHint { x: 0px; y: 34px; width: parent.width; height: 20px; text: "Send directly through native WinHTTP."; }
+
+            Rectangle {
+                x: 0px;
+                y: 70px;
+                width: parent.width;
+                height: 310px;
+                border-radius: 11px;
+                background: Theme.panel;
+                border-color: Theme.line;
+                border-width: 1px;
+
+                VerticalBox {
+                    x: 18px;
+                    y: 16px;
+                    width: parent.width - 36px;
+                    height: parent.height - 32px;
+                    spacing: 8px;
+                    FieldLabel { height: 18px; text: "TITLE"; }
+                    publish-title := LineEdit { height: 38px; placeholder-text: "Optional title"; }
+                    FieldLabel { height: 18px; text: "MESSAGE"; }
+                    publish-body := TextEdit {
+                        height: 120px;
+                        placeholder-text: "Type a message";
+                        wrap: word-wrap;
+                    }
+                    HorizontalBox {
+                        height: 38px;
+                        PageHint { text: root.topic == "" ? "Choose a topic on the Connection page." : "Publishing to " + root.topic; }
+                        Rectangle { horizontal-stretch: 1; }
+                        Button {
+                            text: "Send";
+                            enabled: publish-body.text != "" && root.topic != "";
+                            clicked => {
+                                root.publish(publish-title.text, publish-body.text);
+                                publish-body.text = "";
+                            }
                         }
                     }
                 }
             }
         }
 
-        HorizontalBox {
-            vertical-stretch: 0;
-            SectionTitle { text: "Recent notifications"; }
-            Rectangle { horizontal-stretch: 1; }
-            Button { text: "Clear"; clicked => { root.clear-notifications(); } }
-        }
+        if root.page == 3: Rectangle {
+            x: 24px;
+            y: 18px;
+            width: parent.width - 48px;
+            height: parent.height - 36px;
+            background: #00000000;
 
-        ListView {
-            vertical-stretch: 1;
-            for item in root.notifications: MessageCard {
-                item: item;
-                width: root.width - 48px;
+            PageTitle { x: 0px; y: 0px; width: parent.width - 110px; height: 32px; text: "Recent notifications"; }
+            PageHint { x: 0px; y: 34px; width: parent.width - 110px; height: 20px; text: "Bounded to 64 messages and 2 KiB per retained body."; }
+            Button { x: parent.width - 90px; y: 8px; width: 90px; text: "Clear"; clicked => { root.clear-notifications(); } }
+
+            if root.notifications.length == 0: Rectangle {
+                x: 0px;
+                y: 72px;
+                width: parent.width;
+                height: parent.height - 72px;
+                border-radius: 11px;
+                background: Theme.panel;
+                border-color: Theme.line;
+                border-width: 1px;
+                Text {
+                    x: 24px;
+                    y: parent.height / 2 - 24px;
+                    width: parent.width - 48px;
+                    height: 24px;
+                    text: "No notifications yet";
+                    color: Theme.text;
+                    font-size: 16px;
+                    font-weight: 700;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+                Text {
+                    x: 24px;
+                    y: parent.height / 2 + 4px;
+                    width: parent.width - 48px;
+                    height: 20px;
+                    text: "New messages appear here while the app is open or in the tray.";
+                    color: Theme.text-muted;
+                    font-size: 11px;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+
+            if root.notifications.length > 0: history-list := ListView {
+                x: 0px;
+                y: 72px;
+                width: parent.width;
+                height: parent.height - 72px;
+                for item in root.notifications: MessageCard {
+                    item: item;
+                    width: history-list.width - 10px;
+                }
             }
         }
+    }
 
-        HorizontalBox {
-            vertical-stretch: 0;
-            Text {
-                text: "Closing this window keeps the subscription running in the system tray.";
-                color: #718096;
-                font-size: 11px;
-            }
-            Rectangle { horizontal-stretch: 1; }
-            Button { text: "Quit"; clicked => { root.quit(); } }
+    Rectangle {
+        x: 0px;
+        y: parent.height - 30px;
+        width: parent.width;
+        height: 30px;
+        background: #101620;
+        Rectangle { y: 0px; width: parent.width; height: 1px; background: Theme.line; }
+        Text {
+            x: 14px;
+            width: parent.width - 120px;
+            height: parent.height;
+            text: root.status-text;
+            color: Theme.text-muted;
+            font-size: 10px;
+            overflow: elide;
+            vertical-alignment: center;
         }
+        Button { x: parent.width - 74px; y: 3px; width: 62px; height: 24px; text: "Quit"; clicked => { root.quit(); } }
     }
 }
 
 export component NotificationPopup inherits Window {
     title: "ntfy notification";
     icon: @image-url("assets/icon.svg");
-    width: 380px;
-    height: 142px;
+    width: 366px;
+    height: 118px;
     no-frame: true;
     always-on-top: true;
-    background: #101827;
+    background: #0e1522;
 
     in-out property <string> popup-title: "ntfy";
     in-out property <string> popup-body: "";
@@ -283,56 +661,92 @@ export component NotificationPopup inherits Window {
     callback dismiss();
 
     Rectangle {
-        x: 1px;
-        y: 1px;
-        width: parent.width - 2px;
-        height: parent.height - 2px;
-        background: #111a2a;
-        border-color: #4ade80;
+        x: 0px;
+        y: 0px;
+        width: parent.width;
+        height: parent.height;
+        background: #131b28;
+        border-color: #334158;
         border-width: 1px;
-        border-radius: 10px;
-        VerticalBox {
-            x: 13px;
-            y: 11px;
-            width: parent.width - 26px;
-            height: parent.height - 22px;
-            spacing: 5px;
-            HorizontalBox {
-                Text {
-                    text: root.popup-title;
-                    font-size: 16px;
-                    font-weight: 750;
-                    color: #f9fafb;
-                    overflow: elide;
-                }
-                Text {
-                    text: "×";
-                    width: 24px;
-                    color: #9ca3af;
-                    font-size: 18px;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                    TouchArea { clicked => { root.dismiss(); } }
-                }
-            }
+        border-radius: 9px;
+        clip: true;
+
+        Rectangle {
+            x: 0px;
+            y: 0px;
+            width: 4px;
+            height: parent.height;
+            background: Theme.accent;
+        }
+        Rectangle {
+            x: 16px;
+            y: 14px;
+            width: 28px;
+            height: 28px;
+            border-radius: 14px;
+            background: Theme.accent-soft;
             Text {
-                text: root.popup-body;
-                color: #e5e7eb;
-                wrap: word-wrap;
-                max-height: 68px;
-                overflow: elide;
-            }
-            Text {
-                text: root.popup-meta;
-                color: #91a4bd;
-                font-size: 10px;
-                overflow: elide;
+                width: parent.width;
+                height: parent.height;
+                text: "n";
+                color: Theme.accent;
+                font-size: 16px;
+                font-weight: 800;
+                horizontal-alignment: center;
+                vertical-alignment: center;
             }
         }
-        TouchArea {
-            width: parent.width - 42px;
-            height: parent.height;
-            clicked => { root.dismiss(); }
+        Text {
+            x: 54px;
+            y: 12px;
+            width: parent.width - 94px;
+            height: 24px;
+            text: root.popup-title;
+            color: Theme.text;
+            font-size: 14px;
+            font-weight: 700;
+            overflow: elide;
+            vertical-alignment: center;
+        }
+        Rectangle {
+            x: parent.width - 34px;
+            y: 10px;
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            background: close-touch.has-hover ? #283548 : #00000000;
+            Text {
+                width: parent.width;
+                height: parent.height;
+                text: "×";
+                color: Theme.text-secondary;
+                font-size: 16px;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+            close-touch := TouchArea { clicked => { root.dismiss(); } }
+        }
+        Text {
+            x: 54px;
+            y: 40px;
+            width: parent.width - 70px;
+            height: 42px;
+            text: root.popup-body;
+            color: Theme.text-secondary;
+            font-size: 12px;
+            wrap: word-wrap;
+            overflow: elide;
+        }
+        Text {
+            x: 54px;
+            y: 88px;
+            width: parent.width - 70px;
+            height: 16px;
+            text: root.popup-meta;
+            color: Theme.text-muted;
+            font-size: 9px;
+            overflow: elide;
+            vertical-alignment: center;
         }
     }
 }
@@ -341,7 +755,7 @@ export component AppTray inherits SystemTrayIcon {
     icon: @image-url("assets/icon.svg");
     in-out property <bool> tray-visible <=> root.visible;
     in-out property <bool> connected: false;
-    tooltip: root.connected ? "ntfy - connected" : "ntfy - disconnected";
+    tooltip: root.connected ? "ntfy · connected" : "ntfy · disconnected";
     title: "ntfy";
     callback show-window();
     callback toggle-subscription();
@@ -349,7 +763,7 @@ export component AppTray inherits SystemTrayIcon {
 
     clicked => { root.show-window(); }
     Menu {
-        MenuItem { title: "Show ntfy"; activated => { root.show-window(); } }
+        MenuItem { title: "Open ntfy"; activated => { root.show-window(); } }
         MenuItem {
             title: root.connected ? "Disconnect" : "Subscribe";
             activated => { root.toggle-subscription(); }
