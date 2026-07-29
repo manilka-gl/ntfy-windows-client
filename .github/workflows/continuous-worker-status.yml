@@ -1,0 +1,62 @@
+name: Report continuous Windows worker status
+run-name: Report worker status — ${{ github.event.issue.body }}
+
+on:
+  issues:
+    types:
+      - opened
+
+permissions:
+  actions: read
+  issues: write
+
+jobs:
+  report:
+    if: github.event.issue.title == 'continuous-worker-status'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET_BRANCH: ${{ github.event.issue.body }}
+    steps:
+      - name: Report latest matching run
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          branch="${TARGET_BRANCH//$'\r'/}"
+          if [[ -z "$branch" || "$branch" == *$'\n'* ]]; then
+            echo 'Issue body must contain exactly one branch name.' >&2
+            exit 2
+          fi
+
+          runs="$({
+            gh api \
+              "repos/${GITHUB_REPOSITORY}/actions/workflows/continuous-worker.yml/runs" \
+              -f event=workflow_dispatch \
+              -f per_page=30
+          })"
+
+          match="$(
+            jq -c --arg branch "$branch" '
+              [
+                .workflow_runs[]
+                | select(.display_title | contains($branch))
+                | {
+                    id,
+                    status,
+                    conclusion,
+                    event,
+                    run_attempt,
+                    created_at,
+                    updated_at,
+                    html_url,
+                    display_title,
+                    head_sha
+                  }
+              ][0] // {error: "no matching workflow run"}
+            ' <<<"$runs"
+          )"
+
+          gh issue close "${{ github.event.issue.number }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --comment "Latest matching run status:\n\n\`\`\`json\n${match}\n\`\`\`"
