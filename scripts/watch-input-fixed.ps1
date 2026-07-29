@@ -23,6 +23,70 @@ $ErrorActionPreference = 'Stop'
 $SourcePath = Join-Path $PSScriptRoot 'watch-input.ps1'
 $SourceText = [IO.File]::ReadAllText($SourcePath)
 
+$OriginalFetch = @'
+function Fetch-WatchedBranch {
+    Invoke-Git -Arguments @(
+        'fetch',
+        '--no-tags',
+        'origin',
+        $FetchRefSpec
+    )
+}
+'@
+
+$PatchedFetch = @'
+function Fetch-WatchedBranch {
+    & git fetch --no-tags origin $FetchRefSpec
+    $FetchExitCode = $LASTEXITCODE
+
+    if ($FetchExitCode -eq 0) {
+        return
+    }
+
+    # A command is allowed to use Git and can accidentally delete the watched
+    # remote branch. Distinguish that case from a transient fetch failure and
+    # recreate the ref from the checked-out source commit before continuing.
+    & git ls-remote --exit-code --heads origin $RemoteHeadRef *> $null
+    $LookupExitCode = $LASTEXITCODE
+
+    if ($LookupExitCode -ne 2) {
+        throw (
+            "Could not fetch monitored branch $Branch; " +
+            "git fetch exited with $FetchExitCode and remote lookup " +
+            "exited with $LookupExitCode."
+        )
+    }
+
+    $LocalCommit = Get-GitText -Arguments @(
+        'rev-parse',
+        '--verify',
+        'HEAD'
+    )
+
+    Write-Warning (
+        "Remote branch $Branch disappeared. Restoring it from " +
+        "$LocalCommit."
+    )
+
+    Invoke-Git -Arguments @(
+        'push',
+        'origin',
+        "${LocalCommit}:$RemoteHeadRef"
+    )
+
+    Invoke-Git -Arguments @(
+        'fetch',
+        '--no-tags',
+        'origin',
+        $FetchRefSpec
+    )
+}
+'@
+
+if (-not $SourceText.Contains($OriginalFetch)) {
+    throw 'Expected Fetch-WatchedBranch implementation was not found.'
+}
+
 $OriginalInvocation = @'
             $CommandResult = Invoke-CommandFile `
                 -CommandFile $CommandFile `
@@ -48,6 +112,9 @@ if (-not $SourceText.Contains($OriginalInvocation)) {
 }
 
 $PatchedText = $SourceText.Replace(
+    $OriginalFetch,
+    $PatchedFetch
+).Replace(
     $OriginalInvocation,
     $PatchedInvocation
 )
