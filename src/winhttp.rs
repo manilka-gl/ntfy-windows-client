@@ -10,8 +10,8 @@ use std::{
     time::Duration,
 };
 use windows_sys::Win32::{
-    Foundation::GetLastError,
-    Networking::WinHttp::{
+    errhandlingapi::GetLastError,
+    winhttp::{
         HINTERNET, HTTP_STATUS_OK, INTERNET_DEFAULT_HTTP_PORT, INTERNET_DEFAULT_HTTPS_PORT,
         WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, WINHTTP_FLAG_SECURE, WINHTTP_QUERY_FLAG_NUMBER,
         WINHTTP_QUERY_STATUS_CODE, WinHttpCloseHandle, WinHttpConnect, WinHttpOpen,
@@ -151,7 +151,7 @@ fn run_subscription(
     while !stop.load(Ordering::Acquire) {
         on_event(Event::Status("Connecting".into()));
         let since_query = since.clone();
-        let mut handle_message = |message| {
+        let mut handle_message = |message: Message| {
             if !message.id.is_empty() {
                 since.clone_from(&message.id);
             }
@@ -371,7 +371,7 @@ fn publish_blocking(config: &ClientConfig, title: &str, body: &str) -> Result<()
     winhttp_bool(
         unsafe {
             WinHttpSendRequest(
-                request.raw,
+                request.0,
                 headers_wide.as_ptr(),
                 headers_wide.len().saturating_sub(1) as u32,
                 bytes.as_ptr().cast::<c_void>(),
@@ -383,10 +383,10 @@ fn publish_blocking(config: &ClientConfig, title: &str, body: &str) -> Result<()
         "send publish request",
     )?;
     winhttp_bool(
-        unsafe { WinHttpReceiveResponse(request.raw, ptr::null_mut()) },
+        unsafe { WinHttpReceiveResponse(request.0, ptr::null_mut()) },
         "receive publish response",
     )?;
-    let status = query_status(request.raw)?;
+    let status = query_status(request.0)?;
     if !(200..300).contains(&status) {
         return Err(Error(format!("publish returned HTTP {status}")));
     }

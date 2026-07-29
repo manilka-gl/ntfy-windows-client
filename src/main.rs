@@ -20,11 +20,14 @@ const POPUP_WIDTH: f32 = 380.0;
 const POPUP_HEIGHT: f32 = 132.0;
 const POPUP_DURATION: Duration = Duration::from_secs(6);
 
+thread_local! {
+    static POPUP_TIMER: Timer = Timer::default();
+}
+
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
     let tray = AppTray::new()?;
     let popup = NotificationPopup::new()?;
-    let popup_timer = Rc::new(Timer::default());
     let settings = Settings::load();
 
     ui.set_server_url(settings.server_url.clone().into());
@@ -49,7 +52,6 @@ fn main() -> Result<(), slint::PlatformError> {
     {
         let ui_weak = ui.as_weak();
         let popup_weak = popup.as_weak();
-        let popup_timer = Rc::clone(&popup_timer);
         let controller = Rc::clone(&controller);
         ui.on_toggle_subscription(move || {
             if controller.borrow().is_running() {
@@ -64,13 +66,11 @@ fn main() -> Result<(), slint::PlatformError> {
             let config = client_config(&ui);
             let ui_weak_events = ui.as_weak();
             let popup_weak_events = popup_weak.clone();
-            let popup_timer_events = Rc::clone(&popup_timer);
             let result = controller.borrow_mut().start(config, move |event| {
                 let ui_weak = ui_weak_events.clone();
                 let popup_weak = popup_weak_events.clone();
-                let popup_timer = Rc::clone(&popup_timer_events);
                 let _ = slint::invoke_from_event_loop(move || {
-                    apply_event(&ui_weak, &popup_weak, &popup_timer, event);
+                    apply_event(&ui_weak, &popup_weak, event);
                 });
             });
             match result {
@@ -83,21 +83,18 @@ fn main() -> Result<(), slint::PlatformError> {
     {
         let ui_weak = ui.as_weak();
         let popup_weak = popup.as_weak();
-        let popup_timer = Rc::clone(&popup_timer);
         ui.on_publish(move |title, body| {
             let Some(ui) = ui_weak.upgrade() else { return };
             let config = client_config(&ui);
             ui.set_status_text("Publishing".into());
             let ui_weak_events = ui.as_weak();
             let popup_weak_events = popup_weak.clone();
-            let popup_timer_events = Rc::clone(&popup_timer);
             if let Err(error) =
                 winhttp::publish(config, title.to_string(), body.to_string(), move |event| {
                     let ui_weak = ui_weak_events.clone();
                     let popup_weak = popup_weak_events.clone();
-                    let popup_timer = Rc::clone(&popup_timer_events);
                     let _ = slint::invoke_from_event_loop(move || {
-                        apply_event(&ui_weak, &popup_weak, &popup_timer, event);
+                        apply_event(&ui_weak, &popup_weak, event);
                     });
                 })
             {
@@ -143,9 +140,8 @@ fn main() -> Result<(), slint::PlatformError> {
 
     {
         let controller = Rc::clone(&controller);
-        let popup_timer = Rc::clone(&popup_timer);
         tray.on_quit(move || {
-            popup_timer.stop();
+            POPUP_TIMER.with(|timer| timer.stop());
             controller.borrow_mut().stop();
             let _ = slint::quit_event_loop();
         });
@@ -153,9 +149,8 @@ fn main() -> Result<(), slint::PlatformError> {
 
     {
         let controller = Rc::clone(&controller);
-        let popup_timer = Rc::clone(&popup_timer);
         ui.on_quit(move || {
-            popup_timer.stop();
+            POPUP_TIMER.with(|timer| timer.stop());
             controller.borrow_mut().stop();
             let _ = slint::quit_event_loop();
         });
@@ -189,7 +184,6 @@ fn settings_from_ui(ui: &AppWindow) -> Settings {
 fn apply_event(
     ui_weak: &slint::Weak<AppWindow>,
     popup_weak: &slint::Weak<NotificationPopup>,
-    popup_timer: &Timer,
     event: Event,
 ) {
     let Some(ui) = ui_weak.upgrade() else { return };
@@ -222,7 +216,6 @@ fn apply_event(
             if ui.get_notifications_enabled() {
                 show_popup(
                     popup_weak,
-                    popup_timer,
                     &title,
                     &popup_body,
                     &topic,
@@ -238,7 +231,6 @@ fn apply_event(
 
 fn show_popup(
     popup_weak: &slint::Weak<NotificationPopup>,
-    popup_timer: &Timer,
     title: &str,
     body: &str,
     topic: &str,
@@ -263,11 +255,13 @@ fn show_popup(
         desktop::play_notification_sound();
     }
 
-    let popup_weak = popup.as_weak();
-    popup_timer.start(TimerMode::SingleShot, POPUP_DURATION, move || {
-        if let Some(popup) = popup_weak.upgrade() {
-            let _ = popup.hide();
-        }
+    POPUP_TIMER.with(|timer| {
+        let popup_weak = popup.as_weak();
+        timer.start(TimerMode::SingleShot, POPUP_DURATION, move || {
+            if let Some(popup) = popup_weak.upgrade() {
+                let _ = popup.hide();
+            }
+        });
     });
 }
 
