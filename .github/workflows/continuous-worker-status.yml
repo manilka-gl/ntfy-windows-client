@@ -1,10 +1,9 @@
 name: Report continuous Windows worker status
-run-name: Report worker status — ${{ github.event.issue.body }}
+run-name: Report worker status
 
 on:
   issues:
-    types:
-      - opened
+    types: [opened]
 
 permissions:
   actions: read
@@ -21,42 +20,35 @@ jobs:
       - name: Report latest matching run
         shell: bash
         run: |
-          set -euo pipefail
-
+          set -u
           branch="${TARGET_BRANCH//$'\r'/}"
-          if [[ -z "$branch" || "$branch" == *$'\n'* ]]; then
-            echo 'Issue body must contain exactly one branch name.' >&2
-            exit 2
-          fi
-
-          runs="$({
-            gh api \
-              --method GET \
-              "repos/${GITHUB_REPOSITORY}/actions/workflows/continuous-worker.yml/runs" \
-              -f event=workflow_dispatch \
-              -f per_page=30
-          })"
-
-          match="$(
-            jq -c --arg branch "$branch" '
-              [
-                .workflow_runs[]
-                | select(.display_title | contains($branch))
-                | {
-                    id,
-                    status,
-                    conclusion,
-                    event,
-                    run_attempt,
-                    created_at,
-                    updated_at,
-                    html_url,
-                    display_title,
-                    head_sha
-                  }
-              ][0] // {error: "no matching workflow run"}
-            ' <<<"$runs"
+          runs="$(
+            gh run list \
+              --repo "$GITHUB_REPOSITORY" \
+              --workflow continuous-worker.yml \
+              --limit 30 \
+              --json databaseId,status,conclusion,event,createdAt,updatedAt,url,displayTitle,headSha \
+              2>&1
           )"
+          query_exit=$?
+
+          if [[ $query_exit -eq 0 ]]; then
+            match="$(
+              jq -c --arg branch "$branch" '
+                [
+                  .[]
+                  | select(.displayTitle | contains($branch))
+                ][0] // {error: "no matching workflow run"}
+              ' <<<"$runs"
+            )"
+          else
+            match="$(
+              jq -cn \
+                --arg error "gh run list failed" \
+                --arg output "$runs" \
+                '{error: $error, output: $output}'
+            )"
+          fi
 
           gh issue close "${{ github.event.issue.number }}" \
             --repo "$GITHUB_REPOSITORY" \
