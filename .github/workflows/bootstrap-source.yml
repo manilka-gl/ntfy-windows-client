@@ -1,0 +1,100 @@
+name: One-shot source bootstrap and verification
+
+on:
+  push:
+    branches: [work/ntfy-rebuild]
+    paths: [.bootstrap/ready]
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild-and-verify:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: work/ntfy-rebuild
+      - name: Reconstruct source bundle
+        shell: pwsh
+        run: |
+          $parts = Get-ChildItem .bootstrap/part* | Sort-Object Name
+          $base64 = ($parts | ForEach-Object { Get-Content $_.FullName -Raw }) -join ''
+          [IO.File]::WriteAllBytes('source.zip', [Convert]::FromBase64String($base64))
+          $hash = (Get-FileHash source.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($hash -ne '6aa5bc407f1f05113b195726352e65ededc3481264683d7ccfc213991aff76fa') {
+            throw "Source bundle hash mismatch: $hash"
+          }
+          Remove-Item src, ui -Recurse -Force
+          Remove-Item Cargo.toml, README.md, build.rs -Force
+          New-Item -ItemType Directory -Force stage | Out-Null
+          Expand-Archive source.zip stage -Force
+          Get-ChildItem stage -Force | ForEach-Object { Copy-Item $_.FullName . -Recurse -Force }
+          Remove-Item stage, .bootstrap -Recurse -Force
+          Remove-Item source.zip, .github/workflows/bootstrap-source.yml -Force
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt, clippy
+          targets: x86_64-pc-windows-msvc,aarch64-pc-windows-msvc
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: one-shot-rebuild
+      - name: Format, verify, test, and build
+        id: verify
+        shell: pwsh
+        run: |
+          cargo generate-lockfile
+          cargo fmt --all
+          $script:failed = $false
+          Set-Content ci-result.txt "Rust: $(rustc --version)`nCargo: $(cargo --version)`n"
+          function Invoke-Check([string]$Name, [scriptblock]$Command) {
+            Add-Content ci-result.txt "`n## $Name"
+            & $Command 2>&1 | Tee-Object -FilePath ci-result.txt -Append
+            if ($LASTEXITCODE -ne 0) {
+              Add-Content ci-result.txt "FAILED: $Name (exit $LASTEXITCODE)"
+              $script:failed = $true
+            } else {
+              Add-Content ci-result.txt "PASSED: $Name"
+            }
+          }
+          Invoke-Check 'Formatting' { cargo fmt --all -- --check }
+          Invoke-Check 'Clippy' { cargo clippy --locked --all-targets --all-features -- -D warnings }
+          Invoke-Check 'Tests' { cargo test --locked --all-features }
+          Invoke-Check 'Debug build' { cargo build --locked --all-features }
+          Invoke-Check 'Release x64' { cargo build --locked --release --target x86_64-pc-windows-msvc }
+          Invoke-Check 'Release ARM64' { cargo build --locked --release --target aarch64-pc-windows-msvc }
+          Add-Content ci-result.txt "`nRESULT=$($script:failed ? 'FAIL' : 'PASS')"
+          "failed=$($script:failed.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+      - name: Package successful builds
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          if (Test-Path target/x86_64-pc-windows-msvc/release/ntfy-windows-client.exe) {
+            Copy-Item target/x86_64-pc-windows-msvc/release/ntfy-windows-client.exe dist/ntfy-windows-client-x64.exe
+          }
+          if (Test-Path target/aarch64-pc-windows-msvc/release/ntfy-windows-client.exe) {
+            Copy-Item target/aarch64-pc-windows-msvc/release/ntfy-windows-client.exe dist/ntfy-windows-client-arm64.exe
+          }
+          Copy-Item README.md, LICENSE, ci-result.txt dist/
+          Compress-Archive -Path dist/* -DestinationPath ntfy-windows-client-verification.zip
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ntfy-windows-client-verification
+          path: ntfy-windows-client-verification.zip
+          if-no-files-found: error
+      - name: Commit rebuilt source and lockfile
+        if: always()
+        shell: pwsh
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m "feat: rebuild lightweight WinHTTP client [skip ci]"
+          git push origin HEAD:work/ntfy-rebuild
+      - name: Fail when verification failed
+        if: steps.verify.outputs.failed == 'true'
+        shell: pwsh
+        run: exit 1
