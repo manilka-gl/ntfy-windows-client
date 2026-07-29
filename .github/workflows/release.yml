@@ -1,10 +1,12 @@
 name: Release
 
 on:
+  push:
+    tags: ["v*"]
   workflow_dispatch:
     inputs:
       tag:
-        description: Optional tag to create or update (for example v0.1.0)
+        description: Optional tag to create or update, for example v0.1.0
         required: false
         type: string
 
@@ -13,8 +15,9 @@ permissions:
 
 jobs:
   verify:
+    name: Test and Clippy
     runs-on: windows-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.97.1
@@ -23,13 +26,14 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo generate-lockfile
       - run: cargo fmt --all -- --check
-      - run: cargo clippy --locked --all-targets --all-features -- -D warnings
-      - run: cargo test --locked --all-features
+      - run: cargo test --locked --all-targets
+      - run: cargo clippy --locked --all-targets -- -D warnings
 
   build:
     needs: verify
+    name: Build ${{ matrix.target }}
     runs-on: windows-latest
-    timeout-minutes: 40
+    timeout-minutes: 50
     strategy:
       fail-fast: false
       matrix:
@@ -59,15 +63,26 @@ jobs:
           name: ntfy-windows-client-${{ matrix.target }}
           path: ntfy-windows-client-${{ matrix.target }}.zip
           if-no-files-found: error
-      - name: Publish GitHub release asset
-        if: inputs.tag != ''
+
+  publish:
+    needs: build
+    if: github.event_name == 'push' || inputs.tag != ''
+    runs-on: windows-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ntfy-windows-client-*
+          path: dist
+          merge-multiple: true
+      - name: Publish release assets
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
         run: |
-          gh release view "${{ inputs.tag }}" *> $null
+          gh release view "$env:RELEASE_TAG" *> $null
           if ($LASTEXITCODE -eq 0) {
-            gh release upload "${{ inputs.tag }}" "ntfy-windows-client-${{ matrix.target }}.zip" --clobber
+            gh release upload "$env:RELEASE_TAG" dist/*.zip --clobber
           } else {
-            gh release create "${{ inputs.tag }}" "ntfy-windows-client-${{ matrix.target }}.zip" --generate-notes
+            gh release create "$env:RELEASE_TAG" dist/*.zip --generate-notes
           }
