@@ -21,10 +21,17 @@ jobs:
         run: |
           $parts = Get-ChildItem .patches/part* | Sort-Object Name
           $base64 = ($parts | ForEach-Object { Get-Content $_.FullName -Raw }) -join ''
-          [IO.File]::WriteAllBytes('requested.patch', [Convert]::FromBase64String($base64))
+          [IO.File]::WriteAllBytes('requested.patch.gz', [Convert]::FromBase64String($base64))
+          $input = [IO.File]::OpenRead('requested.patch.gz')
+          $output = [IO.File]::Create('requested.patch')
+          $gzip = [IO.Compression.GZipStream]::new($input, [IO.Compression.CompressionMode]::Decompress)
+          $gzip.CopyTo($output)
+          $gzip.Dispose()
+          $output.Dispose()
+          $input.Dispose()
           git apply --index --whitespace=nowarn requested.patch
           Remove-Item .patches -Recurse -Force
-          Remove-Item requested.patch -Force
+          Remove-Item requested.patch, requested.patch.gz -Force
       - name: Commit requested features
         shell: pwsh
         run: |
