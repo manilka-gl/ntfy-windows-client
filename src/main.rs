@@ -294,6 +294,6 @@ mod tests {
 
     #[test]
     fn history_is_bounded() {
-        assert!(HISTORY_LIMIT <= 200);
+        const { assert!(HISTORY_LIMIT <= 200) };
     }
 }

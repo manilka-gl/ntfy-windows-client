@@ -36,7 +36,7 @@ impl Presenter {
 
     pub fn play_sound(&self) {
         unsafe {
-            MessageBeep(MB_ICONASTERISK as u32);
+            MessageBeep(MB_ICONASTERISK);
         }
     }
 
@@ -94,7 +94,7 @@ fn work_area() -> RECT {
         right: 1920,
         bottom: 1080,
     };
-    let ok = unsafe { SystemParametersInfoW(SPI_GETWORKAREA as u32, 0, (&raw mut area).cast(), 0) };
+    let ok = unsafe { SystemParametersInfoW(SPI_GETWORKAREA, 0, (&raw mut area).cast(), 0) };
     if ok == 0 {
         RECT {
             left: 0,

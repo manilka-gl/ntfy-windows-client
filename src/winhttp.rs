@@ -241,7 +241,7 @@ where
             ptr::null(),
             ptr::null(),
             if server.secure {
-                WINHTTP_FLAG_SECURE as u32
+                WINHTTP_FLAG_SECURE
             } else {
                 0
             },
@@ -269,7 +269,7 @@ where
         "receive subscription response",
     )?;
     let status = query_status(request.raw)?;
-    if status != HTTP_STATUS_OK as u32 {
+    if status != HTTP_STATUS_OK {
         return Err(Error(format!("subscription returned HTTP {status}")));
     }
     if active_request.load(Ordering::Acquire) != request.raw {
@@ -314,6 +314,7 @@ where
     Ok(())
 }
 
+#[allow(clippy::collapsible_if)]
 fn consume_lines<F>(pending: &mut Vec<u8>, on_message: &mut F) -> Result<(), Error>
 where
     F: FnMut(Message),
@@ -354,7 +355,7 @@ fn publish_blocking(config: &ClientConfig, title: &str, body: &str) -> Result<()
             ptr::null(),
             ptr::null(),
             if server.secure {
-                WINHTTP_FLAG_SECURE as u32
+                WINHTTP_FLAG_SECURE
             } else {
                 0
             },
@@ -400,7 +401,7 @@ fn open_session(receive_timeout: i32) -> Result<Handle, Error> {
     let session = Handle::new(unsafe {
         WinHttpOpen(
             agent.as_ptr(),
-            WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY as u32,
+            WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
             ptr::null(),
             ptr::null(),
             0,
@@ -420,7 +421,7 @@ fn query_status(request: HInternet) -> Result<u32, Error> {
         unsafe {
             WinHttpQueryHeaders(
                 request,
-                (WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER) as u32,
+                (WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER),
                 ptr::null(),
                 (&raw mut status).cast::<c_void>(),
                 &raw mut size,
@@ -527,9 +528,9 @@ impl ParsedServer {
     fn parse(input: &str) -> Result<Self, Error> {
         let input = input.trim().trim_end_matches('/');
         let (secure, rest, default_port) = if let Some(rest) = input.strip_prefix("https://") {
-            (true, rest, INTERNET_DEFAULT_HTTPS_PORT as u16)
+            (true, rest, INTERNET_DEFAULT_HTTPS_PORT)
         } else if let Some(rest) = input.strip_prefix("http://") {
-            (false, rest, INTERNET_DEFAULT_HTTP_PORT as u16)
+            (false, rest, INTERNET_DEFAULT_HTTP_PORT)
         } else {
             return Err(Error(
                 "server URL must begin with http:// or https://".into(),
