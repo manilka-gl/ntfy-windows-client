@@ -1,8 +1,7 @@
 use crate::protocol::{Message, parse_line, sanitize_header, valid_topic};
 use std::{
     ffi::c_void,
-    fmt,
-    ptr,
+    fmt, ptr,
     sync::{
         Arc,
         atomic::{AtomicBool, AtomicPtr, Ordering},
@@ -110,7 +109,12 @@ impl Drop for Controller {
     }
 }
 
-pub fn publish<F>(config: ClientConfig, title: String, body: String, on_event: F) -> Result<(), Error>
+pub fn publish<F>(
+    config: ClientConfig,
+    title: String,
+    body: String,
+    on_event: F,
+) -> Result<(), Error>
 where
     F: FnOnce(Event) + Send + 'static,
 {
@@ -148,11 +152,11 @@ fn run_subscription(
         on_event(Event::Status("Connecting".into()));
         let since_query = since.clone();
         let mut handle_message = |message| {
-                if !message.id.is_empty() {
-                    since.clone_from(&message.id);
-                }
-                on_event(Event::Message(message));
-            };
+            if !message.id.is_empty() {
+                since.clone_from(&message.id);
+            }
+            on_event(Event::Message(message));
+        };
         match subscribe_once(
             &config,
             &since_query,
@@ -287,7 +291,10 @@ where
     Ok(())
 }
 
-fn on_message_status_connected(active_request: &AtomicPtr<c_void>, request: HINTERNET) -> Result<(), Error> {
+fn on_message_status_connected(
+    active_request: &AtomicPtr<c_void>,
+    request: HINTERNET,
+) -> Result<(), Error> {
     if active_request.load(Ordering::Acquire) != request {
         return Err(Error("subscription was cancelled".into()));
     }
@@ -303,7 +310,9 @@ where
         let end = consumed + relative;
         let line = &pending[consumed..end];
         if !line.is_empty() {
-            if let Some(message) = parse_line(line).map_err(|error| Error(format!("invalid ntfy event: {error}")))? {
+            if let Some(message) =
+                parse_line(line).map_err(|error| Error(format!("invalid ntfy event: {error}")))?
+            {
                 on_message(message);
             }
         }
@@ -404,11 +413,7 @@ fn query_status(request: HINTERNET) -> Result<u32, Error> {
 }
 
 fn auth_headers(token: &str) -> String {
-    if token.is_empty() {
-        String::new()
-    } else {
-        format!("Authorization: Bearer {token}\r\n")
-    }
+    if token.is_empty() { String::new() } else { format!("Authorization: Bearer {token}\r\n") }
 }
 
 fn wide(value: &str) -> Vec<u16> {
@@ -465,7 +470,6 @@ impl Handle {
             Ok(Self(raw))
         }
     }
-
 }
 
 impl Drop for Handle {
@@ -496,16 +500,14 @@ impl ParsedServer {
         } else {
             return Err(Error("server URL must begin with http:// or https://".into()));
         };
-        let (authority, path) = rest.split_once('/').map_or((rest, ""), |(host, path)| (host, path));
+        let (authority, path) =
+            rest.split_once('/').map_or((rest, ""), |(host, path)| (host, path));
         if authority.is_empty() || authority.contains(['@', '?', '#']) {
             return Err(Error("server URL has an invalid host".into()));
         }
         let (host, port) = parse_authority(authority, default_port)?;
-        let base_path = if path.is_empty() {
-            String::new()
-        } else {
-            format!("/{}", path.trim_matches('/'))
-        };
+        let base_path =
+            if path.is_empty() { String::new() } else { format!("/{}", path.trim_matches('/')) };
         if base_path.contains(['?', '#']) {
             return Err(Error("server URL path cannot contain query or fragment".into()));
         }

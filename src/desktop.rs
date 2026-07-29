@@ -31,10 +31,8 @@ fn current_work_area() -> WorkArea {
         let mut point = POINT::default();
         let _ = GetCursorPos(&mut point);
         let monitor = MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST as u32);
-        let mut info = MONITORINFO {
-            cbSize: size_of::<MONITORINFO>() as u32,
-            ..Default::default()
-        };
+        let mut info =
+            MONITORINFO { cbSize: size_of::<MONITORINFO>() as u32, ..Default::default() };
         if !monitor.is_null() && GetMonitorInfoW(monitor, &mut info) != 0 {
             return WorkArea {
                 left: info.rcWork.left,
@@ -44,12 +42,7 @@ fn current_work_area() -> WorkArea {
             };
         }
     }
-    WorkArea {
-        left: 0,
-        top: 0,
-        right: 1920,
-        bottom: 1080,
-    }
+    WorkArea { left: 0, top: 0, right: 1920, bottom: 1080 }
 }
 
 fn origin_in_area(
@@ -89,19 +82,11 @@ fn origin_in_area(
 mod tests {
     use super::{NotificationPosition, WorkArea, origin_in_area};
 
-    const AREA: WorkArea = WorkArea {
-        left: 100,
-        top: 50,
-        right: 1100,
-        bottom: 850,
-    };
+    const AREA: WorkArea = WorkArea { left: 100, top: 50, right: 1100, bottom: 850 };
 
     #[test]
     fn places_popup_at_bottom_right_with_margin() {
-        assert_eq!(
-            origin_in_area(AREA, 300, 100, NotificationPosition::BottomRight),
-            (784, 734)
-        );
+        assert_eq!(origin_in_area(AREA, 300, 100, NotificationPosition::BottomRight), (784, 734));
     }
 
     #[test]

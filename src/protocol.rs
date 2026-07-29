@@ -50,17 +50,11 @@ pub fn parse_line(line: &[u8]) -> Result<Option<Message>, serde_json::Error> {
 pub fn valid_topic(topic: &str) -> bool {
     let len = topic.len();
     (1..=64).contains(&len)
-        && topic
-            .bytes()
-            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'))
+        && topic.bytes().all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'))
 }
 
 pub fn sanitize_header(value: &str, max_chars: usize) -> String {
-    value
-        .chars()
-        .filter(|ch| !matches!(ch, '\r' | '\n' | '\0'))
-        .take(max_chars)
-        .collect()
+    value.chars().filter(|ch| !matches!(ch, '\r' | '\n' | '\0')).take(max_chars).collect()
 }
 
 #[cfg(test)]

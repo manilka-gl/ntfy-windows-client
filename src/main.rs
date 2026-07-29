@@ -91,19 +91,16 @@ fn main() -> Result<(), slint::PlatformError> {
             let ui_weak_events = ui.as_weak();
             let popup_weak_events = popup_weak.clone();
             let popup_timer_events = Rc::clone(&popup_timer);
-            if let Err(error) = winhttp::publish(
-                config,
-                title.to_string(),
-                body.to_string(),
-                move |event| {
+            if let Err(error) =
+                winhttp::publish(config, title.to_string(), body.to_string(), move |event| {
                     let ui_weak = ui_weak_events.clone();
                     let popup_weak = popup_weak_events.clone();
                     let popup_timer = Rc::clone(&popup_timer_events);
                     let _ = slint::invoke_from_event_loop(move || {
                         apply_event(&ui_weak, &popup_weak, &popup_timer, event);
                     });
-                },
-            ) {
+                })
+            {
                 ui.set_status_text(error.to_string().into());
             }
         });
@@ -275,11 +272,7 @@ fn show_popup(
 }
 
 fn display_title(title: &str) -> String {
-    if title.trim().is_empty() {
-        "Notification".to_owned()
-    } else {
-        truncate(title, 256)
-    }
+    if title.trim().is_empty() { "Notification".to_owned() } else { truncate(title, 256) }
 }
 
 fn truncate(value: &str, max_chars: usize) -> String {
