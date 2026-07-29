@@ -421,7 +421,7 @@ fn query_status(request: HInternet) -> Result<u32, Error> {
         unsafe {
             WinHttpQueryHeaders(
                 request,
-                (WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER),
+                WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
                 ptr::null(),
                 (&raw mut status).cast::<c_void>(),
                 &raw mut size,
