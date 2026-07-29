@@ -9,7 +9,7 @@ mod winhttp;
 use config::Settings;
 use notification::Presenter;
 use protocol::truncate;
-use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, SharedString, VecModel};
+use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, VecModel};
 use std::{cell::RefCell, rc::Rc};
 use winhttp::{ClientConfig, Controller, Event};
 
@@ -17,10 +17,17 @@ slint::include_modules!();
 
 const HISTORY_LIMIT: usize = 100;
 
+thread_local! {
+    static PRESENTER: RefCell<Option<Presenter>> = const { RefCell::new(None) };
+}
+
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
     let tray = AppTray::new()?;
-    let presenter = Rc::new(Presenter::new()?);
+    PRESENTER.with(|slot| {
+        *slot.borrow_mut() = Some(Presenter::new()?);
+        Ok::<(), slint::PlatformError>(())
+    })?;
     let controller = Rc::new(RefCell::new(Controller::default()));
     let settings = Settings::load();
 
@@ -34,8 +41,8 @@ fn main() -> Result<(), slint::PlatformError> {
         VecModel::<NotificationItem>::default(),
     )));
 
-    configure_subscription(&ui, &tray, Rc::clone(&controller), Rc::clone(&presenter));
-    configure_publish(&ui, Rc::clone(&presenter));
+    configure_subscription(&ui, &tray, Rc::clone(&controller));
+    configure_publish(&ui);
     configure_settings(&ui);
     configure_clear(&ui);
     configure_window_close(&ui);
@@ -56,7 +63,6 @@ fn configure_subscription(
     ui: &AppWindow,
     tray: &AppTray,
     controller: Rc<RefCell<Controller>>,
-    presenter: Rc<Presenter>,
 ) {
     let ui_weak = ui.as_weak();
     let tray_weak = tray.as_weak();
@@ -80,13 +86,11 @@ fn configure_subscription(
         ui.set_status_text("Starting subscription".into());
         let ui_events = ui.as_weak();
         let tray_events = tray_weak.clone();
-        let presenter = Rc::clone(&presenter);
         let result = controller.borrow_mut().start(config, move |event| {
             let ui_weak = ui_events.clone();
             let tray_weak = tray_events.clone();
-            let presenter = Rc::clone(&presenter);
             let _ = slint::invoke_from_event_loop(move || {
-                apply_event(&ui_weak, Some(&tray_weak), &presenter, event);
+                apply_event(&ui_weak, Some(&tray_weak), event);
             });
         });
         if let Err(error) = result {
@@ -95,7 +99,7 @@ fn configure_subscription(
     });
 }
 
-fn configure_publish(ui: &AppWindow, presenter: Rc<Presenter>) {
+fn configure_publish(ui: &AppWindow) {
     let ui_weak = ui.as_weak();
     ui.on_publish(move |title, body| {
         let Some(ui) = ui_weak.upgrade() else {
@@ -104,12 +108,10 @@ fn configure_publish(ui: &AppWindow, presenter: Rc<Presenter>) {
         let config = client_config(&ui);
         ui.set_status_text("Publishing".into());
         let ui_events = ui.as_weak();
-        let presenter = Rc::clone(&presenter);
         let result = winhttp::publish(config, title.to_string(), body.to_string(), move |event| {
             let ui_weak = ui_events.clone();
-            let presenter = Rc::clone(&presenter);
             let _ = slint::invoke_from_event_loop(move || {
-                apply_event(&ui_weak, None, &presenter, event);
+                apply_event(&ui_weak, None, event);
             });
         });
         if let Err(error) = result {
@@ -209,10 +211,17 @@ fn settings_from_ui(ui: &AppWindow) -> Settings {
     }
 }
 
+fn with_presenter(action: impl FnOnce(&Presenter)) {
+    PRESENTER.with(|slot| {
+        if let Some(presenter) = slot.borrow().as_ref() {
+            action(presenter);
+        }
+    });
+}
+
 fn apply_event(
     ui_weak: &slint::Weak<AppWindow>,
     tray_weak: Option<&slint::Weak<AppTray>>,
-    presenter: &Presenter,
     event: Event,
 ) {
     let Some(ui) = ui_weak.upgrade() else {
@@ -260,15 +269,17 @@ fn apply_event(
             }
 
             if ui.get_notifications_enabled() {
-                presenter.show(
-                    &title,
-                    &truncate(&message.body, 500),
-                    &meta,
-                    ui.get_placement_index(),
-                    ui.get_sound_enabled(),
-                );
+                with_presenter(|presenter| {
+                    presenter.show(
+                        &title,
+                        &truncate(&message.body, 500),
+                        &meta,
+                        ui.get_placement_index(),
+                        ui.get_sound_enabled(),
+                    );
+                });
             } else if ui.get_sound_enabled() {
-                presenter.play_sound();
+                with_presenter(|presenter| presenter.play_sound());
             }
             ui.set_status_text("Message received".into());
         }
