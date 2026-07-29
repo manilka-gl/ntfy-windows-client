@@ -29,6 +29,8 @@ jobs:
           Remove-Item bootstrap.zip -Force
           Remove-Item unpacked -Recurse -Force
           Remove-Item .github/workflows/bootstrap.yml -Force
+          Remove-Item .github/workflows/ci.yml -Force
+          Remove-Item .github/workflows/release.yml -Force
       - name: Commit source tree
         shell: pwsh
         run: |
