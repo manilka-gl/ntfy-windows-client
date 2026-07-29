@@ -8,7 +8,7 @@ mod winhttp;
 
 use config::Settings;
 use notification::Presenter;
-use protocol::truncate;
+use protocol::{Message, truncate, truncate_owned};
 use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, VecModel};
 use std::{cell::RefCell, rc::Rc};
 use winhttp::{ClientConfig, Controller, Event};
@@ -16,6 +16,7 @@ use winhttp::{ClientConfig, Controller, Event};
 slint::include_modules!();
 
 const HISTORY_LIMIT: usize = 100;
+const HISTORY_BODY_LIMIT: usize = 4096;
 
 thread_local! {
     static PRESENTER: RefCell<Option<Presenter>> = const { RefCell::new(None) };
@@ -239,28 +240,43 @@ fn apply_event(
             }
         }
         Event::Message(message) => {
-            let title = if message.title.trim().is_empty() {
-                format!("ntfy · {}", message.topic)
+            let Message {
+                id: _,
+                time,
+                topic,
+                title: incoming_title,
+                body,
+                priority,
+                tags,
+            } = message;
+            let title = if incoming_title.trim().is_empty() {
+                format!("ntfy · {topic}")
             } else {
-                message.title.clone()
+                incoming_title
             };
-            let time = timefmt::format_unix_utc(message.time);
-            let tags = if message.tags.is_empty() {
+            let time = timefmt::format_unix_utc(time);
+            let tags = if tags.is_empty() {
                 String::new()
             } else {
-                format!(" · {}", message.tags.join(", "))
+                format!(" · {}", tags.join(", "))
             };
-            let meta = format!("{time} · priority {}{tags}", message.priority);
+            let meta = format!("{time} · priority {priority}{tags}");
+            let notifications_enabled = ui.get_notifications_enabled();
+            let sound_enabled = ui.get_sound_enabled();
+            let placement = ui.get_placement_index();
+            let popup_body = notifications_enabled.then(|| truncate(&body, 500));
+            let history_body = truncate_owned(body, HISTORY_BODY_LIMIT);
+
             let model = ui.get_notifications();
             if let Some(model) = model.as_any().downcast_ref::<VecModel<NotificationItem>>() {
                 model.insert(
                     0,
                     NotificationItem {
-                        topic: message.topic.into(),
+                        topic: topic.into(),
                         title: title.clone().into(),
-                        message: message.body.clone().into(),
+                        message: history_body.into(),
                         meta: meta.clone().into(),
-                        priority: i32::from(message.priority),
+                        priority: i32::from(priority),
                     },
                 );
                 if model.row_count() > HISTORY_LIMIT {
@@ -268,17 +284,17 @@ fn apply_event(
                 }
             }
 
-            if ui.get_notifications_enabled() {
+            if let Some(popup_body) = popup_body {
                 with_presenter(|presenter| {
                     presenter.show(
                         &title,
-                        &truncate(&message.body, 500),
+                        &popup_body,
                         &meta,
-                        ui.get_placement_index(),
-                        ui.get_sound_enabled(),
+                        placement,
+                        sound_enabled,
                     );
                 });
-            } else if ui.get_sound_enabled() {
+            } else if sound_enabled {
                 with_presenter(|presenter| presenter.play_sound());
             }
             ui.set_status_text("Message received".into());
@@ -290,10 +306,13 @@ fn apply_event(
 
 #[cfg(test)]
 mod tests {
-    use super::HISTORY_LIMIT;
+    use super::{HISTORY_BODY_LIMIT, HISTORY_LIMIT};
 
     #[test]
     fn history_is_bounded() {
-        const { assert!(HISTORY_LIMIT <= 200) };
+        const {
+            assert!(HISTORY_LIMIT <= 200);
+            assert!(HISTORY_BODY_LIMIT <= 16 * 1024);
+        };
     }
 }
