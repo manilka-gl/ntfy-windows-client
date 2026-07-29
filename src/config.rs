@@ -14,6 +14,7 @@ pub struct Settings {
     pub topic: String,
     pub notifications_enabled: bool,
     pub sound_enabled: bool,
+    pub audio_output: String,
     pub placement: u8,
     pub auto_connect: bool,
 }
@@ -25,6 +26,7 @@ impl Default for Settings {
             topic: String::new(),
             notifications_enabled: true,
             sound_enabled: true,
+            audio_output: String::new(),
             placement: 2,
             auto_connect: true,
         }
@@ -62,7 +64,7 @@ impl Settings {
         if let Some(parent) = path.parent() {
             fs::create_dir_all(parent)?;
         }
-        let bytes = serde_json::to_vec_pretty(self)
+        let bytes = serde_json::to_vec(self)
             .map_err(|error| io::Error::new(ErrorKind::InvalidData, error))?;
         let temporary = path.with_extension("json.tmp");
         fs::write(&temporary, bytes)?;
@@ -91,6 +93,7 @@ mod tests {
             topic: "alerts".into(),
             notifications_enabled: false,
             sound_enabled: false,
+            audio_output: "Headphones".into(),
             placement: 8,
             auto_connect: false,
         };
@@ -106,6 +109,7 @@ mod tests {
         )
         .unwrap();
         assert!(decoded.sound_enabled);
+        assert!(decoded.audio_output.is_empty());
         assert_eq!(decoded.placement, 2);
         assert!(decoded.auto_connect);
     }
