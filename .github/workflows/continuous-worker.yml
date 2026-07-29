@@ -44,7 +44,7 @@ jobs:
       WATCH_BRANCH: ${{ github.event_name == 'push' && github.ref_name || inputs.branch }}
       CONTROL_BRANCH: ${{ github.event.repository.default_branch }}
       CARGO_CACHE_KEY: >-
-        continuous-cargo-${{ runner.os }}-${{ github.event_name == 'push' && github.ref_name || inputs.branch }}-${{ github.run_id }}-${{ github.run_attempt }}
+        continuous-cargo-Windows-${{ github.event_name == 'push' && github.ref_name || inputs.branch }}-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       # The workflow and watcher are controlled from the default branch.
@@ -88,7 +88,7 @@ jobs:
             repository/target
           key: ${{ env.CARGO_CACHE_KEY }}
           restore-keys: |
-            continuous-cargo-${{ runner.os }}-${{ env.WATCH_BRANCH }}-
+            continuous-cargo-Windows-${{ env.WATCH_BRANCH }}-
 
       - name: Run continuous worker
         shell: pwsh
