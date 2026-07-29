@@ -17,7 +17,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       TARGET_BRANCH: ${{ github.event.issue.body }}
     steps:
-      - name: Report latest matching run
+      - name: Report matching runs
         shell: bash
         run: |
           set -u
@@ -26,7 +26,7 @@ jobs:
             gh run list \
               --repo "$GITHUB_REPOSITORY" \
               --workflow continuous-worker.yml \
-              --limit 30 \
+              --limit 50 \
               --json databaseId,status,conclusion,event,createdAt,updatedAt,url,displayTitle,headSha \
               2>&1
           )"
@@ -38,7 +38,7 @@ jobs:
                 [
                   .[]
                   | select(.displayTitle | contains($branch))
-                ][0] // {error: "no matching workflow run"}
+                ][0:10]
               ' <<<"$runs"
             )"
           else
@@ -52,4 +52,4 @@ jobs:
 
           gh issue close "${{ github.event.issue.number }}" \
             --repo "$GITHUB_REPOSITORY" \
-            --comment "Latest matching run status:\n\n\`\`\`json\n${match}\n\`\`\`"
+            --comment "Matching run status:\n\n\`\`\`json\n${match}\n\`\`\`"
