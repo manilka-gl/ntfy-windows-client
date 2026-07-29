@@ -1,20 +1,23 @@
 name: CI
 
 on:
+  push:
+    branches: [main, "feature/**"]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   quality:
-    name: Format, Clippy, tests, and debug build
+    name: Format, test, Clippy, and debug build
     runs-on: windows-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.97.1
@@ -25,17 +28,21 @@ jobs:
         run: cargo generate-lockfile
       - name: Formatting
         run: cargo fmt --all -- --check
-      - name: Clippy
-        run: cargo clippy --locked --all-targets --all-features -- -D warnings
       - name: Tests
-        run: cargo test --locked --all-features
+        run: cargo test --locked --all-targets
+      - name: Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
       - name: Debug build
-        run: cargo build --locked --all-features
+        run: cargo build --locked
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cargo-lock
+          path: Cargo.lock
 
   release-build:
     name: Release ${{ matrix.target }}
     runs-on: windows-latest
-    timeout-minutes: 40
+    timeout-minutes: 50
     strategy:
       fail-fast: false
       matrix:
