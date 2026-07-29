@@ -18,7 +18,7 @@ jobs:
       - name: Apply pending compile fixes
         shell: pwsh
         run: |
-          git apply --index --ignore-space-change --ignore-whitespace --whitespace=nowarn .fixes/compile.patch
+          & .fixes/fix.ps1
           Remove-Item .fixes -Recurse -Force
       - name: Commit fixes
         shell: pwsh
