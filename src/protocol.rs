@@ -43,15 +43,15 @@ pub fn parse_line(line: &[u8]) -> Result<Option<Message>, serde_json::Error> {
     Ok(Some(Message {
         id: event.id,
         time: event.time,
-        topic: truncate(&event.topic, 256),
-        title: truncate(&event.title, 256),
-        body: truncate(&event.body, 16 * 1024),
+        topic: truncate_owned(event.topic, 256),
+        title: truncate_owned(event.title, 256),
+        body: truncate_owned(event.body, 16 * 1024),
         priority: event.priority.clamp(1, 5),
         tags: event
             .tags
             .into_iter()
             .take(16)
-            .map(|tag| truncate(&tag, 64))
+            .map(|tag| truncate_owned(tag, 64))
             .collect(),
     }))
 }
@@ -73,17 +73,27 @@ pub fn sanitize_header(value: &str, max_chars: usize) -> String {
 }
 
 pub fn truncate(value: &str, max_chars: usize) -> String {
-    let mut characters = value.chars();
-    let mut output: String = characters.by_ref().take(max_chars).collect();
-    if characters.next().is_some() {
+    if let Some((boundary, _)) = value.char_indices().nth(max_chars) {
+        let mut output = String::with_capacity(boundary + '…'.len_utf8());
+        output.push_str(&value[..boundary]);
         output.push('…');
+        output
+    } else {
+        value.to_owned()
     }
-    output
+}
+
+pub fn truncate_owned(mut value: String, max_chars: usize) -> String {
+    if let Some((boundary, _)) = value.char_indices().nth(max_chars) {
+        value.truncate(boundary);
+        value.push('…');
+    }
+    value
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{Message, parse_line, sanitize_header, truncate, valid_topic};
+    use super::{Message, parse_line, sanitize_header, truncate, truncate_owned, valid_topic};
 
     #[test]
     fn parses_message_event() {
@@ -127,5 +137,7 @@ mod tests {
     fn truncates_at_character_boundary() {
         assert_eq!(truncate("abcdef", 3), "abc…");
         assert_eq!(truncate("åäö", 3), "åäö");
+        assert_eq!(truncate_owned("abcdef".into(), 3), "abc…");
+        assert_eq!(truncate_owned("åäö".into(), 3), "åäö");
     }
 }
