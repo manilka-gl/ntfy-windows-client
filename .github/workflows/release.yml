@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        target:
+          - x86_64-pc-windows-msvc
+          - aarch64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: release-${{ matrix.target }}
+      - run: cargo test --all-targets --locked
+      - run: cargo clippy --all-targets --locked -- -D warnings
+      - run: cargo build --release --locked --target ${{ matrix.target }}
+      - shell: pwsh
+        run: |
+          Copy-Item "target/${{ matrix.target }}/release/ntfy-windows-client.exe" "ntfy-windows-client-${{ matrix.target }}.exe"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ntfy-windows-client-${{ matrix.target }}
+          path: ntfy-windows-client-${{ matrix.target }}.exe
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: ntfy-windows-client-${{ matrix.target }}.exe
