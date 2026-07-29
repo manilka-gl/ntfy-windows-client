@@ -81,7 +81,9 @@ fn config_path() -> io::Result<PathBuf> {
     let base = env::var_os("APPDATA")
         .map(PathBuf::from)
         .or_else(|| env::var_os("HOME").map(PathBuf::from))
-        .ok_or_else(|| io::Error::new(ErrorKind::NotFound, "configuration directory unavailable"))?;
+        .ok_or_else(|| {
+            io::Error::new(ErrorKind::NotFound, "configuration directory unavailable")
+        })?;
     Ok(base.join("ntfy-windows-client").join("settings.json"))
 }
 
@@ -92,7 +94,10 @@ mod tests {
     #[test]
     fn accepts_valid_connection() {
         let value = validate(" https://ntfy.sh/ ", "disk_alerts-1").unwrap();
-        assert_eq!(value, ("https://ntfy.sh".to_owned(), "disk_alerts-1".to_owned()));
+        assert_eq!(
+            value,
+            ("https://ntfy.sh".to_owned(), "disk_alerts-1".to_owned())
+        );
     }
 
     #[test]
