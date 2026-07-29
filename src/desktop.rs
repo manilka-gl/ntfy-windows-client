@@ -1,9 +1,11 @@
 use crate::config::NotificationPosition;
 use std::mem::size_of;
 use windows_sys::Win32::{
-    Foundation::POINT,
-    Graphics::Gdi::{GetMonitorInfoW, MONITOR_DEFAULTTONEAREST, MONITORINFO, MonitorFromPoint},
-    UI::WindowsAndMessaging::{GetCursorPos, MB_ICONASTERISK, MessageBeep},
+    windef::POINT,
+    winuser::{
+        GetCursorPos, GetMonitorInfoW, MB_ICONASTERISK, MONITOR_DEFAULTTONEAREST, MONITORINFO,
+        MessageBeep, MonitorFromPoint,
+    },
 };
 
 const EDGE_MARGIN: i32 = 16;
