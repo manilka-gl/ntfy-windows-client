@@ -459,7 +459,7 @@ struct RequestHandle<'a> {
 }
 
 impl<'a> RequestHandle<'a> {
-    fn new(raw: registry: &'a AtomicPtr<c_void>) -> Result<Self, Error> {
+    fn new(raw: HInternet, registry: &'a AtomicPtr<c_void>) -> Result<Self, Error> {
         if raw.is_null() {
             let code = unsafe { GetLastError() };
             return Err(Error(format!(
