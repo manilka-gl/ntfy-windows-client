@@ -169,10 +169,7 @@ fn ensure_audio_outputs(state: &SharedState) {
     }
 
     let outputs = audio::output_names();
-    state
-        .lock()
-        .expect("runtime state poisoned")
-        .audio_outputs = outputs;
+    state.lock().expect("runtime state poisoned").audio_outputs = outputs;
 }
 
 fn hydrate_ui(ui: &AppWindow, state: &SharedState) {
