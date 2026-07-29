@@ -1,6 +1,7 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+Write-Host 'CHECK worker recovery revision 3: start'
 Write-Host 'CHECK worker-control-parse: start'
 
 $workerScripts = @(
