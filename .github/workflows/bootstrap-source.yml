@@ -19,8 +19,7 @@ jobs:
       - name: Reconstruct source bundle
         shell: pwsh
         run: |
-          $parts = Get-ChildItem .bootstrap/part* | Sort-Object Name
-          $base64 = ($parts | ForEach-Object { Get-Content $_.FullName -Raw }) -join ''
+          $base64 = Get-Content .bootstrap/source.b64 -Raw
           [IO.File]::WriteAllBytes('source.zip', [Convert]::FromBase64String($base64))
           $hash = (Get-FileHash source.zip -Algorithm SHA256).Hash.ToLowerInvariant()
           if ($hash -ne '6aa5bc407f1f05113b195726352e65ededc3481264683d7ccfc213991aff76fa') {
@@ -64,7 +63,8 @@ jobs:
           Invoke-Check 'Debug build' { cargo build --locked --all-features }
           Invoke-Check 'Release x64' { cargo build --locked --release --target x86_64-pc-windows-msvc }
           Invoke-Check 'Release ARM64' { cargo build --locked --release --target aarch64-pc-windows-msvc }
-          Add-Content ci-result.txt "`nRESULT=$($script:failed ? 'FAIL' : 'PASS')"
+          $result = if ($script:failed) { 'FAIL' } else { 'PASS' }
+          Add-Content ci-result.txt "`nRESULT=$result"
           "failed=$($script:failed.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
       - name: Package successful builds
         if: always()
