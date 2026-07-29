@@ -7,354 +7,354 @@ PASSED: Formatting
 
 ## Clippy
  Downloading crates ...
-  Downloaded as-slice v0.2.1
-  Downloaded anstyle v1.0.14
   Downloaded adler2 v2.0.1
-  Downloaded aligned v0.4.3
-  Downloaded aligned-vec v0.6.4
-  Downloaded bit_field v0.10.3
-  Downloaded by_address v1.2.1
-  Downloaded cfg-if v1.0.4
-  Downloaded cfg_aliases v0.2.2
-  Downloaded byteorder-lite v0.1.0
-  Downloaded arg_enum_proc_macro v0.3.4
-  Downloaded core_maths v0.1.1
-  Downloaded equator-macro v0.4.2
-  Downloaded glutin_wgl_sys v0.6.1
   Downloaded const-field-offset-macro v0.2.0
-  Downloaded heck v0.5.0
-  Downloaded color_quant v1.1.0
-  Downloaded const-field-offset v0.2.0
-  Downloaded cursor-icon v1.2.0
-  Downloaded error-code v3.3.2
-  Downloaded equator v0.4.2
-  Downloaded float-cmp v0.9.0
-  Downloaded glutin_egl_sys v0.7.1
-  Downloaded slotmap v1.1.1
-  Downloaded glutin-winit v0.5.0
-  Downloaded arrayref v0.3.9
-  Downloaded dpi v0.1.2
-  Downloaded copypasta v0.10.2
-  Downloaded equivalent v1.0.2
-  Downloaded form_urlencoded v1.2.2
-  Downloaded quick-error v2.0.1
-  Downloaded getopts v0.2.24
-  Downloaded autocfg v1.5.1
-  Downloaded cexpr v0.6.0
-  Downloaded countme v3.0.1
-  Downloaded clipboard-win v5.4.1
-  Downloaded rustc-hash v2.1.3
-  Downloaded scopeguard v1.2.0
-  Downloaded siphasher v1.0.3
-  Downloaded bytemuck_derive v1.11.0
-  Downloaded convert_case v0.10.0
-  Downloaded reborrow v0.5.5
-  Downloaded smol_str v0.2.2
-  Downloaded spin_on v0.1.1
-  Downloaded clru v0.6.3
-  Downloaded crossbeam-deque v0.8.7
-  Downloaded derive_utils v0.16.0
-  Downloaded displaydoc v0.2.7
-  Downloaded fax v0.2.7
-  Downloaded fdeflate v0.3.7
-  Downloaded filetime v0.2.29
-  Downloaded font-types v0.12.2
-  Downloaded glob v0.3.4
-  Downloaded avif-serialize v0.8.9
-  Downloaded find-msvc-tools v0.1.9
-  Downloaded htmlparser v0.2.1
-  Downloaded field-offset v0.3.6
-  Downloaded foldhash v0.2.0
-  Downloaded gl_generator v0.14.0
-  Downloaded grid v1.0.1
-  Downloaded potential_utf v0.1.5
-  Downloaded num-complex v0.4.6
-  Downloaded pulp-wasm-simd-flag v0.1.1
-  Downloaded wasm-bindgen-shared v0.2.126
-  Downloaded av1-grain v0.2.5
-  Downloaded clang-sys v1.9.1
-  Downloaded crc32fast v1.5.0
-  Downloaded critical-section v1.2.0
-  Downloaded either v1.17.0
-  Downloaded font-types v0.11.3
-  Downloaded stable_deref_trait v1.2.1
-  Downloaded strict-num v0.1.1
-  Downloaded text-size v1.1.1
-  Downloaded arrayvec v0.7.8
-  Downloaded auto_enums v0.8.10
-  Downloaded built v0.8.1
-  Downloaded crossbeam-epoch v0.9.20
-  Downloaded data-url v0.3.2
-  Downloaded gif v0.14.2
-  Downloaded half v2.7.1
-  Downloaded parlance v0.1.0
-  Downloaded parley_data v0.10.0
-  Downloaded unicode-vo v0.1.0
-  Downloaded windows-collections v0.3.2
-  Downloaded windows-interface v0.59.3
-  Downloaded rustc-hash v1.1.0
-  Downloaded allocator-api2 v0.2.21
-  Downloaded annotate-snippets v0.12.16
+  Downloaded glutin_wgl_sys v0.6.1
   Downloaded anyhow v1.0.104
-  Downloaded bitflags v2.13.1
-  Downloaded bytemuck v1.25.2
-  Downloaded crossbeam-utils v0.8.22
-  Downloaded fixed_decimal v0.7.2
-  Downloaded fontique v0.10.0
-  Downloaded getrandom v0.4.3
-  Downloaded i-slint-backend-selector v1.17.1
-  Downloaded paste v1.0.15
-  Downloaded raw-window-handle v0.6.2
-  Downloaded simd_helpers v0.1.0
-  Downloaded sys-locale v0.3.2
-  Downloaded unicode-bidi-mirroring v0.4.0
-  Downloaded glutin v0.32.3
-  Downloaded num-traits v0.2.19
-  Downloaded proc-macro2 v1.0.107
-  Downloaded tinyvec_macros v0.1.1
-  Downloaded unty v0.0.4
-  Downloaded windows-strings v0.5.1
-  Downloaded writeable v0.6.3
-  Downloaded yazi v0.2.1
-  Downloaded yoke v0.8.3
-  Downloaded base64 v0.22.1
-  Downloaded bincode v2.0.1
-  Downloaded bitstream-io v4.10.0
+  Downloaded aligned-vec v0.6.4
+  Downloaded arrayvec v0.7.8
+  Downloaded htmlparser v0.2.1
+  Downloaded avif-serialize v0.8.9
+  Downloaded built v0.8.1
+  Downloaded arrayref v0.3.9
+  Downloaded as-slice v0.2.1
   Downloaded borsh v1.8.0
-  Downloaded bumpalo v3.20.3
-  Downloaded bytes v1.12.1
-  Downloaded cc v1.4.0
-  Downloaded crossbeam-channel v0.5.16
-  Downloaded derive_more v2.1.1
-  Downloaded euclid v0.22.14
-  Downloaded flate2 v1.1.9
-  Downloaded fontdb v0.23.0
-  Downloaded i-slint-backend-testing v1.17.1
-  Downloaded muda v0.19.3
-  Downloaded nom v7.1.3
-  Downloaded parley v0.10.0
-  Downloaded pulp v0.22.3
-  Downloaded rustc_version v0.4.1
-  Downloaded scoped-tls-hkt v0.1.5
-  Downloaded serde_spanned v1.1.1
-  Downloaded strum v0.28.0
-  Downloaded unicode-ccc v0.4.0
-  Downloaded unicode-linebreak v0.1.5
-  Downloaded utf8_iter v1.0.4
-  Downloaded zerotrie v0.2.4
-  Downloaded aho-corasick v1.1.4
-  Downloaded derive_more-impl v2.1.1
-  Downloaded glow v0.17.0
-  Downloaded hashbrown v0.14.5
-  Downloaded hashbrown v0.16.1
-  Downloaded hashbrown v0.17.1
-  Downloaded icu_locale v2.2.0
-  Downloaded icu_normalizer v2.2.0
-  Downloaded icu_normalizer_data v2.2.0
-  Downloaded icu_plurals v2.2.0
-  Downloaded idna_adapter v1.2.2
-  Downloaded jobserver v0.1.35
-  Downloaded keyboard-types v0.7.0
-  Downloaded libloading v0.8.9
-  Downloaded litemap v0.8.2
-  Downloaded num_enum v0.7.6
-  Downloaded rayon-core v1.13.0
-  Downloaded rustversion v1.0.23
-  Downloaded shlex v1.3.0
-  Downloaded shlex v2.0.1
-  Downloaded simd-adler32 v0.3.10
-  Downloaded slab v0.4.12
-  Downloaded slint-macros v1.17.1
-  Downloaded tinystr v0.8.3
+  Downloaded anstyle v1.0.14
+  Downloaded allocator-api2 v0.2.21
+  Downloaded bincode v2.0.1
+  Downloaded annotate-snippets v0.12.16
+  Downloaded base64 v0.22.1
+  Downloaded thiserror-impl v2.0.19
   Downloaded unicode-xid v0.2.6
-  Downloaded v_frame v0.3.9
-  Downloaded av-scenechange v0.14.1
-  Downloaded bindgen v0.72.1
-  Downloaded chrono v0.4.45
-  Downloaded exr v1.74.2
-  Downloaded harfrust v0.8.4
-  Downloaded i-slint-renderer-skia v1.17.1
-  Downloaded itertools v0.13.0
-  Downloaded nom v8.0.0
-  Downloaded noop_proc_macro v0.3.0
-  Downloaded num_enum_derive v0.7.6
-  Downloaded once_cell v1.21.4
-  Downloaded pastey v0.1.1
-  Downloaded percent-encoding v2.3.2
-  Downloaded pico-args v0.5.0
-  Downloaded pin-project-internal v1.1.13
-  Downloaded pin-project-lite v0.2.17
-  Downloaded pxfm v0.1.30
-  Downloaded simplecss v0.2.2
+  Downloaded aho-corasick v1.1.4
+  Downloaded auto_enums v0.8.10
   Downloaded smol_str v0.3.6
   Downloaded snafu-derive v0.8.9
-  Downloaded strum_macros v0.28.0
   Downloaded synstructure v0.13.2
-  Downloaded thiserror v2.0.19
-  Downloaded thiserror-impl v2.0.19
-  Downloaded toml_datetime v1.1.1+spec-1.1.0
-  Downloaded toml_parser v1.1.3+spec-1.1.0
-  Downloaded toml_writer v1.1.2+spec-1.1.0
-  Downloaded tracing-attributes v0.1.31
-  Downloaded unicase v2.9.0
-  Downloaded unicode-properties v0.1.4
-  Downloaded unicode-script v0.5.8
-  Downloaded version_check v0.9.5
-  Downloaded i-slint-common v1.17.1
-  Downloaded i-slint-core-macros v1.17.1
-  Downloaded lebe v0.5.3
-  Downloaded linked-hash-map v0.5.6
-  Downloaded maybe-rayon v0.1.1
-  Downloaded pin-project v1.1.13
-  Downloaded pin-utils v0.1.0
-  Downloaded pin-weak v1.1.0
-  Downloaded pkg-config v0.3.33
-  Downloaded rgb v0.8.53
-  Downloaded rowan v0.16.1
-  Downloaded rspolib v0.1.2
-  Downloaded semver v1.0.28
-  Downloaded serde_core v1.0.229
-  Downloaded serde_derive v1.0.229
-  Downloaded slint-build v1.17.1
-  Downloaded smallvec v1.15.2
+  Downloaded av-scenechange v0.14.1
+  Downloaded bindgen v0.72.1
+  Downloaded bitstream-io v4.10.0
+  Downloaded i-slint-backend-winit v1.17.1
+  Downloaded arg_enum_proc_macro v0.3.4
+  Downloaded rustc-hash v1.1.0
+  Downloaded serde v1.0.229
+  Downloaded bitflags v2.13.1
+  Downloaded tiff v0.11.3
+  Downloaded roxmltree v0.21.1
+  Downloaded smol_str v0.2.2
   Downloaded softbuffer v0.4.8
+  Downloaded text-size v1.1.1
+  Downloaded reborrow v0.5.5
+  Downloaded rustc-hash v2.1.3
+  Downloaded slint-macros v1.17.1
   Downloaded svgtypes v0.16.1
-  Downloaded tiny-skia-path v0.12.0
-  Downloaded toml v1.1.4+spec-1.1.0
+  Downloaded thiserror v2.0.19
+  Downloaded tiny-skia v0.12.0
+  Downloaded av1-grain v0.2.5
+  Downloaded flate2 v1.1.9
+  Downloaded slint v1.17.1
+  Downloaded syn v3.0.3
+  Downloaded bit_field v0.10.3
+  Downloaded copypasta v0.10.2
+  Downloaded equator-macro v0.4.2
+  Downloaded field-offset v0.3.6
+  Downloaded num-traits v0.2.19
+  Downloaded rav1e v0.8.1
+  Downloaded regex v1.13.1
+  Downloaded resvg v0.47.0
+  Downloaded aligned v0.4.3
+  Downloaded bytes v1.12.1
+  Downloaded heck v0.5.0
+  Downloaded serde_core v1.0.229
+  Downloaded simd_helpers v0.1.0
+  Downloaded tinyvec v1.12.0
+  Downloaded toml_writer v1.1.2+spec-1.1.0
+  Downloaded url v2.5.8
+  Downloaded autocfg v1.5.1
+  Downloaded crossbeam-utils v0.8.22
+  Downloaded ravif v0.13.0
+  Downloaded rustversion v1.0.23
+  Downloaded winit v0.30.13
+  Downloaded fixed_decimal v0.7.2
+  Downloaded glutin v0.32.3
+  Downloaded harfrust v0.8.4
+  Downloaded scopeguard v1.2.0
+  Downloaded derive_utils v0.16.0
+  Downloaded simd-adler32 v0.3.10
   Downloaded tracing-core v0.1.36
+  Downloaded swash v0.2.10
+  Downloaded font-types v0.12.2
+  Downloaded fontdb v0.23.0
+  Downloaded half v2.7.1
+  Downloaded critical-section v1.2.0
+  Downloaded getopts v0.2.24
+  Downloaded snafu v0.8.9
+  Downloaded unicode-script v0.5.8
+  Downloaded crossbeam-epoch v0.9.20
+  Downloaded grid v1.0.1
+  Downloaded bytemuck v1.25.2
+  Downloaded derive_more-impl v2.1.1
+  Downloaded cfg-if v1.0.4
+  Downloaded unicode-segmentation v1.13.3
+  Downloaded equator v0.4.2
+  Downloaded stable_deref_trait v1.2.1
+  Downloaded tar v0.4.46
+  Downloaded toml_datetime v1.1.1+spec-1.1.0
+  Downloaded unicode-bidi-mirroring v0.4.0
+  Downloaded unicode-vo v0.1.0
+  Downloaded unty v0.0.4
+  Downloaded rgb v0.8.53
+  Downloaded rspolib v0.1.2
   Downloaded typed-index-collections v3.5.0
-  Downloaded unicode-bidi v0.3.18
-  Downloaded unicode-ident v1.0.24
+  Downloaded exr v1.74.2
+  Downloaded memoffset v0.9.1
+  Downloaded libloading v0.8.9
+  Downloaded semver v1.0.28
+  Downloaded cexpr v0.6.0
+  Downloaded color_quant v1.1.0
+  Downloaded fdeflate v0.3.7
+  Downloaded tinystr v0.8.3
+  Downloaded unicase v2.9.0
+  Downloaded filetime v0.2.29
+  Downloaded font-types v0.11.3
+  Downloaded gif v0.14.2
+  Downloaded find-msvc-tools v0.1.9
+  Downloaded windows-result v0.4.1
+  Downloaded form_urlencoded v1.2.2
   Downloaded vtable-macro v0.4.0
-  Downloaded wasm-bindgen-macro v0.2.126
-  Downloaded windows-threading v0.2.1
-  Downloaded zune-core v0.5.1
-  Downloaded i-slint-renderer-software v1.17.1
-  Downloaded imgref v1.12.2
+  Downloaded prettyplease v0.2.37
+  Downloaded skrifa v0.42.1
+  Downloaded crossbeam-channel v0.5.16
+  Downloaded error-code v3.3.2
+  Downloaded gl_generator v0.14.0
+  Downloaded i-slint-backend-selector v1.17.1
+  Downloaded serde_json v1.0.151
+  Downloaded strum_macros v0.28.0
+  Downloaded toml_edit v0.25.13+spec-1.1.0
+  Downloaded float-cmp v0.9.0
+  Downloaded glob v0.3.4
+  Downloaded skia-bindings v0.99.0
+  Downloaded strict-num v0.1.1
+  Downloaded tinyvec_macros v0.1.1
+  Downloaded windows-strings v0.5.1
+  Downloaded parley v0.10.0
+  Downloaded simplecss v0.2.2
+  Downloaded skia-safe v0.99.0
+  Downloaded unicode-ccc v0.4.0
+  Downloaded unicode-linebreak v0.1.5
+  Downloaded slotmap v1.1.1
+  Downloaded equivalent v1.0.2
+  Downloaded fontique v0.10.0
+  Downloaded glutin_egl_sys v0.7.1
+  Downloaded new_debug_unreachable v1.0.6
+  Downloaded rustc_version v0.4.1
+  Downloaded crossbeam-deque v0.8.7
+  Downloaded euclid v0.22.14
+  Downloaded foldhash v0.2.0
+  Downloaded writeable v0.6.3
+  Downloaded byteorder-lite v0.1.0
+  Downloaded const-field-offset v0.2.0
+  Downloaded image-webp v0.2.4
+  Downloaded raw-window-handle v0.6.2
+  Downloaded rayon-core v1.13.0
+  Downloaded xml-rs v0.8.28
+  Downloaded zerofrom-derive v0.1.7
+  Downloaded lebe v0.5.3
+  Downloaded pulldown-cmark-escape v0.11.0
+  Downloaded serde_derive v1.0.229
   Downloaded itoa v1.0.18
   Downloaded lazy_static v1.5.0
-  Downloaded libm v0.2.16
-  Downloaded lyon_geom v1.0.19
-  Downloaded lyon_path v1.0.19
-  Downloaded new_debug_unreachable v1.0.6
-  Downloaded ravif v0.13.0
-  Downloaded resvg v0.47.0
-  Downloaded roxmltree v0.21.1
-  Downloaded serde v1.0.229
-  Downloaded snafu v0.8.9
-  Downloaded tar v0.4.46
-  Downloaded tinyvec v1.12.0
-  Downloaded toml_edit v0.25.13+spec-1.1.0
-  Downloaded url v2.5.8
-  Downloaded vtable v0.4.0
-  Downloaded weezl v0.1.12
-  Downloaded windows-implement v0.60.2
-  Downloaded windows-link v0.2.1
-  Downloaded kurbo v0.13.1
-  Downloaded linebender_resource_handle v0.1.1
-  Downloaded natord v1.0.9
-  Downloaded num-rational v0.4.2
-  Downloaded profiling v1.0.18
-  Downloaded profiling-procmacros v1.0.18
-  Downloaded pulldown-cmark-escape v0.11.0
-  Downloaded quote v1.0.47
-  Downloaded regex v1.13.1
-  Downloaded tiff v0.11.3
-  Downloaded unicode-segmentation v1.13.3
-  Downloaded webbrowser v1.2.2
-  Downloaded windows-future v0.3.2
-  Downloaded i-slint-backend-winit v1.17.1
-  Downloaded i-slint-core v1.17.1
-  Downloaded minimal-lexical v0.2.1
-  Downloaded miniz_oxide v0.8.9
-  Downloaded no_std_io2 v0.9.4
-  Downloaded num-derive v0.4.2
-  Downloaded num-integer v0.1.46
-  Downloaded prettyplease v0.2.37
-  Downloaded proc-macro-crate v3.5.0
-  Downloaded qoi v0.4.1
-  Downloaded slint v1.17.1
-  Downloaded wasm-bindgen v0.2.126
-  Downloaded windows-core v0.62.2
-  Downloaded winit v0.30.13
-  Downloaded icu_collections v2.2.0
-  Downloaded icu_properties v2.2.0
-  Downloaded memoffset v0.9.1
+  Downloaded pastey v0.1.1
   Downloaded pulldown-cmark v0.13.4
-  Downloaded raw-cpuid v11.6.0
-  Downloaded usvg v0.47.0
-  Downloaded wasm-bindgen-macro-support v0.2.126
-  Downloaded xmlwriter v0.1.0
-  Downloaded zeno v0.3.3
-  Downloaded zerofrom-derive v0.1.7
-  Downloaded icu_decimal_data v2.2.0
-  Downloaded icu_provider v2.2.0
-  Downloaded moxcms v0.8.1
-  Downloaded num-bigint v0.4.8
-  Downloaded png v0.18.1
-  Downloaded polycool v0.4.0
-  Downloaded rayon v1.12.0
-  Downloaded serde_json v1.0.151
-  Downloaded windows-targets v0.52.6
-  Downloaded xml-rs v0.8.28
-  Downloaded y4m v0.8.0
-  Downloaded yoke-derive v0.8.2
-  Downloaded zerofrom v0.1.8
-  Downloaded icu_decimal v2.2.0
-  Downloaded icu_plurals_data v2.2.0
-  Downloaded taffy v0.10.1
-  Downloaded ttf-parser v0.25.1
-  Downloaded windows-result v0.4.1
-  Downloaded image-webp v0.2.4
-  Downloaded windows-numerics v0.3.1
-  Downloaded icu_locale_core v2.2.0
-  Downloaded icu_locale_data v2.2.0
-  Downloaded idna v1.1.0
-  Downloaded imagesize v0.14.0
-  Downloaded integer-sqrt v0.1.5
-  Downloaded linked_hash_set v0.1.6
-  Downloaded lyon_extra v1.1.0
-  Downloaded swash v0.2.10
-  Downloaded loop9 v0.1.5
-  Downloaded skia-bindings v0.99.0
-  Downloaded windows_x86_64_msvc v0.52.6
+  Downloaded crc32fast v1.5.0
+  Downloaded displaydoc v0.2.7
+  Downloaded either v1.17.0
+  Downloaded fax v0.2.7
+  Downloaded glutin-winit v0.5.0
+  Downloaded icu_normalizer v2.2.0
+  Downloaded read-fonts v0.39.2
+  Downloaded bytemuck_derive v1.11.0
+  Downloaded clru v0.6.3
+  Downloaded convert_case v0.10.0
+  Downloaded core_maths v0.1.1
+  Downloaded countme v3.0.1
+  Downloaded data-url v0.3.2
+  Downloaded dpi v0.1.2
+  Downloaded getrandom v0.4.3
+  Downloaded hashbrown v0.14.5
   Downloaded icu_properties_data v2.2.0
-  Downloaded lyon_algorithms v1.0.20
-  Downloaded memmap2 v0.9.11
-  Downloaded portable-atomic v1.14.0
-  Downloaded rustybuzz v0.20.1
+  Downloaded lyon_geom v1.0.19
+  Downloaded clipboard-win v5.4.1
+  Downloaded lyon_path v1.0.19
+  Downloaded once_cell v1.21.4
+  Downloaded zmij v1.0.23
+  Downloaded clang-sys v1.9.1
+  Downloaded i-slint-backend-testing v1.17.1
+  Downloaded idna v1.1.0
+  Downloaded no_std_io2 v0.9.4
+  Downloaded yoke v0.8.3
+  Downloaded icu_normalizer_data v2.2.0
+  Downloaded proc-macro2 v1.0.107
+  Downloaded cc v1.4.0
+  Downloaded hashbrown v0.17.1
+  Downloaded icu_collections v2.2.0
+  Downloaded icu_locale_data v2.2.0
+  Downloaded quick-error v2.0.1
+  Downloaded ttf-parser v0.25.1
+  Downloaded v_frame v0.3.9
+  Downloaded zerovec-derive v0.11.3
+  Downloaded hashbrown v0.16.1
+  Downloaded linked-hash-map v0.5.6
+  Downloaded log v0.4.33
+  Downloaded moxcms v0.8.1
+  Downloaded muda v0.19.3
+  Downloaded nom v8.0.0
+  Downloaded pkg-config v0.3.33
   Downloaded skrifa v0.44.0
+  Downloaded sys-locale v0.3.2
+  Downloaded windows_x86_64_msvc v0.52.6
+  Downloaded icu_plurals_data v2.2.0
+  Downloaded itertools v0.14.0
+  Downloaded parlance v0.1.0
+  Downloaded rayon v1.12.0
+  Downloaded natord v1.0.9
+  Downloaded serde_spanned v1.1.1
+  Downloaded strum v0.28.0
+  Downloaded chrono v0.4.45
+  Downloaded i-slint-core-macros v1.17.1
+  Downloaded imgref v1.12.2
+  Downloaded portable-atomic v1.14.0
+  Downloaded webbrowser v1.2.2
+  Downloaded bumpalo v3.20.3
+  Downloaded toml_parser v1.1.3+spec-1.1.0
+  Downloaded parley_data v0.10.0
+  Downloaded by_address v1.2.1
+  Downloaded cfg_aliases v0.2.2
+  Downloaded noop_proc_macro v0.3.0
+  Downloaded proc-macro-crate v3.5.0
+  Downloaded toml v1.1.4+spec-1.1.0
+  Downloaded zerofrom v0.1.8
+  Downloaded profiling v1.0.18
+  Downloaded linked_hash_set v0.1.6
+  Downloaded i-slint-renderer-skia v1.17.1
+  Downloaded icu_provider v2.2.0
+  Downloaded icu_plurals v2.2.0
+  Downloaded num-complex v0.4.6
+  Downloaded i-slint-compiler v1.17.1
+  Downloaded memchr v2.8.3
+  Downloaded profiling-procmacros v1.0.18
+  Downloaded smallvec v1.15.2
+  Downloaded spin_on v0.1.1
+  Downloaded cursor-icon v1.2.0
+  Downloaded percent-encoding v2.3.2
+  Downloaded derive_more v2.1.1
+  Downloaded quote v1.0.47
+  Downloaded scoped-tls-hkt v0.1.5
+  Downloaded glow v0.17.0
+  Downloaded wasm-bindgen-shared v0.2.126
+  Downloaded windows-collections v0.3.2
+  Downloaded loop9 v0.1.5
+  Downloaded zerocopy v0.8.55
+  Downloaded pico-args v0.5.0
+  Downloaded paste v1.0.15
+  Downloaded litemap v0.8.2
+  Downloaded zune-core v0.5.1
+  Downloaded png v0.18.1
+  Downloaded icu_decimal v2.2.0
+  Downloaded num-rational v0.4.2
+  Downloaded pin-weak v1.1.0
+  Downloaded rowan v0.16.1
+  Downloaded utf8_iter v1.0.4
+  Downloaded pin-project-lite v0.2.17
+  Downloaded windows-future v0.3.2
+  Downloaded idna_adapter v1.2.2
+  Downloaded shlex v1.3.0
+  Downloaded siphasher v1.0.3
+  Downloaded windows-link v0.2.1
+  Downloaded windows-threading v0.2.1
+  Downloaded qoi v0.4.1
+  Downloaded slab v0.4.12
+  Downloaded unicode-properties v0.1.4
+  Downloaded shlex v2.0.1
+  Downloaded windows-implement v0.60.2
+  Downloaded windows-interface v0.59.3
+  Downloaded windows-targets v0.52.6
+  Downloaded icu_decimal_data v2.2.0
+  Downloaded yazi v0.2.1
+  Downloaded slint-build v1.17.1
+  Downloaded tiny-skia-path v0.12.0
+  Downloaded windows-numerics v0.3.1
+  Downloaded unicode-ident v1.0.24
+  Downloaded tracing-attributes v0.1.31
+  Downloaded unicode-bidi v0.3.18
+  Downloaded vtable v0.4.0
+  Downloaded wasm-bindgen v0.2.126
+  Downloaded zerotrie v0.2.4
+  Downloaded i-slint-core v1.17.1
+  Downloaded icu_properties v2.2.0
+  Downloaded potential_utf v0.1.5
+  Downloaded miniz_oxide v0.8.9
+  Downloaded minimal-lexical v0.2.1
+  Downloaded nom v7.1.3
+  Downloaded pin-project v1.1.13
+  Downloaded wasm-bindgen-macro-support v0.2.126
+  Downloaded weezl v0.1.12
+  Downloaded icu_locale_core v2.2.0
+  Downloaded lyon_algorithms v1.0.20
+  Downloaded num-bigint v0.4.8
+  Downloaded raw-cpuid v11.6.0
+  Downloaded regex-automata v0.4.16
+  Downloaded version_check v0.9.5
   Downloaded zerocopy-derive v0.8.55
   Downloaded zerovec v0.11.6
-  Downloaded log v0.4.33
-  Downloaded skrifa v0.42.1
-  Downloaded syn v2.0.119
-  Downloaded syn v3.0.3
-  Downloaded unicode-width v0.2.2
-  Downloaded zerovec-derive v0.11.3
-  Downloaded zmij v1.0.23
-  Downloaded zune-inflate v0.2.54
-  Downloaded tiny-skia v0.12.0
-  Downloaded i-slint-compiler v1.17.1
-  Downloaded winnow v1.0.4
-  Downloaded zune-jpeg v0.5.15
   Downloaded indexmap v2.14.0
-  Downloaded memchr v2.8.3
-  Downloaded regex-syntax v0.8.11
-  Downloaded itertools v0.14.0
+  Downloaded kurbo v0.13.1
+  Downloaded num_enum_derive v0.7.6
+  Downloaded integer-sqrt v0.1.5
+  Downloaded maybe-rayon v0.1.1
+  Downloaded pin-project-internal v1.1.13
+  Downloaded itertools v0.13.0
+  Downloaded memmap2 v0.9.11
+  Downloaded num-derive v0.4.2
+  Downloaded pulp v0.22.3
+  Downloaded taffy v0.10.1
+  Downloaded usvg v0.47.0
+  Downloaded winnow v1.0.4
+  Downloaded i-slint-common v1.17.1
+  Downloaded lyon_extra v1.1.0
+  Downloaded pin-utils v0.1.0
+  Downloaded i-slint-renderer-software v1.17.1
+  Downloaded polycool v0.4.0
+  Downloaded linebender_resource_handle v0.1.1
+  Downloaded pulp-wasm-simd-flag v0.1.1
+  Downloaded y4m v0.8.0
+  Downloaded rustybuzz v0.20.1
+  Downloaded unicode-width v0.2.2
+  Downloaded icu_locale v2.2.0
+  Downloaded jobserver v0.1.35
+  Downloaded num-integer v0.1.46
+  Downloaded syn v2.0.119
   Downloaded image v0.25.10
-  Downloaded khronos_api v3.1.0
+  Downloaded zune-jpeg v0.5.15
+  Downloaded imagesize v0.14.0
+  Downloaded regex-syntax v0.8.11
   Downloaded tracing v0.1.44
-  Downloaded skia-safe v0.99.0
-  Downloaded zerocopy v0.8.55
-  Downloaded libc v0.2.189
-  Downloaded read-fonts v0.39.2
+  Downloaded zeno v0.3.3
+  Downloaded khronos_api v3.1.0
+  Downloaded wasm-bindgen-macro v0.2.126
+  Downloaded windows-core v0.62.2
+  Downloaded keyboard-types v0.7.0
   Downloaded read-fonts v0.41.0
-  Downloaded regex-automata v0.4.16
-  Downloaded windows-sys v0.52.0
-  Downloaded rav1e v0.8.1
+  Downloaded xmlwriter v0.1.0
+  Downloaded libc v0.2.189
+  Downloaded pxfm v0.1.30
+  Downloaded zune-inflate v0.2.54
   Downloaded icu_segmenter v2.2.0
+  Downloaded num_enum v0.7.6
   Downloaded windows-sys v0.61.2
+  Downloaded yoke-derive v0.8.2
+  Downloaded libm v0.2.16
+  Downloaded windows-sys v0.52.0
   Downloaded icu_segmenter_data v2.2.0
   Downloaded windows v0.62.2
    Compiling proc-macro2 v1.0.107
@@ -368,37 +368,36 @@ PASSED: Formatting
    Compiling memchr v2.8.3
    Compiling num-traits v0.2.19
    Compiling arrayvec v0.7.8
-   Compiling smallvec v1.15.2
    Compiling syn v2.0.119
    Compiling syn v3.0.3
-   Compiling icu_properties_data v2.2.0
    Compiling cfg-if v1.0.4
-   Compiling serde_core v1.0.229
-   Compiling icu_locale_data v2.2.0
+   Compiling icu_properties_data v2.2.0
+   Compiling smallvec v1.15.2
    Compiling icu_normalizer_data v2.2.0
-    Checking writeable v0.6.3
-   Compiling log v0.4.33
+   Compiling icu_locale_data v2.2.0
+   Compiling serde_core v1.0.229
+   Compiling writeable v0.6.3
    Compiling simd-adler32 v0.3.10
-    Checking windows-link v0.2.1
+   Compiling log v0.4.33
    Compiling thiserror v2.0.19
+    Checking windows-link v0.2.1
    Compiling bitflags v2.13.1
-   Compiling litemap v0.8.2
    Compiling adler2 v2.0.1
-   Compiling icu_decimal_data v2.2.0
+   Compiling litemap v0.8.2
    Compiling synstructure v0.13.2
+   Compiling icu_decimal_data v2.2.0
    Compiling miniz_oxide v0.8.9
    Compiling unicode-segmentation v1.13.3
    Compiling displaydoc v0.2.7
    Compiling thiserror-impl v2.0.19
-   Compiling utf8_iter v1.0.4
    Compiling crossbeam-utils v0.8.22
+   Compiling utf8_iter v1.0.4
    Compiling convert_case v0.10.0
-   Compiling unicode-xid v0.2.6
-   Compiling foldhash v0.2.0
-   Compiling crossbeam-epoch v0.9.20
    Compiling pulldown-cmark v0.13.4
+   Compiling foldhash v0.2.0
+   Compiling unicode-xid v0.2.6
+   Compiling crossbeam-epoch v0.9.20
    Compiling hashbrown v0.17.1
-   Compiling flate2 v1.1.9
    Compiling bytemuck_derive v1.11.0
    Compiling zerofrom-derive v0.1.7
    Compiling yoke-derive v0.8.2
@@ -411,34 +410,35 @@ PASSED: Formatting
    Compiling zerovec v0.11.6
    Compiling zerotrie v0.2.4
    Compiling derive_more-impl v2.1.1
+   Compiling flate2 v1.1.9
     Checking tinystr v0.8.3
     Checking icu_locale_core v2.2.0
     Checking potential_utf v0.1.5
    Compiling icu_collections v2.2.0
     Checking icu_provider v2.2.0
-   Compiling windows-result v0.4.1
    Compiling windows-strings v0.5.1
+   Compiling windows-result v0.4.1
    Compiling crossbeam-deque v0.8.7
    Compiling heck v0.5.0
    Compiling windows-core v0.62.2
    Compiling core_maths v0.1.1
    Compiling slotmap v1.1.1
    Compiling rayon-core v1.13.0
-   Compiling float-cmp v0.9.0
    Compiling quick-error v2.0.1
+   Compiling float-cmp v0.9.0
    Compiling strict-num v0.1.1
    Compiling ttf-parser v0.25.1
    Compiling equator-macro v0.4.2
    Compiling fdeflate v0.3.7
    Compiling polycool v0.4.0
-   Compiling zune-core v0.5.1
-   Compiling arrayref v0.3.9
+   Compiling tinyvec_macros v0.1.1
    Compiling weezl v0.1.12
    Compiling unicode-width v0.2.2
-   Compiling tinyvec_macros v0.1.1
-   Compiling tinyvec v1.12.0
-   Compiling zune-jpeg v0.5.15
+   Compiling arrayref v0.3.9
+   Compiling zune-core v0.5.1
    Compiling tiny-skia-path v0.12.0
+   Compiling zune-jpeg v0.5.15
+   Compiling tinyvec v1.12.0
    Compiling png v0.18.1
    Compiling kurbo v0.13.1
    Compiling equator v0.4.2
@@ -446,24 +446,24 @@ PASSED: Formatting
    Compiling rgb v0.8.53
    Compiling windows-threading v0.2.1
    Compiling num-integer v0.1.46
-   Compiling portable-atomic v1.14.0
-   Compiling either v1.17.0
+   Compiling paste v1.0.15
+   Compiling unicode-ccc v0.4.0
+   Compiling byteorder-lite v0.1.0
    Compiling siphasher v1.0.3
    Compiling unicode-script v0.5.8
    Compiling unicode-properties v0.1.4
-   Compiling byteorder-lite v0.1.0
    Compiling anyhow v1.0.104
+   Compiling either v1.17.0
    Compiling unicode-bidi-mirroring v0.4.0
-   Compiling unicode-ccc v0.4.0
    Compiling color_quant v1.1.0
-   Compiling paste v1.0.15
+   Compiling portable-atomic v1.14.0
    Compiling gif v0.14.2
    Compiling rustybuzz v0.20.1
    Compiling image-webp v0.2.4
    Compiling svgtypes v0.16.1
    Compiling num-bigint v0.4.8
-   Compiling windows-future v0.3.2
    Compiling read-fonts v0.39.2
+   Compiling windows-future v0.3.2
    Compiling fontdb v0.23.0
    Compiling aligned-vec v0.6.4
    Compiling windows-collections v0.3.2
@@ -471,15 +471,15 @@ PASSED: Formatting
    Compiling strum_macros v0.28.0
    Compiling simplecss v0.2.2
    Compiling roxmltree v0.21.1
-   Compiling pico-args v0.5.0
-   Compiling unicode-vo v0.1.0
-   Compiling base64 v0.22.1
    Compiling data-url v0.3.2
-   Compiling imagesize v0.14.0
    Compiling xmlwriter v0.1.0
-   Compiling zerocopy v0.8.55
-    Checking critical-section v1.2.0
+   Compiling unicode-vo v0.1.0
+   Compiling pico-args v0.5.0
    Compiling unicode-bidi v0.3.18
+    Checking critical-section v1.2.0
+   Compiling imagesize v0.14.0
+   Compiling zerocopy v0.8.55
+   Compiling base64 v0.22.1
    Compiling usvg v0.47.0
     Checking icu_properties v2.2.0
    Compiling icu_locale v2.2.0
@@ -492,26 +492,26 @@ PASSED: Formatting
    Compiling zerocopy-derive v0.8.55
    Compiling fixed_decimal v0.7.2
    Compiling as-slice v0.2.1
-   Compiling winnow v1.0.4
-   Compiling built v0.8.1
-   Compiling zmij v1.0.23
-   Compiling pulldown-cmark-escape v0.11.0
-   Compiling libc v0.2.189
-   Compiling unicase v2.9.0
-   Compiling linebender_resource_handle v0.1.1
-   Compiling parlance v0.1.0
-   Compiling av-scenechange v0.14.1
    Compiling equivalent v1.0.2
-   Compiling memmap2 v0.9.11
+   Compiling unicase v2.9.0
+   Compiling zmij v1.0.23
    Compiling semver v1.0.28
-   Compiling fontique v0.10.0
-   Compiling indexmap v2.14.0
-   Compiling rustc_version v0.4.1
-   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling av-scenechange v0.14.1
+   Compiling memmap2 v0.9.11
+   Compiling pulldown-cmark-escape v0.11.0
+   Compiling built v0.8.1
+   Compiling libc v0.2.189
+   Compiling parlance v0.1.0
+   Compiling winnow v1.0.4
+   Compiling linebender_resource_handle v0.1.1
    Compiling rav1e v0.8.1
-   Compiling icu_decimal v2.2.0
+   Compiling fontique v0.10.0
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling rustc_version v0.4.1
+   Compiling indexmap v2.14.0
    Compiling aligned v0.4.3
     Checking icu_normalizer v2.2.0
+   Compiling icu_decimal v2.2.0
    Compiling resvg v0.47.0
    Compiling skrifa v0.42.1
    Compiling derive_more v2.1.1
@@ -521,15 +521,15 @@ PASSED: Formatting
    Compiling no_std_io2 v0.9.4
    Compiling pulp v0.22.3
    Compiling memoffset v0.9.1
-   Compiling toml_writer v1.1.2+spec-1.1.0
-   Compiling pastey v0.1.1
    Compiling cfg_aliases v0.2.2
-   Compiling htmlparser v0.2.1
+   Compiling toml_writer v1.1.2+spec-1.1.0
    Compiling y4m v0.8.0
    Compiling toml_datetime v1.1.1+spec-1.1.0
-   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling htmlparser v0.2.1
+   Compiling pastey v0.1.1
    Compiling i-slint-common v1.17.1
    Compiling av1-grain v0.2.5
+   Compiling toml_edit v0.25.13+spec-1.1.0
    Compiling bitstream-io v4.10.0
    Compiling profiling v1.0.18
    Compiling half v2.7.1
@@ -538,20 +538,20 @@ PASSED: Formatting
     Checking once_cell v1.21.4
    Compiling itertools v0.14.0
     Checking euclid v0.22.14
-   Compiling num-complex v0.4.6
    Compiling font-types v0.12.2
+   Compiling num-complex v0.4.6
    Compiling num-derive v0.4.2
    Compiling raw-cpuid v11.6.0
    Compiling simd_helpers v0.1.0
-   Compiling icu_segmenter_data v2.2.0
-   Compiling new_debug_unreachable v1.0.6
    Compiling noop_proc_macro v0.3.0
    Compiling imgref v1.12.2
    Compiling rustversion v1.0.23
    Compiling reborrow v0.5.5
    Compiling pulp-wasm-simd-flag v0.1.1
-   Compiling read-fonts v0.41.0
+   Compiling new_debug_unreachable v1.0.6
+   Compiling icu_segmenter_data v2.2.0
    Compiling loop9 v0.1.5
+   Compiling read-fonts v0.41.0
    Compiling lyon_geom v1.0.19
    Compiling idna_adapter v1.2.2
    Compiling proc-macro-crate v3.5.0
@@ -559,50 +559,50 @@ PASSED: Formatting
    Compiling zune-inflate v0.2.54
    Compiling avif-serialize v0.8.9
    Compiling bit_field v0.10.3
-   Compiling percent-encoding v2.3.2
-   Compiling windows_x86_64_msvc v0.52.6
-   Compiling serde_json v1.0.151
-   Compiling rspolib v0.1.2
    Compiling fax v0.2.7
+   Compiling windows_x86_64_msvc v0.52.6
    Compiling pxfm v0.1.30
+   Compiling serde_json v1.0.151
+   Compiling percent-encoding v2.3.2
    Compiling lebe v0.5.3
-   Compiling exr v1.74.2
-   Compiling tiff v0.11.3
+   Compiling rspolib v0.1.2
    Compiling moxcms v0.8.1
+   Compiling exr v1.74.2
    Compiling form_urlencoded v1.2.2
-   Compiling snafu v0.8.9
-   Compiling ravif v0.13.0
    Compiling skrifa v0.44.0
+   Compiling snafu v0.8.9
+   Compiling tiff v0.11.3
+   Compiling ravif v0.13.0
    Compiling num_enum_derive v0.7.6
    Compiling idna v1.1.0
     Checking lyon_path v1.0.19
    Compiling qoi v0.4.1
    Compiling const-field-offset-macro v0.2.0
-   Compiling linked-hash-map v0.5.6
-   Compiling itoa v1.0.18
    Compiling i-slint-compiler v1.17.1
-   Compiling unicode-linebreak v0.1.5
-   Compiling lazy_static v1.5.0
-   Compiling text-size v1.1.1
-   Compiling natord v1.0.9
-   Compiling yazi v0.2.1
    Compiling anstyle v1.0.14
-   Compiling serde v1.0.229
    Compiling zeno v0.3.3
-   Compiling countme v3.0.1
-    Checking allocator-api2 v0.2.21
-   Compiling hashbrown v0.14.5
+   Compiling yazi v0.2.1
+   Compiling unicode-linebreak v0.1.5
+   Compiling natord v1.0.9
+   Compiling linked-hash-map v0.5.6
    Compiling rustc-hash v1.1.0
-    Checking hashbrown v0.16.1
-   Compiling swash v0.2.10
+   Compiling hashbrown v0.14.5
+   Compiling countme v3.0.1
+   Compiling itoa v1.0.18
+    Checking allocator-api2 v0.2.21
+   Compiling serde v1.0.229
+   Compiling text-size v1.1.1
+   Compiling lazy_static v1.5.0
    Compiling rowan v0.16.1
-   Compiling annotate-snippets v0.12.16
+    Checking hashbrown v0.16.1
    Compiling linked_hash_set v0.1.6
+   Compiling swash v0.2.10
+   Compiling annotate-snippets v0.12.16
     Checking const-field-offset v0.2.0
    Compiling image v0.25.10
+    Checking icu_segmenter v2.2.0
    Compiling num_enum v0.7.6
    Compiling lyon_extra v1.1.0
-    Checking icu_segmenter v2.2.0
    Compiling url v2.5.8
     Checking harfrust v0.8.4
     Checking parley_data v0.10.0
@@ -611,18 +611,18 @@ PASSED: Formatting
    Compiling vtable-macro v0.4.0
    Compiling serde_derive v1.0.229
    Compiling derive_utils v0.16.0
-   Compiling pin-utils v0.1.0
    Compiling typed-index-collections v3.5.0
-   Compiling smol_str v0.3.6
+    Checking tracing-core v0.1.36
    Compiling by_address v1.2.1
     Checking pin-project-lite v0.2.17
-    Checking tracing-core v0.1.36
-    Checking tracing v0.1.44
+   Compiling smol_str v0.3.6
+   Compiling pin-utils v0.1.0
    Compiling spin_on v0.1.1
-   Compiling auto_enums v0.8.10
+    Checking tracing v0.1.44
     Checking parley v0.10.0
-    Checking vtable v0.4.0
+   Compiling auto_enums v0.8.10
     Checking pin-project v1.1.13
+    Checking vtable v0.4.0
     Checking windows-targets v0.52.6
    Compiling i-slint-core-macros v1.17.1
     Checking clru v0.6.3
@@ -631,13 +631,13 @@ PASSED: Formatting
     Checking taffy v0.10.1
     Checking chrono v0.4.45
     Checking windows-sys v0.61.2
-    Checking dpi v0.1.2
-    Checking raw-window-handle v0.6.2
-    Checking scopeguard v1.2.0
-    Checking error-code v3.3.2
     Checking slab v0.4.12
-    Checking pin-weak v1.1.0
+    Checking dpi v0.1.2
+    Checking scopeguard v1.2.0
     Checking sys-locale v0.3.2
+    Checking pin-weak v1.1.0
+    Checking error-code v3.3.2
+    Checking raw-window-handle v0.6.2
     Checking clipboard-win v5.4.1
     Checking i-slint-core v1.17.1
     Checking crossbeam-channel v0.5.16
@@ -649,14 +649,14 @@ PASSED: Formatting
     Checking cursor-icon v1.2.0
     Checking i-slint-renderer-software v1.17.1
     Checking muda v0.19.3
-    Checking softbuffer v0.4.8
     Checking webbrowser v1.2.2
+    Checking softbuffer v0.4.8
     Checking copypasta v0.10.2
    Compiling i-slint-backend-selector v1.17.1
     Checking scoped-tls-hkt v0.1.5
    Compiling slint-build v1.17.1
-   Compiling slint-macros v1.17.1
    Compiling ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client)
+   Compiling slint-macros v1.17.1
 error: lint group `all` has the same priority (0) as a lint
   --> Cargo.toml:48:1
    |
@@ -687,29 +687,29 @@ FAILED: Clippy (exit 101)
    Compiling zerofrom v0.1.8
    Compiling cfg-if v1.0.4
    Compiling yoke v0.8.3
-   Compiling memchr v2.8.3
+   Compiling log v0.4.33
    Compiling writeable v0.6.3
    Compiling zerovec v0.11.6
-   Compiling log v0.4.33
+   Compiling memchr v2.8.3
    Compiling windows-link v0.2.1
    Compiling simd-adler32 v0.3.10
-   Compiling adler2 v2.0.1
    Compiling litemap v0.8.2
+   Compiling adler2 v2.0.1
+   Compiling zerotrie v0.2.4
    Compiling miniz_oxide v0.8.9
    Compiling tinystr v0.8.3
-   Compiling potential_utf v0.1.5
    Compiling icu_locale_core v2.2.0
-   Compiling zerotrie v0.2.4
+   Compiling potential_utf v0.1.5
    Compiling utf8_iter v1.0.4
    Compiling icu_collections v2.2.0
    Compiling crc32fast v1.5.0
-   Compiling flate2 v1.1.9
    Compiling foldhash v0.2.0
+   Compiling flate2 v1.1.9
    Compiling num-traits v0.2.19
-   Compiling windows-strings v0.5.1
-   Compiling icu_provider v2.2.0
-   Compiling windows-result v0.4.1
    Compiling core_maths v0.1.1
+   Compiling windows-strings v0.5.1
+   Compiling windows-result v0.4.1
+   Compiling icu_provider v2.2.0
    Compiling bytemuck v1.25.2
    Compiling float-cmp v0.9.0
    Compiling strict-num v0.1.1
@@ -723,13 +723,13 @@ FAILED: Clippy (exit 101)
    Compiling unicode-segmentation v1.13.3
    Compiling tinyvec v1.12.0
    Compiling windows-threading v0.2.1
-   Compiling siphasher v1.0.3
-   Compiling quick-error v2.0.1
-   Compiling unicode-bidi-mirroring v0.4.0
    Compiling zune-core v0.5.1
-   Compiling unicode-script v0.5.8
-   Compiling unicode-properties v0.1.4
    Compiling unicode-ccc v0.4.0
+   Compiling unicode-bidi-mirroring v0.4.0
+   Compiling quick-error v2.0.1
+   Compiling siphasher v1.0.3
+   Compiling unicode-properties v0.1.4
+   Compiling unicode-script v0.5.8
    Compiling zune-jpeg v0.5.15
    Compiling windows-future v0.3.2
    Compiling windows-collections v0.3.2
@@ -738,30 +738,30 @@ FAILED: Clippy (exit 101)
    Compiling unicode-width v0.2.2
    Compiling byteorder-lite v0.1.0
    Compiling bitflags v2.13.1
-   Compiling icu_locale_data v2.2.0
    Compiling icu_properties_data v2.2.0
-   Compiling simplecss v0.2.2
+   Compiling icu_locale_data v2.2.0
    Compiling roxmltree v0.21.1
-   Compiling imagesize v0.14.0
-   Compiling unicode-vo v0.1.0
-   Compiling base64 v0.22.1
+   Compiling simplecss v0.2.2
    Compiling xmlwriter v0.1.0
-   Compiling pico-args v0.5.0
-   Compiling unicode-bidi v0.3.18
+   Compiling unicode-vo v0.1.0
    Compiling data-url v0.3.2
+   Compiling imagesize v0.14.0
+   Compiling base64 v0.22.1
    Compiling color_quant v1.1.0
+   Compiling unicode-bidi v0.3.18
+   Compiling pico-args v0.5.0
    Compiling gif v0.14.2
    Compiling thiserror v2.0.19
-   Compiling icu_properties v2.2.0
    Compiling icu_locale v2.2.0
    Compiling image-webp v0.2.4
+   Compiling icu_properties v2.2.0
    Compiling icu_normalizer_data v2.2.0
    Compiling convert_case v0.10.0
-   Compiling arrayvec v0.7.8
    Compiling memmap2 v0.9.11
+   Compiling equivalent v1.0.2
+   Compiling arrayvec v0.7.8
    Compiling parlance v0.1.0
    Compiling linebender_resource_handle v0.1.1
-   Compiling equivalent v1.0.2
    Compiling derive_more-impl v2.1.1
    Compiling icu_normalizer v2.2.0
    Compiling getopts v0.2.24
@@ -771,8 +771,8 @@ FAILED: Clippy (exit 101)
    Compiling fixed_decimal v0.7.2
    Compiling polycool v0.4.0
    Compiling icu_decimal v2.2.0
-   Compiling htmlparser v0.2.1
    Compiling pxfm v0.1.30
+   Compiling htmlparser v0.2.1
    Compiling kurbo v0.13.1
    Compiling png v0.18.1
    Compiling tiny-skia-path v0.12.0
@@ -785,12 +785,12 @@ FAILED: Clippy (exit 101)
    Compiling fontdb v0.23.0
    Compiling idna_adapter v1.2.2
    Compiling rustybuzz v0.20.1
-   Compiling percent-encoding v2.3.2
    Compiling critical-section v1.2.0
    Compiling yazi v0.2.1
+   Compiling percent-encoding v2.3.2
    Compiling zeno v0.3.3
-   Compiling portable-atomic v1.14.0
    Compiling form_urlencoded v1.2.2
+   Compiling portable-atomic v1.14.0
    Compiling idna v1.1.0
    Compiling v_frame v0.3.9
    Compiling num-rational v0.4.2
@@ -809,11 +809,11 @@ FAILED: Clippy (exit 101)
    Compiling derive_more v2.1.1
    Compiling pulldown-cmark v0.13.4
    Compiling indexmap v2.14.0
-   Compiling nom v8.0.0
    Compiling no_std_io2 v0.9.4
+   Compiling nom v8.0.0
+   Compiling av-scenechange v0.14.1
    Compiling toml_edit v0.25.13+spec-1.1.0
    Compiling bitstream-io v4.10.0
-   Compiling av-scenechange v0.14.1
    Compiling i-slint-common v1.17.1
    Compiling half v2.7.1
    Compiling maybe-rayon v0.1.1
@@ -822,35 +822,35 @@ FAILED: Clippy (exit 101)
    Compiling av1-grain v0.2.5
    Compiling num-complex v0.4.6
    Compiling font-types v0.12.2
-   Compiling rav1e v0.8.1
    Compiling read-fonts v0.41.0
+   Compiling rav1e v0.8.1
    Compiling pulp v0.22.3
    Compiling lyon_geom v1.0.19
-   Compiling memoffset v0.9.1
    Compiling proc-macro-crate v3.5.0
+   Compiling memoffset v0.9.1
    Compiling zmij v1.0.23
    Compiling loop9 v0.1.5
    Compiling zune-inflate v0.2.54
    Compiling itoa v1.0.18
-   Compiling tiff v0.11.3
-   Compiling skrifa v0.44.0
    Compiling exr v1.74.2
+   Compiling skrifa v0.44.0
+   Compiling tiff v0.11.3
    Compiling ravif v0.13.0
-   Compiling num_enum_derive v0.7.6
    Compiling field-offset v0.3.6
+   Compiling num_enum_derive v0.7.6
    Compiling lyon_path v1.0.19
    Compiling icu_segmenter_data v2.2.0
    Compiling moxcms v0.8.1
    Compiling allocator-api2 v0.2.21
    Compiling annotate-snippets v0.12.16
-   Compiling rspolib v0.1.2
    Compiling image v0.25.10
+   Compiling rspolib v0.1.2
    Compiling hashbrown v0.16.1
    Compiling const-field-offset v0.2.0
-   Compiling icu_segmenter v2.2.0
-   Compiling serde_json v1.0.151
-   Compiling num_enum v0.7.6
    Compiling lyon_extra v1.1.0
+   Compiling num_enum v0.7.6
+   Compiling serde_json v1.0.151
+   Compiling icu_segmenter v2.2.0
    Compiling windows_x86_64_msvc v0.52.6
    Compiling swash v0.2.10
    Compiling harfrust v0.8.4
@@ -858,12 +858,12 @@ FAILED: Clippy (exit 101)
    Compiling parley_data v0.10.0
    Compiling tracing-core v0.1.36
    Compiling pin-project-lite v0.2.17
-   Compiling parley v0.10.0
    Compiling i-slint-compiler v1.17.1
    Compiling tracing v0.1.44
    Compiling pin-project v1.1.13
    Compiling vtable v0.4.0
    Compiling serde v1.0.229
+   Compiling parley v0.10.0
    Compiling windows-targets v0.52.6
    Compiling i-slint-core-macros v1.17.1
    Compiling clru v0.6.3
@@ -872,15 +872,15 @@ FAILED: Clippy (exit 101)
    Compiling taffy v0.10.1
    Compiling chrono v0.4.45
    Compiling windows-sys v0.61.2
-   Compiling pin-weak v1.1.0
    Compiling sys-locale v0.3.2
-   Compiling dpi v0.1.2
-   Compiling error-code v3.3.2
-   Compiling raw-window-handle v0.6.2
-   Compiling slab v0.4.12
    Compiling scopeguard v1.2.0
-   Compiling clipboard-win v5.4.1
+   Compiling pin-weak v1.1.0
+   Compiling error-code v3.3.2
+   Compiling dpi v0.1.2
+   Compiling slab v0.4.12
+   Compiling raw-window-handle v0.6.2
    Compiling i-slint-core v1.17.1
+   Compiling clipboard-win v5.4.1
    Compiling crossbeam-channel v0.5.16
    Compiling windows-sys v0.52.0
    Compiling keyboard-types v0.7.0
@@ -900,64 +900,176 @@ FAILED: Clippy (exit 101)
    Compiling slint-macros v1.17.1
    Compiling ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client)
    Compiling slint v1.17.1
-error: failed to run custom build command for `ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client)`
+error[E0432]: unresolved import `windows_sys::Win32::UI::WindowsAndMessaging::MessageBeep`
+ --> src\notification.rs:7:26
+  |
+7 |         MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW,
+  |                          ^^^^^^^^^^^ no `MessageBeep` in `Win32::UI::WindowsAndMessaging`
+  |
+help: a similar name exists in the module
+  |
+7 -         MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW,
+7 +         MB_ICONASTERISK, MessageBoxA, SPI_GETWORKAREA, SystemParametersInfoW,
+  |
 
-Caused by:
-  process didn't exit successfully: `D:\a\ntfy-windows-client\ntfy-windows-client\target\debug\build\ntfy-windows-client-02ab2960e79f9699\build-script-build` (exit code: 101)
-  --- stderr
+error[E0432]: unresolved import `windows_sys::Win32::Networking::WinHttp::HINTERNET`
+  --> src\winhttp.rs:17:9
+   |
+17 |         HINTERNET, HTTP_STATUS_OK, INTERNET_DEFAULT_HTTP_PORT, INTERNET_DEFAULT_HTTPS_PORT,
+   |         ^^^^^^^^^ no `HINTERNET` in `Win32::Networking::WinHttp`
 
-  thread '<unnamed>' (6680) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+warning: unused import: `SharedString`
+  --> src\main.rs:12:68
+   |
+12 | use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, SharedString, VecModel};
+   |                                                                    ^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
 
-  thread '<unnamed>' (2404) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
+error[E0277]: `Rc<Presenter>` cannot be sent between threads safely
+    --> src\main.rs:88:51
+     |
+  88 |               let _ = slint::invoke_from_event_loop(move || {
+     |                       ----------------------------- ^------
+     |                       |                             |
+     |  _____________________|_____________________________within this `{closure@src\main.rs:88:51: 88:58}`
+     | |                     |
+     | |                     required by a bound introduced by this call
+  89 | |                 apply_event(&ui_weak, Some(&tray_weak), &presenter, event);
+  90 | |             });
+     | |_____________^ `Rc<Presenter>` cannot be sent between threads safely
+     |
+     = help: within `{closure@src\main.rs:88:51: 88:58}`, the trait `Send` is not implemented for `Rc<Presenter>`
+note: required because it's used within this closure
+    --> src\main.rs:88:51
+     |
+  88 |             let _ = slint::invoke_from_event_loop(move || {
+     |                                                   ^^^^^^^
+note: required by a bound in `slint::invoke_from_event_loop`
+    --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-core-1.17.1\api.rs:1260:53
+     |
+1260 | pub fn invoke_from_event_loop(func: impl FnOnce() + Send + 'static) -> Result<(), EventLoopError> {
+     |                                                     ^^^^ required by this bound in `invoke_from_event_loop`
 
-  thread '<unnamed>' (2404) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
+error[E0277]: `Rc<Presenter>` cannot be sent between threads safely
+    --> src\main.rs:111:51
+     |
+ 111 |               let _ = slint::invoke_from_event_loop(move || {
+     |                       ----------------------------- ^------
+     |                       |                             |
+     |  _____________________|_____________________________within this `{closure@src\main.rs:111:51: 111:58}`
+     | |                     |
+     | |                     required by a bound introduced by this call
+ 112 | |                 apply_event(&ui_weak, None, &presenter, event);
+ 113 | |             });
+     | |_____________^ `Rc<Presenter>` cannot be sent between threads safely
+     |
+     = help: within `{closure@src\main.rs:111:51: 111:58}`, the trait `Send` is not implemented for `Rc<Presenter>`
+note: required because it's used within this closure
+    --> src\main.rs:111:51
+     |
+ 111 |             let _ = slint::invoke_from_event_loop(move || {
+     |                                                   ^^^^^^^
+note: required by a bound in `slint::invoke_from_event_loop`
+    --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-core-1.17.1\api.rs:1260:53
+     |
+1260 | pub fn invoke_from_event_loop(func: impl FnOnce() + Send + 'static) -> Result<(), EventLoopError> {
+     |                                                     ^^^^ required by this bound in `invoke_from_event_loop`
 
-  thread '<unnamed>' (9616) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-
-  thread '<unnamed>' (2404) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-
-  thread '<unnamed>' (2404) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
+Some errors have detailed explanations: E0277, E0432.
+For more information about an error, try `rustc --explain E0277`.
+warning: `ntfy-windows-client` (bin "ntfy-windows-client" test) generated 1 warning
+error: could not compile `ntfy-windows-client` (bin "ntfy-windows-client" test) due to 4 previous errors; 1 warning emitted
 FAILED: Tests (exit 101)
 
 ## Debug build
    Compiling ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client)
-error: failed to run custom build command for `ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client)`
+error[E0432]: unresolved import `windows_sys::Win32::UI::WindowsAndMessaging::MessageBeep`
+ --> src\notification.rs:7:26
+  |
+7 |         MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW,
+  |                          ^^^^^^^^^^^ no `MessageBeep` in `Win32::UI::WindowsAndMessaging`
+  |
+help: a similar name exists in the module
+  |
+7 -         MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW,
+7 +         MB_ICONASTERISK, MessageBoxA, SPI_GETWORKAREA, SystemParametersInfoW,
+  |
 
-Caused by:
-  process didn't exit successfully: `D:\a\ntfy-windows-client\ntfy-windows-client\target\debug\build\ntfy-windows-client-02ab2960e79f9699\build-script-build` (exit code: 101)
-  --- stderr
+error[E0432]: unresolved import `windows_sys::Win32::Networking::WinHttp::HINTERNET`
+  --> src\winhttp.rs:17:9
+   |
+17 |         HINTERNET, HTTP_STATUS_OK, INTERNET_DEFAULT_HTTP_PORT, INTERNET_DEFAULT_HTTPS_PORT,
+   |         ^^^^^^^^^ no `HINTERNET` in `Win32::Networking::WinHttp`
 
-  thread '<unnamed>' (1632) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+warning: unused import: `SharedString`
+  --> src\main.rs:12:68
+   |
+12 | use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, SharedString, VecModel};
+   |                                                                    ^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
 
-  thread '<unnamed>' (9756) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
+error[E0277]: `Rc<Presenter>` cannot be sent between threads safely
+    --> src\main.rs:88:51
+     |
+  88 |               let _ = slint::invoke_from_event_loop(move || {
+     |                       ----------------------------- ^------
+     |                       |                             |
+     |  _____________________|_____________________________within this `{closure@src\main.rs:88:51: 88:58}`
+     | |                     |
+     | |                     required by a bound introduced by this call
+  89 | |                 apply_event(&ui_weak, Some(&tray_weak), &presenter, event);
+  90 | |             });
+     | |_____________^ `Rc<Presenter>` cannot be sent between threads safely
+     |
+     = help: within `{closure@src\main.rs:88:51: 88:58}`, the trait `Send` is not implemented for `Rc<Presenter>`
+note: required because it's used within this closure
+    --> src\main.rs:88:51
+     |
+  88 |             let _ = slint::invoke_from_event_loop(move || {
+     |                                                   ^^^^^^^
+note: required by a bound in `slint::invoke_from_event_loop`
+    --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-core-1.17.1\api.rs:1260:53
+     |
+1260 | pub fn invoke_from_event_loop(func: impl FnOnce() + Send + 'static) -> Result<(), EventLoopError> {
+     |                                                     ^^^^ required by this bound in `invoke_from_event_loop`
 
-  thread '<unnamed>' (9756) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
+error[E0277]: `Rc<Presenter>` cannot be sent between threads safely
+    --> src\main.rs:111:51
+     |
+ 111 |               let _ = slint::invoke_from_event_loop(move || {
+     |                       ----------------------------- ^------
+     |                       |                             |
+     |  _____________________|_____________________________within this `{closure@src\main.rs:111:51: 111:58}`
+     | |                     |
+     | |                     required by a bound introduced by this call
+ 112 | |                 apply_event(&ui_weak, None, &presenter, event);
+ 113 | |             });
+     | |_____________^ `Rc<Presenter>` cannot be sent between threads safely
+     |
+     = help: within `{closure@src\main.rs:111:51: 111:58}`, the trait `Send` is not implemented for `Rc<Presenter>`
+note: required because it's used within this closure
+    --> src\main.rs:111:51
+     |
+ 111 |             let _ = slint::invoke_from_event_loop(move || {
+     |                                                   ^^^^^^^
+note: required by a bound in `slint::invoke_from_event_loop`
+    --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-core-1.17.1\api.rs:1260:53
+     |
+1260 | pub fn invoke_from_event_loop(func: impl FnOnce() + Send + 'static) -> Result<(), EventLoopError> {
+     |                                                     ^^^^ required by this bound in `invoke_from_event_loop`
 
-  thread '<unnamed>' (9756) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-
-  thread '<unnamed>' (9756) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-
-  thread '<unnamed>' (1232) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
+Some errors have detailed explanations: E0277, E0432.
+For more information about an error, try `rustc --explain E0277`.
+warning: `ntfy-windows-client` (bin "ntfy-windows-client") generated 1 warning
+error: could not compile `ntfy-windows-client` (bin "ntfy-windows-client") due to 4 previous errors; 1 warning emitted
 FAILED: Debug build (exit 101)
 
 ## Release x64
    Compiling proc-macro2 v1.0.107
-   Compiling unicode-ident v1.0.24
    Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.24
    Compiling libm v0.2.16
    Compiling autocfg v1.5.1
    Compiling version_check v0.9.5
@@ -965,10 +1077,10 @@ FAILED: Debug build (exit 101)
    Compiling crc32fast v1.5.0
    Compiling memchr v2.8.3
    Compiling num-traits v0.2.19
+   Compiling arrayvec v0.7.8
    Compiling syn v2.0.119
    Compiling syn v3.0.3
    Compiling icu_properties_data v2.2.0
-   Compiling arrayvec v0.7.8
    Compiling cfg-if v1.0.4
    Compiling icu_normalizer_data v2.2.0
    Compiling icu_locale_data v2.2.0
@@ -976,67 +1088,67 @@ FAILED: Debug build (exit 101)
    Compiling serde_core v1.0.229
    Compiling writeable v0.6.3
    Compiling simd-adler32 v0.3.10
-   Compiling log v0.4.33
    Compiling thiserror v2.0.19
+   Compiling log v0.4.33
    Compiling bitflags v2.13.1
-   Compiling synstructure v0.13.2
    Compiling windows-link v0.2.1
    Compiling icu_decimal_data v2.2.0
+   Compiling synstructure v0.13.2
+   Compiling adler2 v2.0.1
+   Compiling litemap v0.8.2
    Compiling displaydoc v0.2.7
    Compiling thiserror-impl v2.0.19
-   Compiling litemap v0.8.2
-   Compiling adler2 v2.0.1
    Compiling miniz_oxide v0.8.9
+   Compiling utf8_iter v1.0.4
+   Compiling unicode-segmentation v1.13.3
+   Compiling crossbeam-utils v0.8.22
+   Compiling pulldown-cmark v0.13.4
+   Compiling convert_case v0.10.0
    Compiling bytemuck_derive v1.11.0
    Compiling zerofrom-derive v0.1.7
    Compiling yoke-derive v0.8.2
    Compiling zerovec-derive v0.11.3
-   Compiling bytemuck v1.25.2
    Compiling windows-interface v0.59.3
+   Compiling bytemuck v1.25.2
    Compiling windows-implement v0.60.2
    Compiling zerofrom v0.1.8
    Compiling yoke v0.8.3
    Compiling zerovec v0.11.6
    Compiling zerotrie v0.2.4
-   Compiling pulldown-cmark v0.13.4
    Compiling tinystr v0.8.3
    Compiling potential_utf v0.1.5
    Compiling icu_locale_core v2.2.0
-   Compiling crossbeam-utils v0.8.22
-   Compiling unicode-segmentation v1.13.3
-   Compiling utf8_iter v1.0.4
    Compiling icu_collections v2.2.0
-   Compiling convert_case v0.10.0
-   Compiling icu_provider v2.2.0
-   Compiling crossbeam-epoch v0.9.20
    Compiling foldhash v0.2.0
    Compiling unicode-xid v0.2.6
+   Compiling crossbeam-epoch v0.9.20
    Compiling derive_more-impl v2.1.1
    Compiling hashbrown v0.17.1
+   Compiling icu_provider v2.2.0
    Compiling flate2 v1.1.9
-   Compiling windows-strings v0.5.1
    Compiling windows-result v0.4.1
+   Compiling windows-strings v0.5.1
    Compiling heck v0.5.0
    Compiling crossbeam-deque v0.8.7
    Compiling windows-core v0.62.2
    Compiling core_maths v0.1.1
    Compiling slotmap v1.1.1
-   Compiling rayon-core v1.13.0
    Compiling quick-error v2.0.1
+   Compiling rayon-core v1.13.0
    Compiling float-cmp v0.9.0
    Compiling strict-num v0.1.1
    Compiling ttf-parser v0.25.1
    Compiling equator-macro v0.4.2
    Compiling fdeflate v0.3.7
    Compiling polycool v0.4.0
-   Compiling weezl v0.1.12
-   Compiling tinyvec_macros v0.1.1
    Compiling zune-core v0.5.1
+   Compiling weezl v0.1.12
    Compiling arrayref v0.3.9
+   Compiling tinyvec_macros v0.1.1
    Compiling unicode-width v0.2.2
-   Compiling zune-jpeg v0.5.15
-   Compiling tiny-skia-path v0.12.0
    Compiling tinyvec v1.12.0
+   Compiling tiny-skia-path v0.12.0
+   Compiling zune-jpeg v0.5.15
    Compiling kurbo v0.13.1
    Compiling png v0.18.1
    Compiling equator v0.4.2
@@ -1044,46 +1156,46 @@ FAILED: Debug build (exit 101)
    Compiling font-types v0.11.3
    Compiling windows-threading v0.2.1
    Compiling num-integer v0.1.46
-   Compiling unicode-script v0.5.8
-   Compiling anyhow v1.0.104
-   Compiling either v1.17.0
-   Compiling byteorder-lite v0.1.0
-   Compiling unicode-ccc v0.4.0
-   Compiling paste v1.0.15
    Compiling unicode-properties v0.1.4
-   Compiling portable-atomic v1.14.0
-   Compiling unicode-bidi-mirroring v0.4.0
+   Compiling unicode-script v0.5.8
    Compiling color_quant v1.1.0
+   Compiling unicode-ccc v0.4.0
+   Compiling either v1.17.0
+   Compiling unicode-bidi-mirroring v0.4.0
+   Compiling paste v1.0.15
+   Compiling anyhow v1.0.104
    Compiling siphasher v1.0.3
-   Compiling rustybuzz v0.20.1
+   Compiling byteorder-lite v0.1.0
+   Compiling portable-atomic v1.14.0
    Compiling svgtypes v0.16.1
-   Compiling gif v0.14.2
+   Compiling rustybuzz v0.20.1
    Compiling image-webp v0.2.4
+   Compiling gif v0.14.2
    Compiling num-bigint v0.4.8
    Compiling read-fonts v0.39.2
    Compiling windows-future v0.3.2
    Compiling fontdb v0.23.0
    Compiling aligned-vec v0.6.4
-   Compiling windows-collections v0.3.2
    Compiling windows-numerics v0.3.1
+   Compiling windows-collections v0.3.2
    Compiling strum_macros v0.28.0
    Compiling simplecss v0.2.2
    Compiling roxmltree v0.21.1
-   Compiling base64 v0.22.1
+   Compiling critical-section v1.2.0
    Compiling pico-args v0.5.0
-   Compiling xmlwriter v0.1.0
-   Compiling zerocopy v0.8.55
+   Compiling zmij v1.0.23
+   Compiling base64 v0.22.1
+   Compiling unicode-vo v0.1.0
+   Compiling unicode-bidi v0.3.18
    Compiling data-url v0.3.2
    Compiling imagesize v0.14.0
-   Compiling critical-section v1.2.0
-   Compiling unicode-vo v0.1.0
-   Compiling zmij v1.0.23
-   Compiling unicode-bidi v0.3.18
+   Compiling zerocopy v0.8.55
+   Compiling xmlwriter v0.1.0
    Compiling usvg v0.47.0
    Compiling windows v0.62.2
    Compiling v_frame v0.3.9
-   Compiling icu_locale v2.2.0
    Compiling num-rational v0.4.2
+   Compiling icu_locale v2.2.0
    Compiling icu_properties v2.2.0
    Compiling rayon v1.12.0
    Compiling tiny-skia v0.12.0
@@ -1091,45 +1203,45 @@ FAILED: Debug build (exit 101)
    Compiling zerocopy-derive v0.8.55
    Compiling fixed_decimal v0.7.2
    Compiling as-slice v0.2.1
-   Compiling winnow v1.0.4
-   Compiling semver v1.0.28
-   Compiling pulldown-cmark-escape v0.11.0
-   Compiling av-scenechange v0.14.1
-   Compiling libc v0.2.189
-   Compiling equivalent v1.0.2
    Compiling unicase v2.9.0
-   Compiling built v0.8.1
+   Compiling libc v0.2.189
    Compiling memmap2 v0.9.11
+   Compiling equivalent v1.0.2
    Compiling parlance v0.1.0
+   Compiling built v0.8.1
+   Compiling pulldown-cmark-escape v0.11.0
+   Compiling winnow v1.0.4
    Compiling linebender_resource_handle v0.1.1
-   Compiling fontique v0.10.0
+   Compiling av-scenechange v0.14.1
+   Compiling semver v1.0.28
    Compiling rav1e v0.8.1
+   Compiling fontique v0.10.0
+   Compiling rustc_version v0.4.1
    Compiling toml_parser v1.1.3+spec-1.1.0
    Compiling indexmap v2.14.0
-   Compiling rustc_version v0.4.1
-   Compiling icu_decimal v2.2.0
    Compiling aligned v0.4.3
+   Compiling icu_decimal v2.2.0
    Compiling resvg v0.47.0
    Compiling skrifa v0.42.1
    Compiling icu_normalizer v2.2.0
    Compiling derive_more v2.1.1
    Compiling arg_enum_proc_macro v0.3.4
    Compiling profiling-procmacros v1.0.18
-   Compiling nom v8.0.0
    Compiling no_std_io2 v0.9.4
+   Compiling nom v8.0.0
    Compiling pulp v0.22.3
    Compiling memoffset v0.9.1
-   Compiling toml_datetime v1.1.1+spec-1.1.0
-   Compiling toml_writer v1.1.2+spec-1.1.0
-   Compiling htmlparser v0.2.1
    Compiling y4m v0.8.0
    Compiling cfg_aliases v0.2.2
+   Compiling htmlparser v0.2.1
+   Compiling toml_datetime v1.1.1+spec-1.1.0
    Compiling pastey v0.1.1
-   Compiling i-slint-common v1.17.1
+   Compiling toml_writer v1.1.2+spec-1.1.0
    Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling i-slint-common v1.17.1
    Compiling av1-grain v0.2.5
-   Compiling bitstream-io v4.10.0
    Compiling profiling v1.0.18
+   Compiling bitstream-io v4.10.0
    Compiling half v2.7.1
    Compiling field-offset v0.3.6
    Compiling maybe-rayon v0.1.1
@@ -1141,13 +1253,13 @@ FAILED: Debug build (exit 101)
    Compiling num-derive v0.4.2
    Compiling raw-cpuid v11.6.0
    Compiling simd_helpers v0.1.0
-   Compiling rustversion v1.0.23
-   Compiling pulp-wasm-simd-flag v0.1.1
-   Compiling icu_segmenter_data v2.2.0
-   Compiling noop_proc_macro v0.3.0
-   Compiling reborrow v0.5.5
-   Compiling imgref v1.12.2
    Compiling new_debug_unreachable v1.0.6
+   Compiling pulp-wasm-simd-flag v0.1.1
+   Compiling imgref v1.12.2
+   Compiling rustversion v1.0.23
+   Compiling icu_segmenter_data v2.2.0
+   Compiling reborrow v0.5.5
+   Compiling noop_proc_macro v0.3.0
    Compiling loop9 v0.1.5
    Compiling read-fonts v0.41.0
    Compiling lyon_geom v1.0.19
@@ -1156,50 +1268,50 @@ FAILED: Debug build (exit 101)
    Compiling snafu-derive v0.8.9
    Compiling zune-inflate v0.2.54
    Compiling avif-serialize v0.8.9
-   Compiling windows_x86_64_msvc v0.52.6
-   Compiling rspolib v0.1.2
    Compiling lebe v0.5.3
+   Compiling bit_field v0.10.3
+   Compiling rspolib v0.1.2
+   Compiling percent-encoding v2.3.2
+   Compiling pxfm v0.1.30
+   Compiling windows_x86_64_msvc v0.52.6
    Compiling serde_json v1.0.151
    Compiling fax v0.2.7
-   Compiling bit_field v0.10.3
-   Compiling pxfm v0.1.30
-   Compiling percent-encoding v2.3.2
+   Compiling tiff v0.11.3
+   Compiling moxcms v0.8.1
    Compiling form_urlencoded v1.2.2
    Compiling exr v1.74.2
-   Compiling moxcms v0.8.1
-   Compiling tiff v0.11.3
-   Compiling snafu v0.8.9
    Compiling skrifa v0.44.0
+   Compiling snafu v0.8.9
    Compiling ravif v0.13.0
    Compiling num_enum_derive v0.7.6
    Compiling idna v1.1.0
    Compiling lyon_path v1.0.19
    Compiling qoi v0.4.1
    Compiling const-field-offset-macro v0.2.0
-   Compiling zeno v0.3.3
-   Compiling serde v1.0.229
-   Compiling allocator-api2 v0.2.21
-   Compiling rustc-hash v1.1.0
-   Compiling linked-hash-map v0.5.6
+   Compiling text-size v1.1.1
    Compiling countme v3.0.1
-   Compiling natord v1.0.9
-   Compiling lazy_static v1.5.0
+   Compiling allocator-api2 v0.2.21
    Compiling itoa v1.0.18
    Compiling unicode-linebreak v0.1.5
-   Compiling yazi v0.2.1
+   Compiling serde v1.0.229
+   Compiling natord v1.0.9
+   Compiling rustc-hash v1.1.0
    Compiling anstyle v1.0.14
    Compiling i-slint-compiler v1.17.1
+   Compiling zeno v0.3.3
+   Compiling yazi v0.2.1
+   Compiling lazy_static v1.5.0
    Compiling hashbrown v0.14.5
-   Compiling text-size v1.1.1
-   Compiling rowan v0.16.1
-   Compiling annotate-snippets v0.12.16
-   Compiling swash v0.2.10
-   Compiling hashbrown v0.16.1
+   Compiling linked-hash-map v0.5.6
    Compiling linked_hash_set v0.1.6
+   Compiling rowan v0.16.1
+   Compiling swash v0.2.10
+   Compiling annotate-snippets v0.12.16
+   Compiling hashbrown v0.16.1
    Compiling const-field-offset v0.2.0
    Compiling image v0.25.10
-   Compiling num_enum v0.7.6
    Compiling icu_segmenter v2.2.0
+   Compiling num_enum v0.7.6
    Compiling lyon_extra v1.1.0
    Compiling url v2.5.8
    Compiling harfrust v0.8.4
@@ -1209,12 +1321,12 @@ FAILED: Debug build (exit 101)
    Compiling pin-project-internal v1.1.13
    Compiling serde_derive v1.0.229
    Compiling derive_utils v0.16.0
-   Compiling typed-index-collections v3.5.0
-   Compiling smol_str v0.3.6
-   Compiling pin-project-lite v0.2.17
-   Compiling pin-utils v0.1.0
-   Compiling by_address v1.2.1
    Compiling tracing-core v0.1.36
+   Compiling pin-project-lite v0.2.17
+   Compiling typed-index-collections v3.5.0
+   Compiling by_address v1.2.1
+   Compiling pin-utils v0.1.0
+   Compiling smol_str v0.3.6
    Compiling spin_on v0.1.1
    Compiling tracing v0.1.44
    Compiling auto_enums v0.8.10
@@ -1222,19 +1334,19 @@ FAILED: Debug build (exit 101)
    Compiling parley v0.10.0
    Compiling vtable v0.4.0
    Compiling windows-targets v0.52.6
-   Compiling clru v0.6.3
    Compiling i-slint-core-macros v1.17.1
+   Compiling clru v0.6.3
    Compiling lyon_algorithms v1.0.20
    Compiling winit v0.30.13
    Compiling taffy v0.10.1
    Compiling chrono v0.4.45
    Compiling windows-sys v0.61.2
    Compiling error-code v3.3.2
-   Compiling pin-weak v1.1.0
-   Compiling raw-window-handle v0.6.2
-   Compiling slab v0.4.12
    Compiling scopeguard v1.2.0
+   Compiling raw-window-handle v0.6.2
    Compiling sys-locale v0.3.2
+   Compiling pin-weak v1.1.0
+   Compiling slab v0.4.12
    Compiling dpi v0.1.2
    Compiling i-slint-core v1.17.1
    Compiling clipboard-win v5.4.1
@@ -1243,8 +1355,8 @@ FAILED: Debug build (exit 101)
    Compiling keyboard-types v0.7.0
    Compiling i-slint-backend-winit v1.17.1
    Compiling integer-sqrt v0.1.5
-   Compiling smol_str v0.2.2
    Compiling cursor-icon v1.2.0
+   Compiling smol_str v0.2.2
    Compiling muda v0.19.3
    Compiling i-slint-renderer-software v1.17.1
    Compiling webbrowser v1.2.2
@@ -1255,31 +1367,87 @@ FAILED: Debug build (exit 101)
    Compiling slint-build v1.17.1
    Compiling ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client)
    Compiling slint-macros v1.17.1
-error: failed to run custom build command for `ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client)`
+   Compiling slint v1.17.1
+error[E0432]: unresolved import `windows_sys::Win32::UI::WindowsAndMessaging::MessageBeep`
+ --> src\notification.rs:7:26
+  |
+7 |         MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW,
+  |                          ^^^^^^^^^^^ no `MessageBeep` in `Win32::UI::WindowsAndMessaging`
+  |
+help: a similar name exists in the module
+  |
+7 -         MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW,
+7 +         MB_ICONASTERISK, MessageBoxA, SPI_GETWORKAREA, SystemParametersInfoW,
+  |
 
-Caused by:
-  process didn't exit successfully: `D:\a\ntfy-windows-client\ntfy-windows-client\target\release\build\ntfy-windows-client-73336b069c73dae4\build-script-build` (exit code: 101)
-  --- stderr
+error[E0432]: unresolved import `windows_sys::Win32::Networking::WinHttp::HINTERNET`
+  --> src\winhttp.rs:17:9
+   |
+17 |         HINTERNET, HTTP_STATUS_OK, INTERNET_DEFAULT_HTTP_PORT, INTERNET_DEFAULT_HTTPS_PORT,
+   |         ^^^^^^^^^ no `HINTERNET` in `Win32::Networking::WinHttp`
 
-  thread '<unnamed>' (788) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+warning: unused import: `SharedString`
+  --> src\main.rs:12:68
+   |
+12 | use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, SharedString, VecModel};
+   |                                                                    ^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
 
-  thread '<unnamed>' (788) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
+error[E0277]: `Rc<Presenter>` cannot be sent between threads safely
+    --> src\main.rs:88:51
+     |
+  88 |               let _ = slint::invoke_from_event_loop(move || {
+     |                       ----------------------------- ^------
+     |                       |                             |
+     |  _____________________|_____________________________within this `{closure@src\main.rs:88:51: 88:58}`
+     | |                     |
+     | |                     required by a bound introduced by this call
+  89 | |                 apply_event(&ui_weak, Some(&tray_weak), &presenter, event);
+  90 | |             });
+     | |_____________^ `Rc<Presenter>` cannot be sent between threads safely
+     |
+     = help: within `{closure@src\main.rs:88:51: 88:58}`, the trait `Send` is not implemented for `Rc<Presenter>`
+note: required because it's used within this closure
+    --> src\main.rs:88:51
+     |
+  88 |             let _ = slint::invoke_from_event_loop(move || {
+     |                                                   ^^^^^^^
+note: required by a bound in `slint::invoke_from_event_loop`
+    --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-core-1.17.1\api.rs:1260:53
+     |
+1260 | pub fn invoke_from_event_loop(func: impl FnOnce() + Send + 'static) -> Result<(), EventLoopError> {
+     |                                                     ^^^^ required by this bound in `invoke_from_event_loop`
 
-  thread '<unnamed>' (788) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
+error[E0277]: `Rc<Presenter>` cannot be sent between threads safely
+    --> src\main.rs:111:51
+     |
+ 111 |               let _ = slint::invoke_from_event_loop(move || {
+     |                       ----------------------------- ^------
+     |                       |                             |
+     |  _____________________|_____________________________within this `{closure@src\main.rs:111:51: 111:58}`
+     | |                     |
+     | |                     required by a bound introduced by this call
+ 112 | |                 apply_event(&ui_weak, None, &presenter, event);
+ 113 | |             });
+     | |_____________^ `Rc<Presenter>` cannot be sent between threads safely
+     |
+     = help: within `{closure@src\main.rs:111:51: 111:58}`, the trait `Send` is not implemented for `Rc<Presenter>`
+note: required because it's used within this closure
+    --> src\main.rs:111:51
+     |
+ 111 |             let _ = slint::invoke_from_event_loop(move || {
+     |                                                   ^^^^^^^
+note: required by a bound in `slint::invoke_from_event_loop`
+    --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-core-1.17.1\api.rs:1260:53
+     |
+1260 | pub fn invoke_from_event_loop(func: impl FnOnce() + Send + 'static) -> Result<(), EventLoopError> {
+     |                                                     ^^^^ required by this bound in `invoke_from_event_loop`
 
-  thread '<unnamed>' (7136) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-
-  thread '<unnamed>' (4476) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-
-  thread '<unnamed>' (2284) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-warning: build failed, waiting for other jobs to finish...
+Some errors have detailed explanations: E0277, E0432.
+For more information about an error, try `rustc --explain E0277`.
+warning: `ntfy-windows-client` (bin "ntfy-windows-client") generated 1 warning
+error: could not compile `ntfy-windows-client` (bin "ntfy-windows-client") due to 4 previous errors; 1 warning emitted
 FAILED: Release x64 (exit 101)
 
 ## Release ARM64
@@ -1307,16 +1475,16 @@ FAILED: Release x64 (exit 101)
    Compiling simd-adler32 v0.3.10
    Compiling icu_provider v2.2.0
    Compiling bitflags v2.13.1
-   Compiling windows-strings v0.5.1
    Compiling windows-result v0.4.1
+   Compiling windows-strings v0.5.1
    Compiling icu_properties_data v2.2.0
    Compiling crc32fast v1.5.0
+   Compiling cfg-if v1.0.4
    Compiling log v0.4.33
    Compiling adler2 v2.0.1
-   Compiling cfg-if v1.0.4
-   Compiling miniz_oxide v0.8.9
    Compiling portable-atomic v1.14.0
    Compiling windows-core v0.62.2
+   Compiling miniz_oxide v0.8.9
    Compiling icu_normalizer_data v2.2.0
    Compiling critical-section v1.2.0
    Compiling flate2 v1.1.9
@@ -1335,8 +1503,8 @@ FAILED: Release x64 (exit 101)
    Compiling fdeflate v0.3.7
    Compiling polycool v0.4.0
    Compiling windows-threading v0.2.1
-   Compiling arrayref v0.3.9
    Compiling tinyvec_macros v0.1.1
+   Compiling arrayref v0.3.9
    Compiling tiny-skia-path v0.12.0
    Compiling tinyvec v1.12.0
    Compiling memoffset v0.9.1
@@ -1348,18 +1516,18 @@ FAILED: Release x64 (exit 101)
    Compiling windows-collections v0.3.2
    Compiling windows-numerics v0.3.1
    Compiling euclid v0.22.14
-   Compiling unicode-ccc v0.4.0
-   Compiling unicode-bidi-mirroring v0.4.0
-   Compiling byteorder-lite v0.1.0
    Compiling unicode-script v0.5.8
+   Compiling byteorder-lite v0.1.0
+   Compiling unicode-bidi-mirroring v0.4.0
    Compiling unicode-properties v0.1.4
    Compiling siphasher v1.0.3
+   Compiling unicode-ccc v0.4.0
    Compiling zune-core v0.5.1
-   Compiling lyon_geom v1.0.19
+   Compiling rustybuzz v0.20.1
    Compiling svgtypes v0.16.1
    Compiling zune-jpeg v0.5.15
-   Compiling rustybuzz v0.20.1
    Compiling icu_segmenter_data v2.2.0
+   Compiling lyon_geom v1.0.19
    Compiling windows v0.62.2
    Compiling field-offset v0.3.6
    Compiling fontdb v0.23.0
@@ -1369,46 +1537,46 @@ FAILED: Release x64 (exit 101)
    Compiling icu_decimal_data v2.2.0
    Compiling thiserror v2.0.19
    Compiling font-types v0.12.2
-   Compiling unicode-segmentation v1.13.3
-   Compiling unicode-vo v0.1.0
    Compiling unicode-width v0.2.2
-   Compiling memmap2 v0.9.11
-   Compiling data-url v0.3.2
-   Compiling base64 v0.22.1
-   Compiling windows_aarch64_msvc v0.52.6
-   Compiling imagesize v0.14.0
    Compiling parlance v0.1.0
-   Compiling weezl v0.1.12
-   Compiling linebender_resource_handle v0.1.1
+   Compiling memmap2 v0.9.11
    Compiling pico-args v0.5.0
+   Compiling windows_aarch64_msvc v0.52.6
+   Compiling weezl v0.1.12
+   Compiling unicode-vo v0.1.0
+   Compiling base64 v0.22.1
    Compiling xmlwriter v0.1.0
-   Compiling color_quant v1.1.0
-   Compiling quick-error v2.0.1
    Compiling unicode-bidi v0.3.18
-   Compiling image-webp v0.2.4
+   Compiling linebender_resource_handle v0.1.1
+   Compiling color_quant v1.1.0
+   Compiling unicode-segmentation v1.13.3
+   Compiling imagesize v0.14.0
+   Compiling quick-error v2.0.1
+   Compiling data-url v0.3.2
    Compiling usvg v0.47.0
+   Compiling image-webp v0.2.4
    Compiling gif v0.14.2
    Compiling getopts v0.2.24
    Compiling read-fonts v0.41.0
-   Compiling fontique v0.10.0
    Compiling lyon_path v1.0.19
+   Compiling fontique v0.10.0
    Compiling skrifa v0.42.1
    Compiling tiny-skia v0.12.0
    Compiling pulldown-cmark v0.13.4
    Compiling fixed_decimal v0.7.2
    Compiling rgb v0.8.53
-   Compiling allocator-api2 v0.2.21
-   Compiling equivalent v1.0.2
    Compiling unicase v2.9.0
-   Compiling pxfm v0.1.30
+   Compiling equivalent v1.0.2
    Compiling pulldown-cmark-escape v0.11.0
-   Compiling moxcms v0.8.1
-   Compiling skrifa v0.44.0
-   Compiling hashbrown v0.16.1
-   Compiling serde v1.0.229
+   Compiling allocator-api2 v0.2.21
+   Compiling pxfm v0.1.30
    Compiling crossbeam-utils v0.8.22
-   Compiling const-field-offset v0.2.0
+   Compiling skrifa v0.44.0
+   Compiling moxcms v0.8.1
+   Compiling serde v1.0.229
+   Compiling hashbrown v0.16.1
    Compiling resvg v0.47.0
+   Compiling const-field-offset v0.2.0
    Compiling icu_decimal v2.2.0
    Compiling icu_segmenter v2.2.0
    Compiling harfrust v0.8.4
@@ -1417,81 +1585,139 @@ FAILED: Release x64 (exit 101)
    Compiling derive_more v2.1.1
    Compiling tracing-core v0.1.36
    Compiling yazi v0.2.1
-   Compiling zeno v0.3.3
-   Compiling percent-encoding v2.3.2
-   Compiling pin-project-lite v0.2.17
    Compiling htmlparser v0.2.1
+   Compiling zeno v0.3.3
+   Compiling pin-project-lite v0.2.17
+   Compiling percent-encoding v2.3.2
    Compiling tracing v0.1.44
-   Compiling parley v0.10.0
-   Compiling i-slint-common v1.17.1
-   Compiling swash v0.2.10
    Compiling form_urlencoded v1.2.2
-   Compiling pin-project v1.1.13
+   Compiling swash v0.2.10
+   Compiling i-slint-common v1.17.1
    Compiling vtable v0.4.0
+   Compiling pin-project v1.1.13
+   Compiling parley v0.10.0
    Compiling idna v1.1.0
    Compiling windows-targets v0.52.6
    Compiling clru v0.6.3
    Compiling image v0.25.10
-   Compiling lyon_algorithms v1.0.20
    Compiling lyon_extra v1.1.0
+   Compiling lyon_algorithms v1.0.20
    Compiling taffy v0.10.1
    Compiling strum v0.28.0
    Compiling chrono v0.4.45
    Compiling windows-sys v0.61.2
-   Compiling slab v0.4.12
-   Compiling unicode-linebreak v0.1.5
    Compiling sys-locale v0.3.2
+   Compiling slab v0.4.12
    Compiling pin-weak v1.1.0
+   Compiling unicode-linebreak v0.1.5
+   Compiling error-code v3.3.2
    Compiling dpi v0.1.2
    Compiling scopeguard v1.2.0
-   Compiling error-code v3.3.2
    Compiling raw-window-handle v0.6.2
-   Compiling clipboard-win v5.4.1
    Compiling i-slint-core v1.17.1
+   Compiling clipboard-win v5.4.1
    Compiling winit v0.30.13
    Compiling crossbeam-channel v0.5.16
    Compiling windows-sys v0.52.0
-   Compiling keyboard-types v0.7.0
    Compiling url v2.5.8
+   Compiling keyboard-types v0.7.0
    Compiling integer-sqrt v0.1.5
-   Compiling smol_str v0.2.2
    Compiling cursor-icon v1.2.0
-   Compiling i-slint-backend-winit v1.17.1
-   Compiling webbrowser v1.2.2
+   Compiling smol_str v0.2.2
    Compiling i-slint-renderer-software v1.17.1
    Compiling muda v0.19.3
+   Compiling i-slint-backend-winit v1.17.1
+   Compiling webbrowser v1.2.2
    Compiling softbuffer v0.4.8
    Compiling copypasta v0.10.2
-   Compiling scoped-tls-hkt v0.1.5
    Compiling imgref v1.12.2
+   Compiling scoped-tls-hkt v0.1.5
    Compiling i-slint-backend-selector v1.17.1
    Compiling zmij v1.0.23
    Compiling serde_json v1.0.151
    Compiling itoa v1.0.18
    Compiling slint v1.17.1
    Compiling ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client)
-error: failed to run custom build command for `ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client)`
+error[E0432]: unresolved import `windows_sys::Win32::UI::WindowsAndMessaging::MessageBeep`
+ --> src\notification.rs:7:26
+  |
+7 |         MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW,
+  |                          ^^^^^^^^^^^ no `MessageBeep` in `Win32::UI::WindowsAndMessaging`
+  |
+help: a similar name exists in the module
+  |
+7 -         MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW,
+7 +         MB_ICONASTERISK, MessageBoxA, SPI_GETWORKAREA, SystemParametersInfoW,
+  |
 
-Caused by:
-  process didn't exit successfully: `D:\a\ntfy-windows-client\ntfy-windows-client\target\release\build\ntfy-windows-client-73336b069c73dae4\build-script-build` (exit code: 101)
-  --- stderr
+error[E0432]: unresolved import `windows_sys::Win32::Networking::WinHttp::HINTERNET`
+  --> src\winhttp.rs:17:9
+   |
+17 |         HINTERNET, HTTP_STATUS_OK, INTERNET_DEFAULT_HTTP_PORT, INTERNET_DEFAULT_HTTPS_PORT,
+   |         ^^^^^^^^^ no `HINTERNET` in `Win32::Networking::WinHttp`
 
-  thread '<unnamed>' (5180) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+warning: unused import: `SharedString`
+  --> src\main.rs:12:68
+   |
+12 | use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, SharedString, VecModel};
+   |                                                                    ^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
 
-  thread '<unnamed>' (852) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
+error[E0277]: `Rc<Presenter>` cannot be sent between threads safely
+    --> src\main.rs:88:51
+     |
+  88 |               let _ = slint::invoke_from_event_loop(move || {
+     |                       ----------------------------- ^------
+     |                       |                             |
+     |  _____________________|_____________________________within this `{closure@src\main.rs:88:51: 88:58}`
+     | |                     |
+     | |                     required by a bound introduced by this call
+  89 | |                 apply_event(&ui_weak, Some(&tray_weak), &presenter, event);
+  90 | |             });
+     | |_____________^ `Rc<Presenter>` cannot be sent between threads safely
+     |
+     = help: within `{closure@src\main.rs:88:51: 88:58}`, the trait `Send` is not implemented for `Rc<Presenter>`
+note: required because it's used within this closure
+    --> src\main.rs:88:51
+     |
+  88 |             let _ = slint::invoke_from_event_loop(move || {
+     |                                                   ^^^^^^^
+note: required by a bound in `slint::invoke_from_event_loop`
+    --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-core-1.17.1\api.rs:1260:53
+     |
+1260 | pub fn invoke_from_event_loop(func: impl FnOnce() + Send + 'static) -> Result<(), EventLoopError> {
+     |                                                     ^^^^ required by this bound in `invoke_from_event_loop`
 
-  thread '<unnamed>' (1724) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
+error[E0277]: `Rc<Presenter>` cannot be sent between threads safely
+    --> src\main.rs:111:51
+     |
+ 111 |               let _ = slint::invoke_from_event_loop(move || {
+     |                       ----------------------------- ^------
+     |                       |                             |
+     |  _____________________|_____________________________within this `{closure@src\main.rs:111:51: 111:58}`
+     | |                     |
+     | |                     required by a bound introduced by this call
+ 112 | |                 apply_event(&ui_weak, None, &presenter, event);
+ 113 | |             });
+     | |_____________^ `Rc<Presenter>` cannot be sent between threads safely
+     |
+     = help: within `{closure@src\main.rs:111:51: 111:58}`, the trait `Send` is not implemented for `Rc<Presenter>`
+note: required because it's used within this closure
+    --> src\main.rs:111:51
+     |
+ 111 |             let _ = slint::invoke_from_event_loop(move || {
+     |                                                   ^^^^^^^
+note: required by a bound in `slint::invoke_from_event_loop`
+    --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-core-1.17.1\api.rs:1260:53
+     |
+1260 | pub fn invoke_from_event_loop(func: impl FnOnce() + Send + 'static) -> Result<(), EventLoopError> {
+     |                                                     ^^^^ required by this bound in `invoke_from_event_loop`
 
-  thread '<unnamed>' (1724) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-
-  thread '<unnamed>' (1724) panicked at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\i-slint-compiler-1.17.1\passes\embed_glyphs.rs:494:42:
-  large glyph y coordinate: TryFromIntError(PosOverflow)
-warning: build failed, waiting for other jobs to finish...
+Some errors have detailed explanations: E0277, E0432.
+For more information about an error, try `rustc --explain E0277`.
+warning: `ntfy-windows-client` (bin "ntfy-windows-client") generated 1 warning
+error: could not compile `ntfy-windows-client` (bin "ntfy-windows-client") due to 4 previous errors; 1 warning emitted
 FAILED: Release ARM64 (exit 101)
 
 RESULT=FAIL
