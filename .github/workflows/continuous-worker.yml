@@ -1,7 +1,10 @@
 name: Continuous Windows command worker
-run-name: Continuous worker — ${{ inputs.branch }}
+run-name: >-
+  Continuous worker — ${{ github.event_name == 'push' && github.ref_name || inputs.branch }}
 
 on:
+  # Manual start. The workflow definition is loaded from the selected ref,
+  # normally main, while the branch input identifies the branch to monitor.
   workflow_dispatch:
     inputs:
       branch:
@@ -9,14 +12,23 @@ on:
         required: true
         type: string
 
+  # Automatic start. Create or update this marker on any branch, including
+  # main. The pushed branch itself becomes the monitored branch.
+  push:
+    branches:
+      - '**'
+    paths:
+      - '.continuous-worker/start.txt'
+
 # Input commands inherit the repository GITHUB_TOKEN with every available
 # repository permission set to write. GitHub branch protection and organisation
-# policy still apply.
+# policy still apply, including when WATCH_BRANCH is main.
 permissions: write-all
 
 # One chain per monitored branch. Different branches run independently.
 concurrency:
-  group: continuous-windows-worker-${{ inputs.branch }}
+  group: >-
+    continuous-windows-worker-${{ github.event_name == 'push' && github.ref_name || inputs.branch }}
   cancel-in-progress: false
 
 jobs:
@@ -29,16 +41,17 @@ jobs:
 
     env:
       GH_TOKEN: ${{ github.token }}
-      WATCH_BRANCH: ${{ inputs.branch }}
+      WATCH_BRANCH: ${{ github.event_name == 'push' && github.ref_name || inputs.branch }}
       CONTROL_BRANCH: ${{ github.event.repository.default_branch }}
-      CARGO_CACHE_KEY: continuous-cargo-${{ runner.os }}-${{ inputs.branch }}-${{ github.run_id }}-${{ github.run_attempt }}
+      CARGO_CACHE_KEY: >-
+        continuous-cargo-${{ runner.os }}-${{ github.event_name == 'push' && github.ref_name || inputs.branch }}-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       # The workflow and watcher are controlled from the default branch.
       - name: Check out worker control files
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: ${{ env.CONTROL_BRANCH }}
           path: .worker-control
           fetch-depth: 1
           fetch-tags: false
@@ -52,7 +65,7 @@ jobs:
       - name: Check out monitored branch
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ env.WATCH_BRANCH }}
           path: repository
           fetch-depth: 1
           fetch-tags: false
@@ -75,7 +88,7 @@ jobs:
             repository/target
           key: ${{ env.CARGO_CACHE_KEY }}
           restore-keys: |
-            continuous-cargo-${{ runner.os }}-${{ inputs.branch }}-
+            continuous-cargo-${{ runner.os }}-${{ env.WATCH_BRANCH }}-
 
       - name: Run continuous worker
         shell: pwsh
@@ -130,7 +143,7 @@ jobs:
 
           if ($LASTEXITCODE -ne 0) {
               throw (
-                  "Could not fetch monitored branch " +
+                  'Could not fetch monitored branch ' +
                   "$env:WATCH_BRANCH."
               )
           }
@@ -150,8 +163,8 @@ jobs:
               exit 0
           }
 
-          # The workflow definition is read from the default branch. The input
-          # keeps the replacement assigned to exactly the same watched branch.
+          # Replacement runs always load the workflow definition from the
+          # default branch and continue monitoring the same WATCH_BRANCH.
           & gh workflow run $env:WORKFLOW_FILE `
               --repo $env:GITHUB_REPOSITORY `
               --ref $env:CONTROL_BRANCH `
@@ -159,13 +172,13 @@ jobs:
 
           if ($LASTEXITCODE -ne 0) {
               throw (
-                  "Could not dispatch replacement for " +
+                  'Could not dispatch replacement for ' +
                   "$env:WATCH_BRANCH."
               )
           }
 
           Write-Host (
-              "Replacement dispatched for branch " +
+              'Replacement dispatched for branch ' +
               "$env:WATCH_BRANCH."
           )
 
