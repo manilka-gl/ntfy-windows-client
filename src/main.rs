@@ -11,9 +11,7 @@ use audio::DEFAULT_OUTPUT_LABEL;
 use config::Settings;
 use notification::Presenter;
 use protocol::{Message, truncate, truncate_owned};
-use slint::{
-    CloseRequestResponse, ComponentHandle, Model, ModelRc, SharedString, Timer, VecModel,
-};
+use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, SharedString, Timer, VecModel};
 use std::{
     cell::RefCell,
     collections::VecDeque,
@@ -90,13 +88,7 @@ fn main() -> Result<(), slint::PlatformError> {
     tray.set_tray_visible(true);
 
     if !background {
-        open_window(
-            &owner,
-            &bridge,
-            &state,
-            &tray,
-            Rc::clone(&controller),
-        )?;
+        open_window(&owner, &bridge, &state, &tray, Rc::clone(&controller))?;
     }
 
     let auto_connect = {
@@ -135,11 +127,7 @@ fn open_window(
     tray: &AppTray,
     controller: Rc<RefCell<Controller>>,
 ) -> Result<(), slint::PlatformError> {
-    if let Some(ui) = owner
-        .borrow()
-        .as_ref()
-        .map(ComponentHandle::clone_strong)
-    {
+    if let Some(ui) = owner.borrow().as_ref().map(ComponentHandle::clone_strong) {
         ui.show()?;
         ui.window().request_redraw();
         return Ok(());
@@ -223,18 +211,13 @@ fn configure_window(
         set_status(&state_for_publish, &bridge_for_publish, "Publishing");
         let state = Arc::clone(&state_for_publish);
         let bridge = Arc::clone(&bridge_for_publish);
-        let result = winhttp::publish(
-            config,
-            title.to_string(),
-            body.to_string(),
-            move |event| {
-                let state = Arc::clone(&state);
-                let bridge = Arc::clone(&bridge);
-                let _ = slint::invoke_from_event_loop(move || {
-                    apply_event(&state, &bridge, None, event);
-                });
-            },
-        );
+        let result = winhttp::publish(config, title.to_string(), body.to_string(), move |event| {
+            let state = Arc::clone(&state);
+            let bridge = Arc::clone(&bridge);
+            let _ = slint::invoke_from_event_loop(move || {
+                apply_event(&state, &bridge, None, event);
+            });
+        });
         if let Err(error) = result {
             set_status(&state_for_publish, &bridge_for_publish, &error.to_string());
         }
@@ -559,12 +542,7 @@ fn set_status(state: &SharedState, bridge: &UiBridge, status: &str) {
     }
 }
 
-fn set_connected(
-    state: &SharedState,
-    bridge: &UiBridge,
-    tray: Option<&AppTray>,
-    connected: bool,
-) {
+fn set_connected(state: &SharedState, bridge: &UiBridge, tray: Option<&AppTray>, connected: bool) {
     state.lock().expect("runtime state poisoned").connected = connected;
     if let Some(ui) = current_ui(bridge) {
         ui.set_connected(connected);
@@ -594,7 +572,10 @@ fn set_audio_outputs(ui: &AppWindow, outputs: &[String], selected: &str) {
     let index = if selected.is_empty() {
         0
     } else {
-        outputs.iter().position(|name| name == selected).unwrap_or(0)
+        outputs
+            .iter()
+            .position(|name| name == selected)
+            .unwrap_or(0)
     };
     let model = outputs
         .iter()

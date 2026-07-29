@@ -1,8 +1,7 @@
 use std::{
     ffi::c_void,
     mem::size_of,
-    ptr,
-    thread,
+    ptr, thread,
     time::{Duration, Instant},
 };
 
