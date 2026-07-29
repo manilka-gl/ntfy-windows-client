@@ -1,0 +1,18 @@
+{
+  "command_file": "000-worker-recovery.ps1",
+  "command_path": "input/000-worker-recovery.ps1",
+  "command_sha256": "846eef3fdb37e347b7e213dea10aab8b129371812abedf416184724515a05a5d",
+  "source_commit": "2d35e93470383b1d79191d8cf0708e5eec6b6ad2",
+  "status": "command_failed",
+  "exit_code": 1,
+  "timed_out": false,
+  "started_utc": "2026-07-29T22:35:51.9189680+00:00",
+  "finished_utc": "2026-07-29T22:35:52.9021390+00:00",
+  "duration_seconds": 0.983,
+  "log_file": "846eef3fdb37e347b7e213dea10aab8b129371812abedf416184724515a05a5d.log",
+  "branch": "fix/memory-notification-ui-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30494632210",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000393"
+}

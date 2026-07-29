@@ -1,0 +1,22 @@
+=== STANDARD OUTPUT ===
+CHECK worker-control-parse: start
+CHECK parsed: scripts/watch-input.ps1
+CHECK parsed: scripts/watch-input-fixed.ps1
+CHECK malformed-input-detection: start
+CHECK malformed input detected: Missing closing '}' in statement block or type definition.
+CHECK monitored branch exists: fix/memory-notification-ui-20260730
+Diff in \\?\D:\a\ntfy-windows-client\ntfy-windows-client\repository\src\main.rs:169:
+     }
+ 
+     let outputs = audio::output_names();
+[31m-    state
+[0m[31m-        .lock()
+[0m[31m-        .expect("runtime state poisoned")
+[0m[31m-        .audio_outputs = outputs;
+[0m[32m+    state.lock().expect("runtime state poisoned").audio_outputs = outputs;
+[0m }
+ 
+ fn hydrate_ui(ui: &AppWindow, state: &SharedState) {
+
+
+=== STANDARD ERROR ===
