@@ -14,13 +14,15 @@ use std::{
 use windows_sys::Win32::{
     Foundation::GetLastError,
     Networking::WinHttp::{
-        HINTERNET, HTTP_STATUS_OK, INTERNET_DEFAULT_HTTP_PORT, INTERNET_DEFAULT_HTTPS_PORT,
+        HTTP_STATUS_OK, INTERNET_DEFAULT_HTTP_PORT, INTERNET_DEFAULT_HTTPS_PORT,
         WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, WINHTTP_FLAG_SECURE, WINHTTP_QUERY_FLAG_NUMBER,
         WINHTTP_QUERY_STATUS_CODE, WinHttpCloseHandle, WinHttpConnect, WinHttpOpen,
         WinHttpOpenRequest, WinHttpQueryDataAvailable, WinHttpQueryHeaders, WinHttpReadData,
         WinHttpReceiveResponse, WinHttpSendRequest, WinHttpSetTimeouts,
     },
 };
+
+type HInternet = *mut c_void;
 
 const USER_AGENT: &str = concat!("ntfy-windows-client/", env!("CARGO_PKG_VERSION"));
 const MAX_LINE_BYTES: usize = 1024 * 1024;
@@ -411,7 +413,7 @@ fn open_session(receive_timeout: i32) -> Result<Handle, Error> {
     Ok(session)
 }
 
-fn query_status(request: HINTERNET) -> Result<u32, Error> {
+fn query_status(request: HInternet) -> Result<u32, Error> {
     let mut status = 0_u32;
     let mut size = size_of::<u32>() as u32;
     winhttp_bool(
@@ -452,12 +454,12 @@ fn winhttp_bool(ok: i32, operation: &str) -> Result<(), Error> {
 }
 
 struct RequestHandle<'a> {
-    raw: HINTERNET,
+    raw: HInternet,
     registry: &'a AtomicPtr<c_void>,
 }
 
 impl<'a> RequestHandle<'a> {
-    fn new(raw: HINTERNET, registry: &'a AtomicPtr<c_void>) -> Result<Self, Error> {
+    fn new(raw: registry: &'a AtomicPtr<c_void>) -> Result<Self, Error> {
         if raw.is_null() {
             let code = unsafe { GetLastError() };
             return Err(Error(format!(
@@ -488,10 +490,10 @@ impl Drop for RequestHandle<'_> {
     }
 }
 
-struct Handle(HINTERNET);
+struct Handle(HInternet);
 
 impl Handle {
-    fn new(raw: HINTERNET) -> Result<Self, Error> {
+    fn new(raw: HInternet) -> Result<Self, Error> {
         if raw.is_null() {
             let code = unsafe { GetLastError() };
             Err(Error(format!(
