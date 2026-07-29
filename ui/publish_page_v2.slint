@@ -1,0 +1,89 @@
+import {
+    Button,
+    HorizontalBox,
+    LineEdit,
+    TextEdit,
+    VerticalBox,
+} from "std-widgets.slint";
+import { FieldLabel, Theme } from "components_v2.slint";
+
+export component PublishPage inherits Rectangle {
+    in property <string> topic;
+    callback publish(string, string);
+
+    background: #00000000;
+
+    Text {
+        width: parent.width;
+        height: 30px;
+        text: "Publish";
+        color: Theme.text;
+        font-size: 23px;
+        font-weight: 700;
+    }
+
+    Text {
+        y: 32px;
+        width: parent.width;
+        height: 20px;
+        text: "Send directly through native WinHTTP.";
+        color: Theme.secondary;
+        font-size: 12px;
+    }
+
+    Rectangle {
+        y: 68px;
+        width: parent.width;
+        height: 316px;
+        border-radius: 12px;
+        background: Theme.panel;
+        border-width: 1px;
+        border-color: Theme.border;
+
+        VerticalBox {
+            x: 18px;
+            y: 16px;
+            width: parent.width - 36px;
+            height: parent.height - 32px;
+            spacing: 8px;
+
+            FieldLabel { text: "TITLE"; }
+            publish-title := LineEdit {
+                height: 38px;
+                placeholder-text: "Optional title";
+            }
+
+            FieldLabel { text: "MESSAGE"; }
+            publish-body := TextEdit {
+                height: 132px;
+                placeholder-text: "Type a message";
+                wrap: word-wrap;
+            }
+
+            HorizontalBox {
+                height: 40px;
+
+                Text {
+                    text: root.topic == ""
+                        ? "Configure a topic first."
+                        : "Destination: " + root.topic;
+                    color: Theme.muted;
+                    font-size: 10px;
+                    vertical-alignment: center;
+                }
+
+                Rectangle { horizontal-stretch: 1; }
+
+                Button {
+                    text: "Send";
+                    enabled: publish-body.text != "" && root.topic != "";
+                    clicked => {
+                        root.publish(publish-title.text, publish-body.text);
+                        publish-title.text = "";
+                        publish-body.text = "";
+                    }
+                }
+            }
+        }
+    }
+}
