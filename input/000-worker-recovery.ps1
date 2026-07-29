@@ -25,36 +25,19 @@ foreach ($scriptPath in $workerScripts) {
     Write-Host "CHECK parsed: $scriptPath"
 }
 
-Write-Host 'CHECK malformed-child-isolation: start'
-$malformedPath = Join-Path $env:RUNNER_TEMP 'ntfy-malformed-input.ps1'
-[IO.File]::WriteAllText(
-    $malformedPath,
+Write-Host 'CHECK malformed-input-detection: start'
+$tokens = $null
+$errors = $null
+[void] [System.Management.Automation.Language.Parser]::ParseInput(
     "Set-StrictMode -Version Latest`nfunction Broken {`n",
-    [Text.UTF8Encoding]::new($false)
+    [ref] $tokens,
+    [ref] $errors
 )
 
-$process = Start-Process `
-    -FilePath (Get-Command pwsh -ErrorAction Stop).Source `
-    -ArgumentList @(
-        '-NoLogo',
-        '-NoProfile',
-        '-NonInteractive',
-        '-ExecutionPolicy',
-        'Bypass',
-        '-File',
-        $malformedPath
-    ) `
-    -NoNewWindow `
-    -Wait `
-    -PassThru
-
-Remove-Item -LiteralPath $malformedPath -Force -ErrorAction SilentlyContinue
-
-if ($process.ExitCode -eq 0) {
-    throw 'Malformed PowerShell unexpectedly returned exit code 0.'
+if ($errors.Count -eq 0) {
+    throw 'Malformed PowerShell unexpectedly produced no parser errors.'
 }
-
-Write-Host "CHECK malformed child rejected with exit code $($process.ExitCode)"
+Write-Host "CHECK malformed input detected: $($errors[0].Message)"
 
 & git ls-remote --exit-code --heads origin "refs/heads/$env:WORKER_BRANCH" *> $null
 if ($LASTEXITCODE -ne 0) {
