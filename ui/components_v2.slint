@@ -1,0 +1,126 @@
+export struct NotificationItem {
+    topic: string,
+    title: string,
+    message: string,
+    meta: string,
+    priority: int,
+}
+
+export global Theme {
+    out property <color> bg: #0b1017;
+    out property <color> chrome: #111923;
+    out property <color> panel: #16202c;
+    out property <color> hover: #1c2937;
+    out property <color> border: #2a394b;
+    out property <color> text: #f2f5f9;
+    out property <color> secondary: #aab5c4;
+    out property <color> muted: #748196;
+    out property <color> accent: #4ade80;
+    out property <color> accent-soft: #173b29;
+    out property <color> blue: #60a5fa;
+    out property <color> warning: #fbbf24;
+    out property <color> danger: #fb7185;
+}
+
+export component Tab inherits Rectangle {
+    in property <string> label;
+    in property <bool> selected;
+    callback activated();
+
+    height: 36px;
+    border-radius: 8px;
+    background: selected ? #203044 : tab-touch.has-hover ? Theme.hover : #00000000;
+    border-width: selected ? 1px : 0px;
+    border-color: selected ? #3a5069 : #00000000;
+
+    Text {
+        width: parent.width;
+        height: parent.height;
+        text: root.label;
+        color: root.selected ? Theme.text : Theme.secondary;
+        font-size: 12px;
+        font-weight: root.selected ? 700 : 550;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+
+    tab-touch := TouchArea {
+        clicked => { root.activated(); }
+    }
+}
+
+export component FieldLabel inherits Text {
+    height: 18px;
+    color: Theme.secondary;
+    font-size: 11px;
+    font-weight: 650;
+    vertical-alignment: center;
+}
+
+export component MessageRow inherits Rectangle {
+    in property <NotificationItem> item;
+
+    height: 104px;
+    border-radius: 10px;
+    background: row-touch.has-hover ? Theme.hover : Theme.panel;
+    border-width: 1px;
+    border-color: item.priority >= 5 ? Theme.danger :
+                  item.priority == 4 ? Theme.warning : Theme.border;
+
+    Rectangle {
+        width: 4px;
+        height: parent.height;
+        border-radius: 2px;
+        background: item.priority >= 5 ? Theme.danger :
+                    item.priority == 4 ? Theme.warning : Theme.blue;
+    }
+
+    Text {
+        x: 16px;
+        y: 10px;
+        width: parent.width - 126px;
+        height: 22px;
+        text: item.title;
+        color: Theme.text;
+        font-size: 14px;
+        font-weight: 700;
+        overflow: elide;
+    }
+
+    Text {
+        x: parent.width - 104px;
+        y: 11px;
+        width: 88px;
+        height: 20px;
+        text: item.topic;
+        color: Theme.muted;
+        font-size: 10px;
+        horizontal-alignment: right;
+        overflow: elide;
+    }
+
+    Text {
+        x: 16px;
+        y: 36px;
+        width: parent.width - 32px;
+        height: 40px;
+        text: item.message;
+        color: Theme.secondary;
+        font-size: 12px;
+        wrap: word-wrap;
+        overflow: elide;
+    }
+
+    Text {
+        x: 16px;
+        y: 82px;
+        width: parent.width - 32px;
+        height: 15px;
+        text: item.meta;
+        color: Theme.muted;
+        font-size: 9px;
+        overflow: elide;
+    }
+
+    row-touch := TouchArea {}
+}
