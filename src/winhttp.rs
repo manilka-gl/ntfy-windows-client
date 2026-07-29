@@ -11,8 +11,8 @@ use std::{
     time::Duration,
 };
 use windows_sys::Win32::{
-    errhandlingapi::GetLastError,
-    winhttp::{
+    Foundation::GetLastError,
+    Networking::WinHttp::{
         HINTERNET, HTTP_STATUS_OK, INTERNET_DEFAULT_HTTP_PORT, INTERNET_DEFAULT_HTTPS_PORT,
         WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, WINHTTP_FLAG_SECURE, WINHTTP_QUERY_FLAG_NUMBER,
         WINHTTP_QUERY_STATUS_CODE, WinHttpCloseHandle, WinHttpConnect, WinHttpOpen,
@@ -142,9 +142,6 @@ fn run_subscription(
     active_request: Arc<AtomicPtr<c_void>>,
     on_event: Box<dyn Fn(Event) + Send>,
 ) {
-    let initialized = unsafe {
-        windows_sys::Win32::ro::RoInitialize(windows_sys::Win32::ro::RO_INIT_MULTITHREADED) >= 0
-    };
     let mut since = String::from("latest");
     let mut backoff_secs = 1_u64;
     while !stop.load(Ordering::Acquire) {
@@ -184,9 +181,6 @@ fn run_subscription(
     }
     on_event(Event::Connected(false));
     on_event(Event::Status("Disconnected".into()));
-    if initialized {
-        unsafe { windows_sys::Win32::ro::RoUninitialize() };
-    }
 }
 
 fn subscribe_once<F>(
