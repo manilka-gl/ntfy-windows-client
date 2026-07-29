@@ -2,9 +2,9 @@ use serde::Deserialize;
 use std::{
     io::{self, BufRead, BufReader},
     sync::{
+        Arc, Mutex,
         atomic::{AtomicU64, Ordering},
         mpsc::SyncSender,
-        Arc, Mutex,
     },
     thread,
     time::Duration,
@@ -34,17 +34,9 @@ pub struct Message {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Event {
-    Connected {
-        generation: u64,
-    },
-    Status {
-        generation: u64,
-        message: String,
-    },
-    Message {
-        generation: u64,
-        message: Message,
-    },
+    Connected { generation: u64 },
+    Status { generation: u64, message: String },
+    Message { generation: u64, message: Message },
 }
 
 impl Event {
@@ -89,18 +81,20 @@ pub fn spawn_subscription_worker(
 ) {
     thread::Builder::new()
         .name("ntfy-subscription".to_owned())
-        .spawn(move || loop {
-            let own_generation = generation.load(Ordering::Acquire);
-            let connection = active_connection
-                .lock()
-                .ok()
-                .and_then(|current| current.clone());
-            let Some(connection) = connection else {
-                thread::sleep(Duration::from_millis(200));
-                continue;
-            };
-            if !run_subscription(connection, &generation, own_generation, &sender) {
-                return;
+        .spawn(move || {
+            loop {
+                let own_generation = generation.load(Ordering::Acquire);
+                let connection = active_connection
+                    .lock()
+                    .ok()
+                    .and_then(|current| current.clone());
+                let Some(connection) = connection else {
+                    thread::sleep(Duration::from_millis(200));
+                    continue;
+                };
+                if !run_subscription(connection, &generation, own_generation, &sender) {
+                    return;
+                }
             }
         })
         .expect("failed to start subscription thread");
@@ -322,7 +316,7 @@ fn read_line_limited<R: BufRead>(
 
 #[cfg(test)]
 mod tests {
-    use super::{parse_message, read_line_limited, Message};
+    use super::{Message, parse_message, read_line_limited};
     use std::io::{BufReader, Cursor};
 
     #[test]
