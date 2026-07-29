@@ -1,42 +1,43 @@
 # ntfy Windows Client
 
-A small native Windows desktop client for [ntfy](https://ntfy.sh), written in Rust with Slint.
+A lightweight native Windows desktop client for [ntfy](https://ntfy.sh), written in Rust and Slint.
 
-## Current features
+## Features
 
-- Subscribe to an ntfy JSON stream with automatic reconnect and incremental backoff.
-- Recover recent cached messages and resume from the last message ID after reconnects.
-- Publish messages with an optional title.
-- Optional bearer-token authentication. Tokens are kept in memory and are not written to disk.
-- Native Windows toast notifications through `windows-rs`.
-- Bounded in-memory history of 200 messages and a 1 MiB per-message stream safety limit.
-- Persistent server, topic, and notification preference under `%APPDATA%\ntfy-windows-client\settings.json`.
+- Native WinHTTP streaming and publishing; no browser engine, WebView, Tokio, Reqwest, OpenSSL bundle, or background polling loop.
+- Runs in the system tray after the main window is closed and keeps the subscription active.
+- Reusable custom desktop popup with nine user-selectable positions: top, middle, and bottom across left, centre, and right.
+- Optional Windows system notification sound.
+- Bounded 100-message in-memory history and 1 MiB safety limits for incoming stream lines and published messages.
+- Automatic reconnect with bounded exponential backoff and resume from the last ntfy message ID.
+- Optional bearer authentication. Tokens stay in memory and are never written to the settings file.
+- Consistent Fluent dark interface and software rendering.
 
-## Efficiency choices
+## Efficiency design
 
-- Slint software renderer; no browser engine, Electron, WebView, GPU renderer, or async runtime.
-- One blocking subscription worker and short-lived publish workers.
-- Bounded models and input sizes.
-- Release builds use size optimization, full LTO, one codegen unit, stripped symbols, and abort-on-panic.
-
-The supplied ntfy server executable is not embedded. The client talks directly to ntfy's HTTP JSON stream, avoiding the roughly 74 MB server/CLI binary.
+- One blocking subscription worker with a 320 KiB stack.
+- Short-lived publish workers with 256 KiB stacks.
+- One reusable popup window and one timer instead of allocating a new notification window per event.
+- Native Windows TLS, proxy, and connection handling through WinHTTP.
+- Release builds use size optimisation, fat LTO, one codegen unit, symbol stripping, disabled incremental compilation, and abort-on-panic.
+- Only required Slint and Windows API features are enabled.
 
 ## Build
 
-Requires Rust 1.85 or newer.
+Official builds use Rust 1.97.1 and Slint 1.17.1 on GitHub-hosted Windows runners.
 
 ```powershell
-cargo build --release
+cargo generate-lockfile
+cargo fmt --all -- --check
+cargo clippy --locked --all-targets --all-features -- -D warnings
+cargo test --locked --all-features
+cargo build --locked --release --target x86_64-pc-windows-msvc
 ```
 
-The executable is created at `target\release\ntfy-windows-client.exe`.
+The manual **CI** workflow verifies the project and uploads x64 and ARM64 ZIP artifacts. The manual **Release** workflow can also create or update a GitHub release when a tag is supplied.
 
-## Verification and binaries
+## Behaviour
 
-GitHub Actions runs formatting, Clippy with warnings denied, tests, debug builds, and optimized Windows builds. Every CI run uploads a Windows x64 ZIP artifact. Pushing a tag such as `v0.1.0` also creates a GitHub release with the ZIP attached.
+Closing the main window hides it and leaves the process running in the Windows system tray. Use the tray menu's **Quit** command to stop the subscription and exit.
 
-## Notes
-
-- Topic names follow ntfy's `[-_A-Za-z0-9]{1,64}` rule.
-- Windows may suppress notifications through Focus Assist or notification settings.
-- Native toast delivery from an unpackaged executable is best-effort on Windows installations with stricter AppUserModelID registration policies. The in-app feed remains functional if Windows rejects a toast.
+Settings are stored in `%APPDATA%\ntfy-windows-client\settings.json`. The bearer token is deliberately excluded.

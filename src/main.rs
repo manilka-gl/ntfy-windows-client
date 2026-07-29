@@ -1,248 +1,288 @@
-#![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use ntfy_windows_client::{
-    config::{self, Settings},
-    ntfy::{self, Connection, Event},
-    timefmt, toast,
-};
-use slint::{ComponentHandle, Model, VecModel};
-use std::sync::{
-    Arc, Mutex,
-    atomic::{AtomicBool, AtomicU64, Ordering},
-    mpsc,
-};
+mod config;
+mod notification;
+mod protocol;
+mod timefmt;
+mod winhttp;
+
+use config::Settings;
+use notification::Presenter;
+use protocol::truncate;
+use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, SharedString, VecModel};
+use std::{cell::RefCell, rc::Rc};
+use winhttp::{ClientConfig, Controller, Event};
 
 slint::include_modules!();
 
-const MAX_MESSAGES: usize = 200;
+const HISTORY_LIMIT: usize = 100;
 
 fn main() -> Result<(), slint::PlatformError> {
-    let ui = MainWindow::new()?;
-    let settings = Settings::load().unwrap_or_default();
-    ui.set_server(settings.server.clone().into());
+    let ui = AppWindow::new()?;
+    let tray = AppTray::new()?;
+    let presenter = Rc::new(Presenter::new()?);
+    let controller = Rc::new(RefCell::new(Controller::default()));
+    let settings = Settings::load();
+
+    ui.set_server_url(settings.server_url.clone().into());
     ui.set_topic(settings.topic.clone().into());
     ui.set_notifications_enabled(settings.notifications_enabled);
-    ui.set_messages(slint::ModelRc::new(VecModel::default()));
+    ui.set_sound_enabled(settings.sound_enabled);
+    ui.set_placement_index(i32::from(settings.placement.min(8)));
+    ui.set_auto_connect(settings.auto_connect);
+    ui.set_notifications(ModelRc::from(Rc::new(
+        VecModel::<NotificationItem>::default(),
+    )));
 
-    let generation = Arc::new(AtomicU64::new(0));
-    let active_connection = Arc::new(Mutex::new(None::<Connection>));
-    let (event_sender, event_receiver) = mpsc::sync_channel::<Event>(256);
-    ntfy::spawn_subscription_worker(
-        Arc::clone(&active_connection),
-        Arc::clone(&generation),
-        event_sender.clone(),
-    );
+    configure_subscription(&ui, &tray, Rc::clone(&controller), Rc::clone(&presenter));
+    configure_publish(&ui, Rc::clone(&presenter));
+    configure_settings(&ui);
+    configure_clear(&ui);
+    configure_window_close(&ui);
+    configure_tray(&ui, &tray, Rc::clone(&controller));
+    configure_quit(&ui, Rc::clone(&controller));
 
-    configure_connect_callback(&ui, Arc::clone(&generation), Arc::clone(&active_connection));
-    configure_publish_callback(
-        &ui,
-        Arc::clone(&active_connection),
-        Arc::new(AtomicBool::new(false)),
-    );
-    configure_clear_callback(&ui);
-    configure_event_pump(&ui, event_receiver, Arc::clone(&generation));
+    tray.set_connected(false);
+    tray.set_tray_visible(true);
 
-    if !settings.topic.is_empty() {
-        ui.invoke_connect_requested(
-            settings.server.into(),
-            settings.topic.into(),
-            "".into(),
-            settings.notifications_enabled,
-        );
+    if settings.auto_connect && !settings.topic.is_empty() {
+        ui.invoke_toggle_subscription();
     }
 
     ui.run()
 }
 
-fn configure_connect_callback(
-    ui: &MainWindow,
-    generation: Arc<AtomicU64>,
-    active_connection: Arc<Mutex<Option<Connection>>>,
+fn configure_subscription(
+    ui: &AppWindow,
+    tray: &AppTray,
+    controller: Rc<RefCell<Controller>>,
+    presenter: Rc<Presenter>,
 ) {
-    let weak = ui.as_weak();
-    ui.on_connect_requested(move |server, topic, token, notifications_enabled| {
-        let (server, topic) = match config::validate(&server, &topic) {
-            Ok(value) => value,
-            Err(error) => {
-                if let Some(ui) = weak.upgrade() {
-                    ui.set_status(error.into());
-                    ui.set_connected(false);
-                }
-                return;
-            }
-        };
-
-        let connection = Connection {
-            server: server.clone(),
-            topic: topic.clone(),
-            token: token.trim().to_owned(),
-        };
-        let Ok(mut current) = active_connection.lock() else {
-            if let Some(ui) = weak.upgrade() {
-                ui.set_status("Internal connection state error".into());
+    let ui_weak = ui.as_weak();
+    let tray_weak = tray.as_weak();
+    ui.on_toggle_subscription(move || {
+        if controller.borrow().is_running() {
+            controller.borrow_mut().stop();
+            if let Some(ui) = ui_weak.upgrade() {
                 ui.set_connected(false);
+                ui.set_status_text("Disconnected".into());
+            }
+            if let Some(tray) = tray_weak.upgrade() {
+                tray.set_connected(false);
             }
             return;
-        };
-        *current = Some(connection);
-        drop(current);
-        generation.fetch_add(1, Ordering::AcqRel);
+        }
 
-        let settings = Settings {
-            server,
-            topic,
-            notifications_enabled,
+        let Some(ui) = ui_weak.upgrade() else {
+            return;
         };
-        let save_result = settings.save();
-
-        if let Some(ui) = weak.upgrade() {
-            clear_model(&ui);
-            ui.set_connected(false);
-            ui.set_status(
-                save_result
-                    .map_or_else(
-                        |error| format!("Connecting (settings not saved: {error})"),
-                        |()| "Connecting…".to_owned(),
-                    )
-                    .into(),
-            );
+        let config = client_config(&ui);
+        ui.set_status_text("Starting subscription".into());
+        let ui_events = ui.as_weak();
+        let tray_events = tray_weak.clone();
+        let presenter = Rc::clone(&presenter);
+        let result = controller.borrow_mut().start(config, move |event| {
+            let ui_weak = ui_events.clone();
+            let tray_weak = tray_events.clone();
+            let presenter = Rc::clone(&presenter);
+            let _ = slint::invoke_from_event_loop(move || {
+                apply_event(&ui_weak, Some(&tray_weak), &presenter, event);
+            });
+        });
+        if let Err(error) = result {
+            ui.set_status_text(error.to_string().into());
         }
     });
 }
 
-fn configure_publish_callback(
-    ui: &MainWindow,
-    active: Arc<Mutex<Option<Connection>>>,
-    publishing: Arc<AtomicBool>,
+fn configure_publish(ui: &AppWindow, presenter: Rc<Presenter>) {
+    let ui_weak = ui.as_weak();
+    ui.on_publish(move |title, body| {
+        let Some(ui) = ui_weak.upgrade() else {
+            return;
+        };
+        let config = client_config(&ui);
+        ui.set_status_text("Publishing".into());
+        let ui_events = ui.as_weak();
+        let presenter = Rc::clone(&presenter);
+        let result = winhttp::publish(config, title.to_string(), body.to_string(), move |event| {
+            let ui_weak = ui_events.clone();
+            let presenter = Rc::clone(&presenter);
+            let _ = slint::invoke_from_event_loop(move || {
+                apply_event(&ui_weak, None, &presenter, event);
+            });
+        });
+        if let Err(error) = result {
+            ui.set_status_text(error.to_string().into());
+        }
+    });
+}
+
+fn configure_settings(ui: &AppWindow) {
+    let ui_weak = ui.as_weak();
+    ui.on_save_settings(move || {
+        if let Some(ui) = ui_weak.upgrade() {
+            let status = match settings_from_ui(&ui).save() {
+                Ok(()) => "Settings saved. The bearer token stays in memory only.".to_owned(),
+                Err(error) => format!("Could not save settings: {error}"),
+            };
+            ui.set_status_text(status.into());
+        }
+    });
+}
+
+fn configure_clear(ui: &AppWindow) {
+    let ui_weak = ui.as_weak();
+    ui.on_clear_notifications(move || {
+        if let Some(ui) = ui_weak.upgrade() {
+            let model = ui.get_notifications();
+            if let Some(model) = model.as_any().downcast_ref::<VecModel<NotificationItem>>() {
+                model.clear();
+            }
+        }
+    });
+}
+
+fn configure_window_close(ui: &AppWindow) {
+    let ui_weak = ui.as_weak();
+    ui.window().on_close_requested(move || {
+        if let Some(ui) = ui_weak.upgrade() {
+            let _ = ui.hide();
+            ui.set_status_text("Running in the system tray".into());
+        }
+        CloseRequestResponse::KeepWindowShown
+    });
+}
+
+fn configure_tray(ui: &AppWindow, tray: &AppTray, controller: Rc<RefCell<Controller>>) {
+    let ui_weak = ui.as_weak();
+    tray.on_show_window(move || {
+        if let Some(ui) = ui_weak.upgrade() {
+            let _ = ui.show();
+            ui.window().request_redraw();
+        }
+    });
+
+    let ui_weak = ui.as_weak();
+    let tray_weak = tray.as_weak();
+    let controller_for_toggle = Rc::clone(&controller);
+    tray.on_toggle_subscription(move || {
+        if let Some(ui) = ui_weak.upgrade() {
+            ui.invoke_toggle_subscription();
+        } else if controller_for_toggle.borrow().is_running() {
+            controller_for_toggle.borrow_mut().stop();
+            if let Some(tray) = tray_weak.upgrade() {
+                tray.set_connected(false);
+            }
+        }
+    });
+
+    tray.on_quit(move || {
+        controller.borrow_mut().stop();
+        let _ = slint::quit_event_loop();
+    });
+}
+
+fn configure_quit(ui: &AppWindow, controller: Rc<RefCell<Controller>>) {
+    ui.on_quit(move || {
+        controller.borrow_mut().stop();
+        let _ = slint::quit_event_loop();
+    });
+}
+
+fn client_config(ui: &AppWindow) -> ClientConfig {
+    ClientConfig {
+        server_url: ui.get_server_url().trim().trim_end_matches('/').to_owned(),
+        topic: ui.get_topic().trim().to_owned(),
+        token: ui.get_token().trim().to_owned(),
+    }
+}
+
+fn settings_from_ui(ui: &AppWindow) -> Settings {
+    Settings {
+        server_url: ui.get_server_url().trim().trim_end_matches('/').to_owned(),
+        topic: ui.get_topic().trim().to_owned(),
+        notifications_enabled: ui.get_notifications_enabled(),
+        sound_enabled: ui.get_sound_enabled(),
+        placement: u8::try_from(ui.get_placement_index().clamp(0, 8)).unwrap_or(2),
+        auto_connect: ui.get_auto_connect(),
+    }
+}
+
+fn apply_event(
+    ui_weak: &slint::Weak<AppWindow>,
+    tray_weak: Option<&slint::Weak<AppTray>>,
+    presenter: &Presenter,
+    event: Event,
 ) {
-    let weak = ui.as_weak();
-    ui.on_publish_requested(move |title, body| {
-        if publishing.swap(true, Ordering::AcqRel) {
-            if let Some(ui) = weak.upgrade() {
-                ui.set_status("A publish request is already running".into());
-            }
-            return;
-        }
-        let connection = active.lock().ok().and_then(|value| value.clone());
-        let Some(connection) = connection else {
-            if let Some(ui) = weak.upgrade() {
-                ui.set_status("Connect to a topic before publishing".into());
-            }
-            publishing.store(false, Ordering::Release);
-            return;
-        };
-        if body.trim().is_empty() {
-            if let Some(ui) = weak.upgrade() {
-                ui.set_status("Message cannot be empty".into());
-            }
-            publishing.store(false, Ordering::Release);
-            return;
-        }
-
-        if let Some(ui) = weak.upgrade() {
-            ui.set_status("Publishing…".into());
-        }
-        let weak_for_thread = weak.clone();
-        let publishing_for_thread = Arc::clone(&publishing);
-        std::thread::Builder::new()
-            .name("ntfy-publish".to_owned())
-            .spawn(move || {
-                let result = ntfy::publish(&connection, &title, &body);
-                publishing_for_thread.store(false, Ordering::Release);
-                let _ = weak_for_thread.upgrade_in_event_loop(move |ui| match result {
-                    Ok(()) => ui.set_status("Published".into()),
-                    Err(error) => ui.set_status(format!("Publish failed: {error}").into()),
-                });
-            })
-            .expect("failed to start publish thread");
-    });
-}
-
-fn configure_clear_callback(ui: &MainWindow) {
-    let weak = ui.as_weak();
-    ui.on_clear_requested(move || {
-        if let Some(ui) = weak.upgrade() {
-            clear_model(&ui);
-        }
-    });
-}
-
-fn configure_event_pump(
-    ui: &MainWindow,
-    receiver: mpsc::Receiver<Event>,
-    generation: Arc<AtomicU64>,
-) {
-    let weak = ui.as_weak();
-    std::thread::Builder::new()
-        .name("ntfy-ui-events".to_owned())
-        .spawn(move || {
-            for event in receiver {
-                if event.generation() != generation.load(Ordering::Acquire) {
-                    continue;
-                }
-                let weak_for_event = weak.clone();
-                if weak_for_event
-                    .upgrade_in_event_loop(move |ui| handle_event(&ui, event))
-                    .is_err()
-                {
-                    break;
-                }
-            }
-        })
-        .expect("failed to start UI event thread");
-}
-
-fn handle_event(ui: &MainWindow, event: Event) {
+    let Some(ui) = ui_weak.upgrade() else {
+        return;
+    };
     match event {
-        Event::Connected { .. } => {
-            ui.set_connected(true);
-            ui.set_status("Connected".into());
+        Event::Status(status) => ui.set_status_text(status.into()),
+        Event::Connected(connected) => {
+            ui.set_connected(connected);
+            if let Some(tray) = tray_weak.and_then(slint::Weak::upgrade) {
+                tray.set_connected(connected);
+            }
+            if connected {
+                ui.set_status_text("Connected".into());
+            }
         }
-        Event::Status {
-            message: status, ..
-        } => {
-            ui.set_connected(false);
-            ui.set_status(status.into());
-        }
-        Event::Message { message, .. } => {
-            let title = if message.title.is_empty() {
+        Event::Message(message) => {
+            let title = if message.title.trim().is_empty() {
                 format!("ntfy · {}", message.topic)
             } else {
                 message.title.clone()
             };
-            let meta = format!(
-                "{} · priority {}{}",
-                timefmt::format_unix_utc(message.timestamp),
-                message.priority,
-                if message.tags.is_empty() {
-                    String::new()
-                } else {
-                    format!(" · {}", message.tags.join(", "))
-                }
-            );
-            let item = NotificationItem {
-                title: title.clone().into(),
-                message: message.body.clone().into(),
-                meta: meta.into(),
-                priority: message.priority,
+            let time = timefmt::format_unix_utc(message.time);
+            let tags = if message.tags.is_empty() {
+                String::new()
+            } else {
+                format!(" · {}", message.tags.join(", "))
             };
-            let model = ui.get_messages();
+            let meta = format!("{time} · priority {}{tags}", message.priority);
+            let model = ui.get_notifications();
             if let Some(model) = model.as_any().downcast_ref::<VecModel<NotificationItem>>() {
-                model.insert(0, item);
-                if model.row_count() > MAX_MESSAGES {
-                    model.remove(MAX_MESSAGES);
+                model.insert(
+                    0,
+                    NotificationItem {
+                        topic: message.topic.into(),
+                        title: title.clone().into(),
+                        message: message.body.clone().into(),
+                        meta: meta.clone().into(),
+                        priority: i32::from(message.priority),
+                    },
+                );
+                if model.row_count() > HISTORY_LIMIT {
+                    model.remove(HISTORY_LIMIT);
                 }
             }
+
             if ui.get_notifications_enabled() {
-                toast::show(&title, &message.body);
+                presenter.show(
+                    &title,
+                    &truncate(&message.body, 500),
+                    &meta,
+                    ui.get_placement_index(),
+                    ui.get_sound_enabled(),
+                );
+            } else if ui.get_sound_enabled() {
+                presenter.play_sound();
             }
+            ui.set_status_text("Message received".into());
         }
+        Event::Published => ui.set_status_text("Published".into()),
+        Event::Error(error) => ui.set_status_text(error.into()),
     }
 }
 
-fn clear_model(ui: &MainWindow) {
-    let model = ui.get_messages();
-    if let Some(model) = model.as_any().downcast_ref::<VecModel<NotificationItem>>() {
-        model.clear();
+#[cfg(test)]
+mod tests {
+    use super::HISTORY_LIMIT;
+
+    #[test]
+    fn history_is_bounded() {
+        assert!(HISTORY_LIMIT <= 200);
     }
 }

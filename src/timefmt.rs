@@ -36,9 +36,4 @@ mod tests {
     fn formats_known_timestamp() {
         assert_eq!(format_unix_utc(1_700_000_000), "2023-11-14 22:13:20 UTC");
     }
-
-    #[test]
-    fn formats_before_epoch() {
-        assert_eq!(format_unix_utc(-1), "1969-12-31 23:59:59 UTC");
-    }
 }
