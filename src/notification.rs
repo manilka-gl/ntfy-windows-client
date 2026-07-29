@@ -3,10 +3,13 @@ use slint::{ComponentHandle, PhysicalPosition, Timer, TimerMode};
 use std::time::Duration;
 use windows_sys::Win32::{
     Foundation::RECT,
-    UI::WindowsAndMessaging::{
-        MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW,
-    },
+    UI::WindowsAndMessaging::{MB_ICONASTERISK, SPI_GETWORKAREA, SystemParametersInfoW},
 };
+
+#[link(name = "user32")]
+unsafe extern "system" {
+    fn MessageBeep(u_type: u32) -> i32;
+}
 
 const MARGIN: i32 = 14;
 const DISPLAY_TIME: Duration = Duration::from_millis(6500);
