@@ -26,6 +26,12 @@ A native ntfy desktop client focused on low idle CPU, low RAM use, and a small r
 - Persistent tray icon with explicit Show and Quit actions.
 - x64 and ARM64 executable artifacts from GitHub Actions.
 
+## Background behavior
+
+The window close button hides the main window instead of terminating the process. Active subscriptions remain connected, the tray icon remains visible in the Windows taskbar notification area, and incoming messages can still display the configured popup and sound. Use **Show** from the tray menu to restore the window or **Quit** to stop the subscription and exit completely.
+
+Notification placement can be set to top-left, top-center, top-right, middle-left, center, middle-right, bottom-left, bottom-center, or bottom-right. The popup uses the work area of the monitor containing the mouse cursor, so it avoids the taskbar.
+
 ## Build and validation
 
 All official checks and builds run on GitHub-hosted Windows runners:
@@ -41,7 +47,7 @@ The CI workflow uploads executables as workflow artifacts. Pushing a `v*` tag cr
 
 ## Security notes
 
-The optional access token is stored in `%APPDATA%\\NtfyWindowsClient\\settings.json` as plain text. A future version can add Windows Credential Manager storage without increasing idle resource use.
+The optional access token is stored in `%APPDATA%\NtfyWindowsClient\settings.json` as plain text. A future version can add Windows Credential Manager storage without increasing idle resource use.
 
 ## Supported topics
 
