@@ -3,37 +3,48 @@ name = "ntfy-windows-client"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
-description = "A lightweight native Windows client for ntfy"
+description = "A resource-efficient native ntfy client for Windows"
 license = "MIT"
 repository = "https://github.com/manilka-gl/ntfy-windows-client"
-publish = false
+build = "build.rs"
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+serde = { version = "1.0", default-features = false, features = ["derive", "std"] }
+serde_json = { version = "1.0", default-features = false, features = ["std"] }
 slint = { version = "=1.17.1", default-features = false, features = [
     "std",
     "backend-winit",
     "renderer-software",
     "compat-1-2",
+    "system-tray",
 ] }
-ureq = { version = "2.12.1", default-features = false, features = ["tls"] }
-
-[target.'cfg(windows)'.dependencies]
-windows = { version = "0.61.3", features = [
-    "Data_Xml_Dom",
-    "UI_Notifications",
+windows-sys = { version = "=0.61.2", default-features = false, features = [
+    "errhandlingapi",
+    "ro",
+    "winhttp",
+    "winuser",
 ] }
 
 [build-dependencies]
-slint-build = "=1.17.1"
+slint-build = { version = "=1.17.1", default-features = false }
 
 [profile.release]
-codegen-units = 1
-lto = "fat"
 opt-level = "z"
+lto = "fat"
+codegen-units = 1
 panic = "abort"
 strip = "symbols"
+debug = false
+incremental = false
+
+[profile.dev]
+debug = 1
+
+[lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
 
 [lints.clippy]
 all = "warn"
+module_name_repetitions = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"

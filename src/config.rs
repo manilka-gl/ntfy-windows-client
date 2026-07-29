@@ -1,113 +1,154 @@
 use serde::{Deserialize, Serialize};
 use std::{
-    env, fs,
-    io::{self, ErrorKind},
-    path::PathBuf,
+    env, fs, io,
+    path::{Path, PathBuf},
 };
 
-const CONFIG_FILE_LIMIT: u64 = 64 * 1024;
+const SETTINGS_LIMIT: u64 = 64 * 1024;
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum NotificationPosition {
+    TopLeft,
+    TopCenter,
+    TopRight,
+    MiddleLeft,
+    Center,
+    MiddleRight,
+    BottomLeft,
+    BottomCenter,
+    #[default]
+    BottomRight,
+}
+
+impl NotificationPosition {
+    pub const fn index(self) -> i32 {
+        match self {
+            Self::TopLeft => 0,
+            Self::TopCenter => 1,
+            Self::TopRight => 2,
+            Self::MiddleLeft => 3,
+            Self::Center => 4,
+            Self::MiddleRight => 5,
+            Self::BottomLeft => 6,
+            Self::BottomCenter => 7,
+            Self::BottomRight => 8,
+        }
+    }
+
+    pub const fn from_index(index: i32) -> Self {
+        match index {
+            0 => Self::TopLeft,
+            1 => Self::TopCenter,
+            2 => Self::TopRight,
+            3 => Self::MiddleLeft,
+            4 => Self::Center,
+            5 => Self::MiddleRight,
+            6 => Self::BottomLeft,
+            7 => Self::BottomCenter,
+            _ => Self::BottomRight,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
 pub struct Settings {
-    pub server: String,
+    pub server_url: String,
     pub topic: String,
-    pub notifications_enabled: bool,
+    pub token: String,
+    pub notify: bool,
+    pub sound: bool,
+    pub notification_position: NotificationPosition,
 }
 
 impl Default for Settings {
     fn default() -> Self {
         Self {
-            server: "https://ntfy.sh".to_owned(),
+            server_url: "https://ntfy.sh".to_owned(),
             topic: String::new(),
-            notifications_enabled: true,
+            token: String::new(),
+            notify: true,
+            sound: true,
+            notification_position: NotificationPosition::BottomRight,
         }
     }
 }
 
 impl Settings {
-    pub fn load() -> io::Result<Self> {
-        let path = config_path()?;
-        let metadata = match fs::metadata(&path) {
-            Ok(metadata) => metadata,
-            Err(error) if error.kind() == ErrorKind::NotFound => return Ok(Self::default()),
-            Err(error) => return Err(error),
-        };
-        if metadata.len() > CONFIG_FILE_LIMIT {
-            return Err(io::Error::new(
-                ErrorKind::InvalidData,
-                "settings file is unexpectedly large",
-            ));
-        }
-        let bytes = fs::read(path)?;
-        serde_json::from_slice(&bytes)
-            .map_err(|error| io::Error::new(ErrorKind::InvalidData, error))
+    pub fn load() -> Self {
+        Self::load_from(&settings_path()).unwrap_or_default()
     }
 
     pub fn save(&self) -> io::Result<()> {
-        let path = config_path()?;
+        self.save_to(&settings_path())
+    }
+
+    fn load_from(path: &Path) -> io::Result<Self> {
+        let metadata = fs::metadata(path)?;
+        if metadata.len() > SETTINGS_LIMIT {
+            return Err(io::Error::new(io::ErrorKind::InvalidData, "settings file is too large"));
+        }
+        let bytes = fs::read(path)?;
+        serde_json::from_slice(&bytes).map_err(io::Error::other)
+    }
+
+    fn save_to(&self, path: &Path) -> io::Result<()> {
         if let Some(parent) = path.parent() {
             fs::create_dir_all(parent)?;
         }
-        let bytes = serde_json::to_vec_pretty(self)
-            .map_err(|error| io::Error::new(ErrorKind::InvalidData, error))?;
-        fs::write(path, bytes)
+        let bytes = serde_json::to_vec(self).map_err(io::Error::other)?;
+        let temp = path.with_extension("json.tmp");
+        fs::write(&temp, bytes)?;
+        if path.exists() {
+            fs::remove_file(path)?;
+        }
+        fs::rename(temp, path)
     }
 }
 
-pub fn validate(server: &str, topic: &str) -> Result<(String, String), String> {
-    let server = server.trim().trim_end_matches('/').to_owned();
-    let topic = topic.trim().to_owned();
-
-    if !(server.starts_with("https://") || server.starts_with("http://")) {
-        return Err("Server must start with https:// or http://".to_owned());
-    }
-    if server.len() > 2048 {
-        return Err("Server address is too long".to_owned());
-    }
-    if topic.is_empty() || topic.len() > 64 {
-        return Err("Topic must contain 1 to 64 characters".to_owned());
-    }
-    if !topic
-        .bytes()
-        .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'))
-    {
-        return Err("Topic may only contain letters, numbers, '-' and '_'".to_owned());
-    }
-
-    Ok((server, topic))
-}
-
-fn config_path() -> io::Result<PathBuf> {
-    let base = env::var_os("APPDATA")
-        .map(PathBuf::from)
-        .or_else(|| env::var_os("HOME").map(PathBuf::from))
-        .ok_or_else(|| {
-            io::Error::new(ErrorKind::NotFound, "configuration directory unavailable")
-        })?;
-    Ok(base.join("ntfy-windows-client").join("settings.json"))
+fn settings_path() -> PathBuf {
+    let root = env::var_os("APPDATA").map(PathBuf::from).unwrap_or_else(env::temp_dir);
+    root.join("NtfyWindowsClient").join("settings.json")
 }
 
 #[cfg(test)]
 mod tests {
-    use super::validate;
+    use super::{NotificationPosition, Settings};
 
     #[test]
-    fn accepts_valid_connection() {
-        let value = validate(" https://ntfy.sh/ ", "disk_alerts-1").unwrap();
-        assert_eq!(
-            value,
-            ("https://ntfy.sh".to_owned(), "disk_alerts-1".to_owned())
-        );
+    fn settings_json_round_trip() {
+        let value = Settings {
+            server_url: "https://example.test".into(),
+            topic: "alerts".into(),
+            token: "secret".into(),
+            notify: false,
+            sound: false,
+            notification_position: NotificationPosition::TopCenter,
+        };
+        let encoded = serde_json::to_vec(&value).unwrap();
+        let decoded: Settings = serde_json::from_slice(&encoded).unwrap();
+        assert_eq!(decoded.server_url, value.server_url);
+        assert_eq!(decoded.topic, value.topic);
+        assert_eq!(decoded.token, value.token);
+        assert_eq!(decoded.notify, value.notify);
+        assert_eq!(decoded.sound, value.sound);
+        assert_eq!(decoded.notification_position, value.notification_position);
     }
 
     #[test]
-    fn rejects_unsafe_topic_characters() {
-        assert!(validate("https://ntfy.sh", "not/a/topic").is_err());
-        assert!(validate("https://ntfy.sh", "topic name").is_err());
+    fn old_settings_receive_new_defaults() {
+        let decoded: Settings = serde_json::from_str(
+            r#"{"server_url":"https://ntfy.sh","topic":"a","token":"","notify":true}"#,
+        )
+        .unwrap();
+        assert!(decoded.sound);
+        assert_eq!(decoded.notification_position, NotificationPosition::BottomRight);
     }
 
     #[test]
-    fn rejects_missing_scheme() {
-        assert!(validate("ntfy.sh", "topic").is_err());
+    fn position_index_is_bounded() {
+        assert_eq!(NotificationPosition::from_index(0), NotificationPosition::TopLeft);
+        assert_eq!(NotificationPosition::from_index(99), NotificationPosition::BottomRight);
     }
 }

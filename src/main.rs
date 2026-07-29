@@ -1,248 +1,310 @@
-#![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use ntfy_windows_client::{
-    config::{self, Settings},
-    ntfy::{self, Connection, Event},
-    timefmt, toast,
+mod config;
+mod desktop;
+mod protocol;
+mod winhttp;
+
+use config::{NotificationPosition, Settings};
+use slint::{
+    CloseRequestResponse, ComponentHandle, Model, ModelRc, PhysicalPosition, PhysicalSize,
+    SharedString, Timer, TimerMode, VecModel,
 };
-use slint::{ComponentHandle, Model, VecModel};
-use std::sync::{
-    Arc, Mutex,
-    atomic::{AtomicBool, AtomicU64, Ordering},
-    mpsc,
-};
+use std::{cell::RefCell, rc::Rc, time::Duration};
+use winhttp::{ClientConfig, Controller, Event};
 
 slint::include_modules!();
 
-const MAX_MESSAGES: usize = 200;
+const HISTORY_LIMIT: usize = 64;
+const POPUP_WIDTH: f32 = 380.0;
+const POPUP_HEIGHT: f32 = 132.0;
+const POPUP_DURATION: Duration = Duration::from_secs(6);
 
 fn main() -> Result<(), slint::PlatformError> {
-    let ui = MainWindow::new()?;
-    let settings = Settings::load().unwrap_or_default();
-    ui.set_server(settings.server.clone().into());
+    let ui = AppWindow::new()?;
+    let tray = AppTray::new()?;
+    let popup = NotificationPopup::new()?;
+    let popup_timer = Rc::new(Timer::default());
+    let settings = Settings::load();
+
+    ui.set_server_url(settings.server_url.clone().into());
     ui.set_topic(settings.topic.clone().into());
-    ui.set_notifications_enabled(settings.notifications_enabled);
-    ui.set_messages(slint::ModelRc::new(VecModel::default()));
+    ui.set_token(settings.token.clone().into());
+    ui.set_notifications_enabled(settings.notify);
+    ui.set_sound_enabled(settings.sound);
+    ui.set_notification_position_index(settings.notification_position.index());
+    ui.set_notifications(ModelRc::from(Rc::new(VecModel::<NotificationItem>::default())));
 
-    let generation = Arc::new(AtomicU64::new(0));
-    let active_connection = Arc::new(Mutex::new(None::<Connection>));
-    let (event_sender, event_receiver) = mpsc::sync_channel::<Event>(256);
-    ntfy::spawn_subscription_worker(
-        Arc::clone(&active_connection),
-        Arc::clone(&generation),
-        event_sender.clone(),
-    );
+    let controller = Rc::new(RefCell::new(Controller::default()));
 
-    configure_connect_callback(&ui, Arc::clone(&generation), Arc::clone(&active_connection));
-    configure_publish_callback(
-        &ui,
-        Arc::clone(&active_connection),
-        Arc::new(AtomicBool::new(false)),
-    );
-    configure_clear_callback(&ui);
-    configure_event_pump(&ui, event_receiver, Arc::clone(&generation));
-
-    if !settings.topic.is_empty() {
-        ui.invoke_connect_requested(
-            settings.server.into(),
-            settings.topic.into(),
-            "".into(),
-            settings.notifications_enabled,
-        );
+    {
+        let popup_weak = popup.as_weak();
+        popup.on_dismiss(move || {
+            if let Some(popup) = popup_weak.upgrade() {
+                let _ = popup.hide();
+            }
+        });
     }
 
-    ui.run()
-}
-
-fn configure_connect_callback(
-    ui: &MainWindow,
-    generation: Arc<AtomicU64>,
-    active_connection: Arc<Mutex<Option<Connection>>>,
-) {
-    let weak = ui.as_weak();
-    ui.on_connect_requested(move |server, topic, token, notifications_enabled| {
-        let (server, topic) = match config::validate(&server, &topic) {
-            Ok(value) => value,
-            Err(error) => {
-                if let Some(ui) = weak.upgrade() {
-                    ui.set_status(error.into());
+    {
+        let ui_weak = ui.as_weak();
+        let popup_weak = popup.as_weak();
+        let popup_timer = Rc::clone(&popup_timer);
+        let controller = Rc::clone(&controller);
+        ui.on_toggle_subscription(move || {
+            if controller.borrow().is_running() {
+                controller.borrow_mut().stop();
+                if let Some(ui) = ui_weak.upgrade() {
                     ui.set_connected(false);
+                    ui.set_status_text("Disconnected".into());
                 }
                 return;
             }
-        };
-
-        let connection = Connection {
-            server: server.clone(),
-            topic: topic.clone(),
-            token: token.trim().to_owned(),
-        };
-        let Ok(mut current) = active_connection.lock() else {
-            if let Some(ui) = weak.upgrade() {
-                ui.set_status("Internal connection state error".into());
-                ui.set_connected(false);
-            }
-            return;
-        };
-        *current = Some(connection);
-        drop(current);
-        generation.fetch_add(1, Ordering::AcqRel);
-
-        let settings = Settings {
-            server,
-            topic,
-            notifications_enabled,
-        };
-        let save_result = settings.save();
-
-        if let Some(ui) = weak.upgrade() {
-            clear_model(&ui);
-            ui.set_connected(false);
-            ui.set_status(
-                save_result
-                    .map_or_else(
-                        |error| format!("Connecting (settings not saved: {error})"),
-                        |()| "Connecting…".to_owned(),
-                    )
-                    .into(),
-            );
-        }
-    });
-}
-
-fn configure_publish_callback(
-    ui: &MainWindow,
-    active: Arc<Mutex<Option<Connection>>>,
-    publishing: Arc<AtomicBool>,
-) {
-    let weak = ui.as_weak();
-    ui.on_publish_requested(move |title, body| {
-        if publishing.swap(true, Ordering::AcqRel) {
-            if let Some(ui) = weak.upgrade() {
-                ui.set_status("A publish request is already running".into());
-            }
-            return;
-        }
-        let connection = active.lock().ok().and_then(|value| value.clone());
-        let Some(connection) = connection else {
-            if let Some(ui) = weak.upgrade() {
-                ui.set_status("Connect to a topic before publishing".into());
-            }
-            publishing.store(false, Ordering::Release);
-            return;
-        };
-        if body.trim().is_empty() {
-            if let Some(ui) = weak.upgrade() {
-                ui.set_status("Message cannot be empty".into());
-            }
-            publishing.store(false, Ordering::Release);
-            return;
-        }
-
-        if let Some(ui) = weak.upgrade() {
-            ui.set_status("Publishing…".into());
-        }
-        let weak_for_thread = weak.clone();
-        let publishing_for_thread = Arc::clone(&publishing);
-        std::thread::Builder::new()
-            .name("ntfy-publish".to_owned())
-            .spawn(move || {
-                let result = ntfy::publish(&connection, &title, &body);
-                publishing_for_thread.store(false, Ordering::Release);
-                let _ = weak_for_thread.upgrade_in_event_loop(move |ui| match result {
-                    Ok(()) => ui.set_status("Published".into()),
-                    Err(error) => ui.set_status(format!("Publish failed: {error}").into()),
+            let Some(ui) = ui_weak.upgrade() else { return };
+            let config = client_config(&ui);
+            let ui_weak_events = ui.as_weak();
+            let popup_weak_events = popup_weak.clone();
+            let popup_timer_events = Rc::clone(&popup_timer);
+            let result = controller.borrow_mut().start(config, move |event| {
+                let ui_weak = ui_weak_events.clone();
+                let popup_weak = popup_weak_events.clone();
+                let popup_timer = Rc::clone(&popup_timer_events);
+                let _ = slint::invoke_from_event_loop(move || {
+                    apply_event(&ui_weak, &popup_weak, &popup_timer, event);
                 });
-            })
-            .expect("failed to start publish thread");
-    });
+            });
+            match result {
+                Ok(()) => ui.set_status_text("Starting".into()),
+                Err(error) => ui.set_status_text(error.to_string().into()),
+            }
+        });
+    }
+
+    {
+        let ui_weak = ui.as_weak();
+        let popup_weak = popup.as_weak();
+        let popup_timer = Rc::clone(&popup_timer);
+        ui.on_publish(move |title, body| {
+            let Some(ui) = ui_weak.upgrade() else { return };
+            let config = client_config(&ui);
+            ui.set_status_text("Publishing".into());
+            let ui_weak_events = ui.as_weak();
+            let popup_weak_events = popup_weak.clone();
+            let popup_timer_events = Rc::clone(&popup_timer);
+            if let Err(error) = winhttp::publish(
+                config,
+                title.to_string(),
+                body.to_string(),
+                move |event| {
+                    let ui_weak = ui_weak_events.clone();
+                    let popup_weak = popup_weak_events.clone();
+                    let popup_timer = Rc::clone(&popup_timer_events);
+                    let _ = slint::invoke_from_event_loop(move || {
+                        apply_event(&ui_weak, &popup_weak, &popup_timer, event);
+                    });
+                },
+            ) {
+                ui.set_status_text(error.to_string().into());
+            }
+        });
+    }
+
+    {
+        let ui_weak = ui.as_weak();
+        ui.on_save_settings(move || {
+            if let Some(ui) = ui_weak.upgrade() {
+                let settings = settings_from_ui(&ui);
+                let status = match settings.save() {
+                    Ok(()) => "Settings saved".to_owned(),
+                    Err(error) => format!("Could not save settings: {error}"),
+                };
+                ui.set_status_text(status.into());
+            }
+        });
+    }
+
+    {
+        let ui_weak = ui.as_weak();
+        ui.window().on_close_requested(move || {
+            if let Some(ui) = ui_weak.upgrade() {
+                let _ = settings_from_ui(&ui).save();
+                ui.set_status_text("Running in the notification area".into());
+            }
+            CloseRequestResponse::HideWindow
+        });
+    }
+
+    {
+        let ui_weak = ui.as_weak();
+        tray.on_show_window(move || {
+            if let Some(ui) = ui_weak.upgrade() {
+                let _ = ui.show();
+                ui.window().request_redraw();
+            }
+        });
+    }
+
+    {
+        let controller = Rc::clone(&controller);
+        let popup_timer = Rc::clone(&popup_timer);
+        tray.on_quit(move || {
+            popup_timer.stop();
+            controller.borrow_mut().stop();
+            let _ = slint::quit_event_loop();
+        });
+    }
+
+    {
+        let controller = Rc::clone(&controller);
+        let popup_timer = Rc::clone(&popup_timer);
+        ui.on_quit(move || {
+            popup_timer.stop();
+            controller.borrow_mut().stop();
+            let _ = slint::quit_event_loop();
+        });
+    }
+
+    tray.set_tray_visible(true);
+    ui.run()
 }
 
-fn configure_clear_callback(ui: &MainWindow) {
-    let weak = ui.as_weak();
-    ui.on_clear_requested(move || {
-        if let Some(ui) = weak.upgrade() {
-            clear_model(&ui);
-        }
-    });
-}
-
-fn configure_event_pump(
-    ui: &MainWindow,
-    receiver: mpsc::Receiver<Event>,
-    generation: Arc<AtomicU64>,
-) {
-    let weak = ui.as_weak();
-    std::thread::Builder::new()
-        .name("ntfy-ui-events".to_owned())
-        .spawn(move || {
-            for event in receiver {
-                if event.generation() != generation.load(Ordering::Acquire) {
-                    continue;
-                }
-                let weak_for_event = weak.clone();
-                if weak_for_event
-                    .upgrade_in_event_loop(move |ui| handle_event(&ui, event))
-                    .is_err()
-                {
-                    break;
-                }
-            }
-        })
-        .expect("failed to start UI event thread");
-}
-
-fn handle_event(ui: &MainWindow, event: Event) {
-    match event {
-        Event::Connected { .. } => {
-            ui.set_connected(true);
-            ui.set_status("Connected".into());
-        }
-        Event::Status {
-            message: status, ..
-        } => {
-            ui.set_connected(false);
-            ui.set_status(status.into());
-        }
-        Event::Message { message, .. } => {
-            let title = if message.title.is_empty() {
-                format!("ntfy · {}", message.topic)
-            } else {
-                message.title.clone()
-            };
-            let meta = format!(
-                "{} · priority {}{}",
-                timefmt::format_unix_utc(message.timestamp),
-                message.priority,
-                if message.tags.is_empty() {
-                    String::new()
-                } else {
-                    format!(" · {}", message.tags.join(", "))
-                }
-            );
-            let item = NotificationItem {
-                title: title.clone().into(),
-                message: message.body.clone().into(),
-                meta: meta.into(),
-                priority: message.priority,
-            };
-            let model = ui.get_messages();
-            if let Some(model) = model.as_any().downcast_ref::<VecModel<NotificationItem>>() {
-                model.insert(0, item);
-                if model.row_count() > MAX_MESSAGES {
-                    model.remove(MAX_MESSAGES);
-                }
-            }
-            if ui.get_notifications_enabled() {
-                toast::show(&title, &message.body);
-            }
-        }
+fn client_config(ui: &AppWindow) -> ClientConfig {
+    ClientConfig {
+        server_url: ui.get_server_url().to_string(),
+        topic: ui.get_topic().to_string(),
+        token: ui.get_token().to_string(),
     }
 }
 
-fn clear_model(ui: &MainWindow) {
-    let model = ui.get_messages();
-    if let Some(model) = model.as_any().downcast_ref::<VecModel<NotificationItem>>() {
-        model.clear();
+fn settings_from_ui(ui: &AppWindow) -> Settings {
+    Settings {
+        server_url: ui.get_server_url().to_string(),
+        topic: ui.get_topic().to_string(),
+        token: ui.get_token().to_string(),
+        notify: ui.get_notifications_enabled(),
+        sound: ui.get_sound_enabled(),
+        notification_position: NotificationPosition::from_index(
+            ui.get_notification_position_index(),
+        ),
+    }
+}
+
+fn apply_event(
+    ui_weak: &slint::Weak<AppWindow>,
+    popup_weak: &slint::Weak<NotificationPopup>,
+    popup_timer: &Timer,
+    event: Event,
+) {
+    let Some(ui) = ui_weak.upgrade() else { return };
+    match event {
+        Event::Status(status) => ui.set_status_text(status.into()),
+        Event::Connected(connected) => {
+            ui.set_connected(connected);
+            if connected {
+                ui.set_status_text("Connected".into());
+            }
+        }
+        Event::Message(message) => {
+            let title = display_title(&message.title);
+            let popup_body = truncate(&message.body, 512);
+            let topic = truncate(&message.topic, 64);
+            let mut rows: Vec<NotificationItem> = ui.get_notifications().iter().collect();
+            if rows.len() >= HISTORY_LIMIT {
+                rows.remove(0);
+            }
+            rows.push(NotificationItem {
+                topic: topic.clone().into(),
+                title: title.clone().into(),
+                message: truncate(&message.body, 4096).into(),
+                time: format_time(message.time),
+                priority: i32::from(message.priority),
+            });
+            ui.set_notifications(ModelRc::from(Rc::new(VecModel::from(rows))));
+            ui.set_status_text("Message received".into());
+
+            if ui.get_notifications_enabled() {
+                show_popup(
+                    popup_weak,
+                    popup_timer,
+                    &title,
+                    &popup_body,
+                    &topic,
+                    NotificationPosition::from_index(ui.get_notification_position_index()),
+                    ui.get_sound_enabled(),
+                );
+            }
+        }
+        Event::Published => ui.set_status_text("Published".into()),
+        Event::Error(error) => ui.set_status_text(error.into()),
+    }
+}
+
+fn show_popup(
+    popup_weak: &slint::Weak<NotificationPopup>,
+    popup_timer: &Timer,
+    title: &str,
+    body: &str,
+    topic: &str,
+    position: NotificationPosition,
+    play_sound: bool,
+) {
+    let Some(popup) = popup_weak.upgrade() else { return };
+    popup.set_notification_title(title.into());
+    popup.set_notification_message(body.into());
+    popup.set_notification_topic(topic.into());
+
+    let scale = popup.window().scale_factor().max(1.0);
+    let width = (POPUP_WIDTH * scale).round() as u32;
+    let height = (POPUP_HEIGHT * scale).round() as u32;
+    popup.window().set_size(PhysicalSize::new(width, height));
+    let (x, y) = desktop::popup_origin(width as i32, height as i32, position);
+    popup.window().set_position(PhysicalPosition::new(x, y));
+    let _ = popup.show();
+    popup.window().request_redraw();
+
+    if play_sound {
+        desktop::play_notification_sound();
+    }
+
+    let popup_weak = popup.as_weak();
+    popup_timer.start(TimerMode::SingleShot, POPUP_DURATION, move || {
+        if let Some(popup) = popup_weak.upgrade() {
+            let _ = popup.hide();
+        }
+    });
+}
+
+fn display_title(title: &str) -> String {
+    if title.trim().is_empty() {
+        "Notification".to_owned()
+    } else {
+        truncate(title, 256)
+    }
+}
+
+fn truncate(value: &str, max_chars: usize) -> String {
+    let mut chars = value.chars();
+    let mut output: String = chars.by_ref().take(max_chars).collect();
+    if chars.next().is_some() {
+        output.push('…');
+    }
+    output
+}
+
+fn format_time(unix_seconds: i64) -> SharedString {
+    if unix_seconds <= 0 {
+        return "now".into();
+    }
+    format!("Unix {unix_seconds}").into()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::truncate;
+
+    #[test]
+    fn truncates_on_character_boundary() {
+        assert_eq!(truncate("abcdef", 3), "abc…");
+        assert_eq!(truncate("åäö", 3), "åäö");
     }
 }

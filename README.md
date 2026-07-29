@@ -1,42 +1,48 @@
-# ntfy Windows Client
+# ntfy Windows client
 
-A small native Windows desktop client for [ntfy](https://ntfy.sh), written in Rust with Slint.
+A native ntfy desktop client focused on low idle CPU, low RAM use, and a small release executable.
 
-## Current features
+## Efficiency design
 
-- Subscribe to an ntfy JSON stream with automatic reconnect and incremental backoff.
-- Recover recent cached messages and resume from the last message ID after reconnects.
-- Publish messages with an optional title.
-- Optional bearer-token authentication. Tokens are kept in memory and are not written to disk.
-- Native Windows toast notifications through `windows-rs`.
-- Bounded in-memory history of 200 messages and a 1 MiB per-message stream safety limit.
-- Persistent server, topic, and notification preference under `%APPDATA%\ntfy-windows-client\settings.json`.
+- Rust and Slint with the software renderer.
+- Native Windows WinHTTP; no Tokio, Reqwest, OpenSSL, or bundled browser engine.
+- One cancellable blocking subscription thread while connected.
+- No timer-based network polling while a subscription is active.
+- Notification history is bounded to 64 entries.
+- One reusable notification window prevents popup stacking and repeated allocations.
+- Incoming event lines are capped at 1 MiB.
+- Release builds use size optimization, fat LTO, one codegen unit, symbol stripping, and abort-on-panic.
+- Only required Windows API and Slint features are enabled.
 
-## Efficiency choices
+## Features
 
-- Slint software renderer; no browser engine, Electron, WebView, GPU renderer, or async runtime.
-- One blocking subscription worker and short-lived publish workers.
-- Bounded models and input sizes.
-- Release builds use size optimization, full LTO, one codegen unit, stripped symbols, and abort-on-panic.
+- Subscribe to ntfy topics over HTTP or HTTPS.
+- Bearer-token authentication.
+- Custom always-on-top Slint notifications with nine selectable screen positions.
+- Optional Windows system notification sound with no audio library or bundled sound file.
+- Publish text messages.
+- Self-hosted server paths and custom ports.
+- Closing the main window keeps subscriptions running in the taskbar notification area.
+- Persistent tray icon with explicit Show and Quit actions.
+- x64 and ARM64 executable artifacts from GitHub Actions.
 
-The supplied ntfy server executable is not embedded. The client talks directly to ntfy's HTTP JSON stream, avoiding the roughly 74 MB server/CLI binary.
+## Build and validation
 
-## Build
+All official checks and builds run on GitHub-hosted Windows runners:
 
-Requires Rust 1.85 or newer.
-
-```powershell
-cargo build --release
+```text
+cargo fmt --all -- --check
+cargo test --all-targets --locked
+cargo clippy --all-targets --locked -- -D warnings
+cargo build --release --locked --target <target>
 ```
 
-The executable is created at `target\release\ntfy-windows-client.exe`.
+The CI workflow uploads executables as workflow artifacts. Pushing a `v*` tag creates a GitHub release with x64 and ARM64 executables.
 
-## Verification and binaries
+## Security notes
 
-GitHub Actions runs formatting, Clippy with warnings denied, tests, debug builds, and optimized Windows builds. Every CI run uploads a Windows x64 ZIP artifact. Pushing a tag such as `v0.1.0` also creates a GitHub release with the ZIP attached.
+The optional access token is stored in `%APPDATA%\\NtfyWindowsClient\\settings.json` as plain text. A future version can add Windows Credential Manager storage without increasing idle resource use.
 
-## Notes
+## Supported topics
 
-- Topic names follow ntfy's `[-_A-Za-z0-9]{1,64}` rule.
-- Windows may suppress notifications through Focus Assist or notification settings.
-- Native toast delivery from an unpackaged executable is best-effort on Windows installations with stricter AppUserModelID registration policies. The in-app feed remains functional if Windows rejects a toast.
+For predictable URLs and header safety, this first version accepts topic names containing 1-64 ASCII letters, digits, hyphens, or underscores.

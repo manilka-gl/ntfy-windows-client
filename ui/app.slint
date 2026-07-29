@@ -1,208 +1,225 @@
-import {
-    Button,
-    CheckBox,
-    HorizontalBox,
-    LineEdit,
-    ListView,
-    TextEdit,
-    VerticalBox,
-} from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, TextEdit, VerticalBox, HorizontalBox, ListView } from "std-widgets.slint";
 
 export struct NotificationItem {
+    topic: string,
     title: string,
     message: string,
-    meta: string,
+    time: string,
     priority: int,
 }
 
-component MessageCard inherits Rectangle {
-    in property <NotificationItem> item;
-    height: content.preferred-height + 16px;
-    background: #f7f8fa;
-    border-color: #d9dde5;
-    border-width: 1px;
-    border-radius: 6px;
+export component AppWindow inherits Window {
+    title: "ntfy for Windows";
+    icon: @image-url("assets/icon.png");
+    preferred-width: 760px;
+    preferred-height: 660px;
+    min-width: 560px;
+    min-height: 460px;
 
-    content := VerticalBox {
-        x: 8px;
-        y: 8px;
-        width: parent.width - 16px;
-        spacing: 4px;
-
-        Text {
-            text: item.title;
-            font-size: 16px;
-            font-weight: 700;
-            wrap: word-wrap;
-            color: #1f2937;
-        }
-        Text {
-            text: item.message;
-            wrap: word-wrap;
-            color: #111827;
-        }
-        Text {
-            text: item.meta;
-            font-size: 11px;
-            color: #6b7280;
-        }
-    }
-}
-
-export component MainWindow inherits Window {
-    title: "ntfy Windows Client";
-    preferred-width: 920px;
-    preferred-height: 680px;
-    min-width: 640px;
-    min-height: 480px;
-
-    in-out property <string> server: "https://ntfy.sh";
-    in-out property <string> topic: "";
-    in-out property <string> token: "";
+    in-out property <string> server-url: "https://ntfy.sh";
+    in-out property <string> topic;
+    in-out property <string> token;
     in-out property <bool> notifications-enabled: true;
-    in-out property <string> publish-title: "";
-    in-out property <string> publish-message: "";
-    in-out property <string> status: "Enter a topic and connect";
+    in-out property <bool> sound-enabled: true;
+    in-out property <int> notification-position-index: 8;
     in-out property <bool> connected: false;
-    in-out property <[NotificationItem]> messages;
+    in-out property <string> status-text: "Disconnected";
+    in property <[NotificationItem]> notifications;
 
-    callback connect-requested(string, string, string, bool);
-    callback publish-requested(string, string);
-    callback clear-requested();
+    callback toggle-subscription;
+    callback publish(string, string);
+    callback save-settings;
+    callback quit;
 
     VerticalBox {
-        padding: 12px;
+        padding: 14px;
         spacing: 10px;
 
-        HorizontalBox {
-            vertical-stretch: 0;
-            Text {
-                text: "ntfy";
-                font-size: 26px;
-                font-weight: 700;
-                color: #15803d;
-                vertical-alignment: center;
-            }
-            Text {
-                text: "Lightweight Windows client";
-                color: #6b7280;
-                vertical-alignment: center;
-            }
+        Text { text: "ntfy Windows client"; font-size: 24px; font-weight: 700; }
+        Text {
+            text: "Native WinHTTP · bounded memory · one reusable notification popup";
+            color: #666;
         }
 
         HorizontalBox {
-            vertical-stretch: 0;
-            Text {
-                text: "Server";
-                width: 64px;
-                vertical-alignment: center;
-            }
-            LineEdit {
-                text <=> root.server;
-                placeholder-text: "https://ntfy.sh";
-            }
-            Text {
-                text: "Topic";
-                width: 48px;
-                vertical-alignment: center;
-            }
-            LineEdit {
-                text <=> root.topic;
-                placeholder-text: "my-topic";
-            }
+            spacing: 8px;
+            Text { text: "Server"; width: 72px; vertical-alignment: center; }
+            LineEdit { text <=> root.server-url; placeholder-text: "https://ntfy.sh"; }
         }
-
         HorizontalBox {
-            vertical-stretch: 0;
-            Text {
-                text: "Token";
-                width: 64px;
-                vertical-alignment: center;
-            }
-            LineEdit {
-                text <=> root.token;
-                placeholder-text: "Optional bearer token (not saved)";
-                input-type: InputType.password;
-            }
-            CheckBox {
-                text: "Windows notifications";
-                checked <=> root.notifications-enabled;
-            }
+            spacing: 8px;
+            Text { text: "Topic"; width: 72px; vertical-alignment: center; }
+            LineEdit { text <=> root.topic; placeholder-text: "alerts"; }
+        }
+        HorizontalBox {
+            spacing: 8px;
+            Text { text: "Token"; width: 72px; vertical-alignment: center; }
+            LineEdit { text <=> root.token; input-type: password; placeholder-text: "optional access token"; }
+        }
+        HorizontalBox {
+            spacing: 8px;
+            CheckBox { text: "Show custom notifications"; checked <=> root.notifications-enabled; }
+            CheckBox { text: "Play sound"; checked <=> root.sound-enabled; }
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "Save"; clicked => { root.save-settings(); } }
             Button {
-                text: root.connected ? "Reconnect" : "Connect";
+                text: root.connected ? "Disconnect" : "Subscribe";
+                clicked => { root.toggle-subscription(); }
+            }
+        }
+        HorizontalBox {
+            spacing: 8px;
+            Text { text: "Notification position"; vertical-alignment: center; }
+            ComboBox {
+                horizontal-stretch: 1;
+                model: [
+                    "Top left", "Top center", "Top right",
+                    "Middle left", "Center", "Middle right",
+                    "Bottom left", "Bottom center", "Bottom right"
+                ];
+                current-index <=> root.notification-position-index;
+            }
+        }
+
+        Rectangle { height: 1px; background: #d8d8d8; }
+
+        Text { text: "Publish"; font-size: 18px; font-weight: 600; }
+        publish-title := LineEdit { placeholder-text: "Title (optional)"; }
+        publish-body := TextEdit { height: 74px; placeholder-text: "Message"; wrap: word-wrap; }
+        HorizontalBox {
+            Rectangle { horizontal-stretch: 1; }
+            Button {
+                text: "Send";
+                enabled: publish-body.text != "";
                 clicked => {
-                    root.connect-requested(
-                        root.server,
-                        root.topic,
-                        root.token,
-                        root.notifications-enabled
-                    );
+                    root.publish(publish-title.text, publish-body.text);
+                    publish-body.text = "";
                 }
             }
         }
 
-        Rectangle {
-            vertical-stretch: 0;
-            height: 34px;
-            border-radius: 5px;
-            background: root.connected ? #e7f7ec : #fff4e5;
-            Text {
-                x: 10px;
-                width: parent.width - 20px;
-                height: parent.height;
-                text: root.status;
-                color: root.connected ? #166534 : #92400e;
-                vertical-alignment: center;
-                overflow: elide;
-            }
-        }
+        Rectangle { height: 1px; background: #d8d8d8; }
 
         HorizontalBox {
-            vertical-stretch: 0;
-            Text {
-                text: "Title";
-                width: 64px;
-                vertical-alignment: center;
-            }
-            LineEdit {
-                text <=> root.publish-title;
-                placeholder-text: "Optional message title";
-            }
-            Button {
-                text: "Clear list";
-                clicked => { root.clear-requested(); }
-            }
-        }
-
-        HorizontalBox {
-            vertical-stretch: 0;
-            Text {
-                text: "Message";
-                width: 64px;
-                vertical-alignment: top;
-            }
-            TextEdit {
-                height: 76px;
-                text <=> root.publish-message;
-                placeholder-text: "Message to publish";
-                wrap: word-wrap;
-            }
-            Button {
-                text: "Publish";
-                enabled: root.publish-message != "";
-                clicked => {
-                    root.publish-requested(root.publish-title, root.publish-message);
-                    root.publish-message = "";
-                }
-            }
+            Text { text: "Recent notifications"; font-size: 18px; font-weight: 600; }
+            Rectangle { horizontal-stretch: 1; }
+            Text { text: root.status-text; color: root.connected ? #167a36 : #666; }
         }
 
         ListView {
             vertical-stretch: 1;
-            for item in root.messages: MessageCard {
-                item: item;
-                width: root.width - 38px;
+            for item in root.notifications: Rectangle {
+                height: content.preferred-height + 18px;
+                background: #f6f6f6;
+                border-color: #dedede;
+                border-width: 1px;
+                border-radius: 5px;
+                content := VerticalBox {
+                    x: 9px;
+                    y: 7px;
+                    width: parent.width - 18px;
+                    spacing: 3px;
+                    HorizontalBox {
+                        Text { text: item.title; font-weight: 650; }
+                        Rectangle { horizontal-stretch: 1; }
+                        Text { text: item.topic + " · " + item.time; color: #777; }
+                    }
+                    Text { text: item.message; wrap: word-wrap; }
+                }
             }
         }
+
+        HorizontalBox {
+            Text { text: "Closing hides the window; the client keeps running in the taskbar notification area."; color: #777; }
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "Quit"; clicked => { root.quit(); } }
+        }
+    }
+}
+
+export component NotificationPopup inherits Window {
+    title: "ntfy notification";
+    icon: @image-url("assets/icon.png");
+    no-frame: true;
+    always-on-top: true;
+    preferred-width: 380px;
+    preferred-height: 132px;
+    min-width: 380px;
+    min-height: 132px;
+    background: #202124;
+
+    in-out property <string> notification-title;
+    in-out property <string> notification-message;
+    in-out property <string> notification-topic;
+    callback dismiss;
+
+    Rectangle {
+        background: #202124;
+        border-color: #55585c;
+        border-width: 1px;
+        border-radius: 10px;
+        clip: true;
+
+        VerticalBox {
+            padding-left: 16px;
+            padding-right: 42px;
+            padding-top: 13px;
+            padding-bottom: 12px;
+            spacing: 6px;
+            Text {
+                text: root.notification-title;
+                color: white;
+                font-size: 17px;
+                font-weight: 700;
+                overflow: elide;
+            }
+            Text {
+                text: root.notification-message;
+                color: #e5e5e5;
+                wrap: word-wrap;
+                max-height: 58px;
+                overflow: elide;
+            }
+            Text {
+                text: root.notification-topic;
+                color: #aeb4bb;
+                font-size: 11px;
+                overflow: elide;
+            }
+        }
+
+        Rectangle {
+            x: parent.width - 38px;
+            y: 7px;
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            background: close-area.has-hover ? #3c4043 : transparent;
+            Text {
+                text: "×";
+                color: #d8d8d8;
+                font-size: 22px;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+            close-area := TouchArea { clicked => { root.dismiss(); } }
+        }
+    }
+}
+
+export component AppTray inherits SystemTrayIcon {
+    icon: @image-url("assets/icon.png");
+    tooltip: "ntfy for Windows · running in background";
+    title: "ntfy";
+    in-out property <bool> tray-visible <=> root.visible;
+    callback show-window;
+    callback quit;
+
+    clicked => { root.show-window(); }
+
+    Menu {
+        MenuItem { title: "Show ntfy"; activated => { root.show-window(); } }
+        MenuSeparator {}
+        MenuItem { title: "Quit"; activated => { root.quit(); } }
     }
 }
