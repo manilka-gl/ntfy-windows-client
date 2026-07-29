@@ -9,9 +9,7 @@ mod winhttp;
 use config::Settings;
 use notification::Presenter;
 use protocol::{Message, truncate, truncate_owned};
-use slint::{
-    CloseRequestResponse, ComponentHandle, Model, ModelRc, Timer, TimerMode, VecModel,
-};
+use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, Timer, TimerMode, VecModel};
 use std::{cell::RefCell, ffi::OsStr, rc::Rc, time::Duration};
 use winhttp::{ClientConfig, Controller, Event};
 
@@ -33,8 +31,7 @@ fn main() -> Result<(), slint::PlatformError> {
     })?;
     let controller = Rc::new(RefCell::new(Controller::default()));
     let settings = Settings::load();
-    let smoke_test = std::env::args_os()
-        .any(|argument| argument == OsStr::new("--smoke-test"));
+    let smoke_test = std::env::args_os().any(|argument| argument == OsStr::new("--smoke-test"));
 
     ui.set_server_url(settings.server_url.clone().into());
     ui.set_topic(settings.topic.clone().into());
@@ -72,11 +69,7 @@ fn main() -> Result<(), slint::PlatformError> {
     ui.run()
 }
 
-fn configure_subscription(
-    ui: &AppWindow,
-    tray: &AppTray,
-    controller: Rc<RefCell<Controller>>,
-) {
+fn configure_subscription(ui: &AppWindow, tray: &AppTray, controller: Rc<RefCell<Controller>>) {
     let ui_weak = ui.as_weak();
     let tray_weak = tray.as_weak();
     ui.on_toggle_subscription(move || {
@@ -298,13 +291,7 @@ fn apply_event(
 
             if let Some(popup_body) = popup_body {
                 with_presenter(|presenter| {
-                    presenter.show(
-                        &title,
-                        &popup_body,
-                        &meta,
-                        placement,
-                        sound_enabled,
-                    );
+                    presenter.show(&title, &popup_body, &meta, placement, sound_enabled);
                 });
             } else if sound_enabled {
                 with_presenter(|presenter| presenter.play_sound());
