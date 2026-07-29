@@ -1,0 +1,73 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index e2a1b14..7df0415 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -19,10 +19,10 @@ slint = { version = "=1.17.1", default-features = false, features = [
+     "system-tray",
+ ] }
+ windows-sys = { version = "=0.61.2", default-features = false, features = [
+-    "errhandlingapi",
+-    "ro",
+-    "winhttp",
+-    "winuser",
++    "Win32_Foundation",
++    "Win32_Graphics_Gdi",
++    "Win32_Networking_WinHttp",
++    "Win32_UI_WindowsAndMessaging",
+ ] }
+ 
+ [build-dependencies]
+diff --git a/src/winhttp.rs b/src/winhttp.rs
+index 256649c..82934db 100644
+--- a/src/winhttp.rs
++++ b/src/winhttp.rs
+@@ -11,8 +11,8 @@ use std::{
+     time::Duration,
+ };
+ use windows_sys::Win32::{
+-    errhandlingapi::GetLastError,
+-    winhttp::{
++    Foundation::GetLastError,
++    Networking::WinHttp::{
+         HINTERNET, HTTP_STATUS_OK, INTERNET_DEFAULT_HTTP_PORT, INTERNET_DEFAULT_HTTPS_PORT,
+         WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, WINHTTP_FLAG_SECURE, WINHTTP_QUERY_FLAG_NUMBER,
+         WINHTTP_QUERY_STATUS_CODE, WinHttpCloseHandle, WinHttpConnect, WinHttpOpen,
+@@ -142,9 +142,6 @@ fn run_subscription(
+     active_request: Arc<AtomicPtr<c_void>>,
+     on_event: Box<dyn Fn(Event) + Send>,
+ ) {
+-    let initialized = unsafe {
+-        windows_sys::Win32::ro::RoInitialize(windows_sys::Win32::ro::RO_INIT_MULTITHREADED) >= 0
+-    };
+     let mut since = String::from("latest");
+     let mut backoff_secs = 1_u64;
+     while !stop.load(Ordering::Acquire) {
+@@ -184,9 +181,6 @@ fn run_subscription(
+     }
+     on_event(Event::Connected(false));
+     on_event(Event::Status("Disconnected".into()));
+-    if initialized {
+-        unsafe { windows_sys::Win32::ro::RoUninitialize() };
+-    }
+ }
+ 
+ fn subscribe_once<F>(
+diff --git a/src/desktop.rs b/src/desktop.rs
+index 68467b7..93700e9 100644
+--- a/src/desktop.rs
++++ b/src/desktop.rs
+@@ -1,11 +1,9 @@
+ use crate::config::NotificationPosition;
+ use std::mem::size_of;
+ use windows_sys::Win32::{
+-    POINT,
+-    winuser::{
+-        GetCursorPos, GetMonitorInfoW, MB_ICONASTERISK, MONITOR_DEFAULTTONEAREST, MONITORINFO,
+-        MessageBeep, MonitorFromPoint,
+-    },
++    Foundation::POINT,
++    Graphics::Gdi::{GetMonitorInfoW, MONITOR_DEFAULTTONEAREST, MONITORINFO, MonitorFromPoint},
++    UI::WindowsAndMessaging::{GetCursorPos, MB_ICONASTERISK, MessageBeep},
+ };
+ 
+ const EDGE_MARGIN: i32 = 16;
