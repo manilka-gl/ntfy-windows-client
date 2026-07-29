@@ -1,0 +1,18 @@
+{
+  "command_file": "030-final-package.ps1",
+  "command_path": "input/030-final-package.ps1",
+  "command_sha256": "5c69c745a1dc7ccbf1678baf1b775a7f5d3c3e02ebf9780932d22a9c43e87a29",
+  "source_commit": "333a7f795fffebac75894a7cdf8773e74316fe7d",
+  "status": "success",
+  "exit_code": 0,
+  "timed_out": false,
+  "started_utc": "2026-07-29T22:59:00.3769465+00:00",
+  "finished_utc": "2026-07-29T22:59:04.2053569+00:00",
+  "duration_seconds": 3.828,
+  "log_file": "5c69c745a1dc7ccbf1678baf1b775a7f5d3c3e02ebf9780932d22a9c43e87a29.log",
+  "branch": "fix/memory-notification-ui-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30496741981",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000401"
+}

@@ -1,0 +1,12 @@
+=== STANDARD OUTPUT ===
+CHECK final package: start
+CHECK final package source format: passed
+CHECK final package executable: present
+CHECK packaged file: ntfy-windows-client.exe
+CHECK packaged file: README.md
+CHECK packaged file: LICENSE
+CHECK final package report: D:\a\ntfy-windows-client\ntfy-windows-client\repository\output\final-package-report.json
+CHECK final package: passed
+
+
+=== STANDARD ERROR ===
