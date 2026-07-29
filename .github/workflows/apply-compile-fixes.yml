@@ -1,0 +1,30 @@
+name: Apply compile fixes
+
+on:
+  push:
+    branches: [feature/background-custom-notifications]
+    paths: [.fixes/ready]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/background-custom-notifications
+      - name: Apply pending compile fixes
+        shell: pwsh
+        run: |
+          git apply --index --ignore-space-change --ignore-whitespace --whitespace=nowarn .fixes/compile.patch
+          Remove-Item .fixes -Recurse -Force
+      - name: Commit fixes
+        shell: pwsh
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m "Fix WinHTTP bindings and event-loop timer ownership"
+          git push origin HEAD:feature/background-custom-notifications
