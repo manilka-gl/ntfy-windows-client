@@ -30,7 +30,7 @@ windows-sys = { version = "=0.61.2", default-features = false, features = [
 slint-build = "=1.17.1"
 
 [profile.release]
-opt-level = "z"
+opt-level = 3
 lto = "fat"
 codegen-units = 1
 panic = "abort"
