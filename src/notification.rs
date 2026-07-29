@@ -48,9 +48,11 @@ impl Presenter {
                     }
                     return;
                 };
-                let slot_for_dismiss = Rc::clone(&self.popup);
+                let slot_for_dismiss = Rc::downgrade(&self.popup);
                 popup.on_dismiss(move || {
-                    if let Some(popup) = slot_for_dismiss.borrow_mut().take() {
+                    if let Some(slot) = slot_for_dismiss.upgrade()
+                        && let Some(popup) = slot.borrow_mut().take()
+                    {
                         let _ = popup.hide();
                     }
                     memory::trim_working_set();
@@ -95,16 +97,8 @@ fn position_popup(popup: &NotificationPopup, placement: i32) {
     let work = work_area();
     let measured = popup.window().size();
     let scale = popup.window().scale_factor().max(1.0);
-    let width = physical_edge(
-        measured.width,
-        POPUP_LOGICAL_WIDTH,
-        scale,
-    );
-    let height = physical_edge(
-        measured.height,
-        POPUP_LOGICAL_HEIGHT,
-        scale,
-    );
+    let width = physical_edge(measured.width, POPUP_LOGICAL_WIDTH, scale);
+    let height = physical_edge(measured.height, POPUP_LOGICAL_HEIGHT, scale);
 
     let min_x = work.left.saturating_add(MARGIN);
     let max_x = work
