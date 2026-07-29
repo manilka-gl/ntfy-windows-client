@@ -15,10 +15,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: feature/background-custom-notifications
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt
       - name: Apply pending compile fixes
         shell: pwsh
         run: |
           & .fixes/fix.ps1
+          cargo fmt --all
           Remove-Item .fixes -Recurse -Force
       - name: Commit fixes
         shell: pwsh
