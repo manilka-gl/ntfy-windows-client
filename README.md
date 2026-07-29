@@ -1,43 +1,45 @@
 # ntfy Windows Client
 
-A lightweight native Windows desktop client for [ntfy](https://ntfy.sh), written in Rust and Slint.
+A native Windows desktop client for [ntfy](https://ntfy.sh), written in Rust and Slint.
 
 ## Features
 
-- Native WinHTTP streaming and publishing; no browser engine, WebView, Tokio, Reqwest, OpenSSL bundle, or background polling loop.
-- Runs in the system tray after the main window is closed and keeps the subscription active.
-- Reusable custom desktop popup with nine user-selectable positions: top, middle, and bottom across left, centre, and right.
-- Optional Windows system notification sound.
-- Bounded 100-message in-memory history and 1 MiB safety limits for incoming stream lines and published messages.
+- Native WinHTTP streaming and publishing; no browser engine, WebView, async runtime, bundled TLS stack, or polling loop.
+- Runs from the system tray and keeps the subscription active after the main window closes.
+- Opaque Slint interface forced to the winit software renderer; no GPU renderer, transparency, blur, or idle animation.
+- Compact paged interface for connection, notification, publishing, and bounded history settings.
+- Custom desktop popup with nine positions across the usable Windows work area.
+- Selectable notification audio output: Windows system default or a specific waveform output device.
 - Automatic reconnect with bounded exponential backoff and resume from the last ntfy message ID.
-- Optional bearer authentication. Tokens stay in memory and are never written to the settings file.
-- Consistent Fluent dark interface and software rendering.
+- Optional bearer authentication. Tokens remain in memory and are never written to settings.
 
 ## Efficiency design
 
-- One blocking subscription worker with a 320 KiB stack.
-- Short-lived publish workers with 256 KiB stacks.
-- One reusable popup window and one timer instead of allocating a new notification window per event.
-- Native Windows TLS, proxy, and connection handling through WinHTTP.
-- Release builds use size optimisation, fat LTO, one codegen unit, symbol stripping, disabled incremental compilation, and abort-on-panic.
-- Only required Slint and Windows API features are enabled.
+- Closing the main window releases its Slint component tree instead of merely hiding it.
+- Starting with `--background` creates the tray listener without opening the main window.
+- The notification popup is created only when needed and released after dismissal.
+- History is bounded to 64 messages and 2 KiB per retained body.
+- One blocking subscription worker uses a 320 KiB stack; short-lived publishing workers use 256 KiB stacks.
+- Native Windows TLS, proxy, connection handling, system sound, and waveform output APIs are used directly.
+- Release builds use full optimization, fat LTO, one codegen unit, symbol stripping, disabled incremental compilation, and abort-on-panic.
+
+The process working set includes mapped Windows, Slint, winit, font, and networking code. It cannot realistically be guaranteed below 1 MiB. The design instead minimizes private allocations and releases UI resources while running in the tray.
 
 ## Build
 
 Official builds use Rust 1.97.1 and Slint 1.17.1 on GitHub-hosted Windows runners.
 
 ```powershell
-cargo generate-lockfile
 cargo fmt --all -- --check
 cargo clippy --locked --all-targets --all-features -- -D warnings
 cargo test --locked --all-features
 cargo build --locked --release --target x86_64-pc-windows-msvc
 ```
 
-The manual **CI** workflow verifies the project and uploads x64 and ARM64 ZIP artifacts. The manual **Release** workflow can also create or update a GitHub release when a tag is supplied.
+The manual **CI** workflow verifies the project and uploads x64 and ARM64 ZIP artifacts. The manual **Release** workflow can create or update a GitHub release when a tag is supplied.
 
 ## Behaviour
 
-Closing the main window hides it and leaves the process running in the Windows system tray. Use the tray menu's **Quit** command to stop the subscription and exit.
+Closing the main window releases it and leaves the subscription running from the system tray. Select **Open ntfy** to construct the interface again, or **Quit** to stop the worker and exit.
 
 Settings are stored in `%APPDATA%\ntfy-windows-client\settings.json`. The bearer token is deliberately excluded.
