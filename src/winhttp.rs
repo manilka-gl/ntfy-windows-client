@@ -12,8 +12,8 @@ use std::{
     time::Duration,
 };
 use windows_sys::Win32::{
-    errhandlingapi::GetLastError,
-    winhttp::{
+    Foundation::GetLastError,
+    Networking::WinHttp::{
         HINTERNET, HTTP_STATUS_OK, INTERNET_DEFAULT_HTTP_PORT, INTERNET_DEFAULT_HTTPS_PORT,
         WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, WINHTTP_FLAG_SECURE, WINHTTP_QUERY_FLAG_NUMBER,
         WINHTTP_QUERY_STATUS_CODE, WinHttpCloseHandle, WinHttpConnect, WinHttpOpen,

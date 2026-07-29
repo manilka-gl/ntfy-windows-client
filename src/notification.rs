@@ -2,8 +2,10 @@ use crate::NotificationPopup;
 use slint::{ComponentHandle, PhysicalPosition, Timer, TimerMode};
 use std::time::Duration;
 use windows_sys::Win32::{
-    windef::RECT,
-    winuser::{MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW},
+    Foundation::RECT,
+    UI::WindowsAndMessaging::{
+        MB_ICONASTERISK, MessageBeep, SPI_GETWORKAREA, SystemParametersInfoW,
+    },
 };
 
 const MARGIN: i32 = 14;
