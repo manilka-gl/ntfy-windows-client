@@ -21,10 +21,9 @@ slint = { version = "=1.17.1", default-features = false, features = [
     "system-tray",
 ] }
 windows-sys = { version = "=0.61.2", default-features = false, features = [
-    "errhandlingapi",
-    "windef",
-    "winhttp",
-    "winuser",
+    "Win32_Foundation",
+    "Win32_Networking_WinHttp",
+    "Win32_UI_WindowsAndMessaging",
 ] }
 
 [build-dependencies]
