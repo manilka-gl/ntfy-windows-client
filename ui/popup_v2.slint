@@ -1,0 +1,118 @@
+import { Theme } from "components_v2.slint";
+
+export component NotificationPopup inherits Window {
+    title: "ntfy notification";
+    icon: @image-url("assets/icon.svg");
+    width: 404px;
+    height: 180px;
+    no-frame: true;
+    always-on-top: true;
+    background: #0d131c;
+
+    in-out property <string> popup-title: "ntfy";
+    in-out property <string> popup-body: "";
+    in-out property <string> popup-meta: "";
+    callback dismiss();
+
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        background: #141c28;
+        border-width: 1px;
+        border-color: #38475d;
+        border-radius: 11px;
+
+        Rectangle {
+            width: 5px;
+            height: parent.height;
+            border-radius: 2px;
+            background: Theme.accent;
+        }
+
+        Rectangle {
+            x: 18px;
+            y: 16px;
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: Theme.accent-soft;
+
+            Text {
+                width: parent.width;
+                height: parent.height;
+                text: "n";
+                color: Theme.accent;
+                font-size: 17px;
+                font-weight: 800;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+
+        Text {
+            x: 62px;
+            y: 14px;
+            width: parent.width - 112px;
+            height: 28px;
+            text: root.popup-title;
+            color: Theme.text;
+            font-size: 15px;
+            font-weight: 700;
+            overflow: elide;
+        }
+
+        Rectangle {
+            x: parent.width - 38px;
+            y: 12px;
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            background: close-touch.has-hover ? #29374a : #00000000;
+
+            Text {
+                width: parent.width;
+                height: parent.height;
+                text: "×";
+                color: Theme.secondary;
+                font-size: 17px;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+
+            close-touch := TouchArea {
+                clicked => { root.dismiss(); }
+            }
+        }
+
+        Text {
+            x: 62px;
+            y: 48px;
+            width: parent.width - 82px;
+            height: 88px;
+            text: root.popup-body;
+            color: Theme.secondary;
+            font-size: 12px;
+            wrap: word-wrap;
+            overflow: elide;
+        }
+
+        Rectangle {
+            x: 62px;
+            y: 140px;
+            width: parent.width - 82px;
+            height: 1px;
+            background: Theme.border;
+        }
+
+        Text {
+            x: 62px;
+            y: 146px;
+            width: parent.width - 82px;
+            height: 20px;
+            text: root.popup-meta;
+            color: Theme.muted;
+            font-size: 9px;
+            overflow: elide;
+        }
+    }
+}
