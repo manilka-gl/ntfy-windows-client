@@ -12,9 +12,9 @@ pub fn show(title: &str, message: &str) {
 #[cfg(windows)]
 fn show_windows(title: &str, message: &str) -> windows::core::Result<()> {
     use windows::{
-        core::HSTRING,
         Data::Xml::Dom::XmlDocument,
         UI::Notifications::{ToastNotification, ToastNotificationManager},
+        core::HSTRING,
     };
 
     const APP_ID: &str = "manilka-gl.ntfy-windows-client";
