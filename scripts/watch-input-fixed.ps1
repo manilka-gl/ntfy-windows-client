@@ -22,14 +22,36 @@ $ErrorActionPreference = 'Stop'
 
 $SourcePath = Join-Path $PSScriptRoot 'watch-input.ps1'
 $SourceText = [IO.File]::ReadAllText($SourcePath)
-$Original = 'return [ordered] @{' 
-$Replacement = 'return [pscustomobject][ordered] @{' 
 
-if (-not $SourceText.Contains($Original)) {
-    throw 'Expected Invoke-CommandFile return statement was not found.'
+$OriginalInvocation = @'
+            $CommandResult = Invoke-CommandFile `
+                -CommandFile $CommandFile `
+                -TimeoutSeconds $CommandTimeoutSeconds
+'@
+
+$PatchedInvocation = @'
+            $CommandResultItems = @(
+                Invoke-CommandFile `
+                    -CommandFile $CommandFile `
+                    -TimeoutSeconds $CommandTimeoutSeconds
+            )
+
+            if ($CommandResultItems.Count -eq 0) {
+                throw 'Invoke-CommandFile returned no command metadata.'
+            }
+
+            $CommandResult = $CommandResultItems[-1]
+'@
+
+if (-not $SourceText.Contains($OriginalInvocation)) {
+    throw 'Expected Invoke-CommandFile invocation was not found.'
 }
 
-$PatchedText = $SourceText.Replace($Original, $Replacement)
+$PatchedText = $SourceText.Replace(
+    $OriginalInvocation,
+    $PatchedInvocation
+)
+
 $TemporaryPath = Join-Path `
     $env:RUNNER_TEMP `
     ('watch-input-patched-' + [Guid]::NewGuid().ToString('N') + '.ps1')
