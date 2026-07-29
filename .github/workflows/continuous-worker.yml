@@ -61,6 +61,69 @@ jobs:
             scripts
           sparse-checkout-cone-mode: true
 
+      # Manual dispatch can reference a branch that was never pushed, and an
+      # unrestricted command can delete its own watched ref. Recreate a missing
+      # branch from the default branch so checkout and replacement can proceed.
+      - name: Ensure monitored branch exists
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          & git check-ref-format --branch $env:WATCH_BRANCH *> $null
+          if ($LASTEXITCODE -ne 0) {
+              throw "Invalid monitored branch: $env:WATCH_BRANCH"
+          }
+
+          $encodedBranch = [Uri]::EscapeDataString($env:WATCH_BRANCH)
+          & gh api `
+              "repos/$env:GITHUB_REPOSITORY/git/ref/heads/$encodedBranch" `
+              --silent *> $null
+          $lookupExitCode = $LASTEXITCODE
+
+          if ($lookupExitCode -eq 0) {
+              Write-Host "Monitored branch exists: $env:WATCH_BRANCH"
+              exit 0
+          }
+
+          $encodedControl = [Uri]::EscapeDataString($env:CONTROL_BRANCH)
+          $defaultSha = (
+              & gh api `
+                  "repos/$env:GITHUB_REPOSITORY/git/ref/heads/$encodedControl" `
+                  --jq '.object.sha'
+          ).Trim()
+
+          if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($defaultSha)) {
+              throw "Could not resolve default branch $env:CONTROL_BRANCH."
+          }
+
+          Write-Warning (
+              "Monitored branch $env:WATCH_BRANCH is missing. " +
+              "Creating it from $env:CONTROL_BRANCH at $defaultSha."
+          )
+
+          & gh api `
+              --method POST `
+              "repos/$env:GITHUB_REPOSITORY/git/refs" `
+              -f "ref=refs/heads/$env:WATCH_BRANCH" `
+              -f "sha=$defaultSha" `
+              --silent *> $null
+          $createExitCode = $LASTEXITCODE
+
+          if ($createExitCode -ne 0) {
+              # A concurrent run may have created the ref after our lookup.
+              & gh api `
+                  "repos/$env:GITHUB_REPOSITORY/git/ref/heads/$encodedBranch" `
+                  --silent *> $null
+
+              if ($LASTEXITCODE -ne 0) {
+                  throw (
+                      "Could not create or resolve monitored branch " +
+                      "$env:WATCH_BRANCH."
+                  )
+              }
+          }
+
       # This is the independent checkout used by the assigned branch worker.
       - name: Check out monitored branch
         uses: actions/checkout@v6
@@ -91,6 +154,8 @@ jobs:
             continuous-cargo-Windows-${{ env.WATCH_BRANCH }}-
 
       - name: Run continuous worker
+        id: continuous-worker
+        continue-on-error: true
         shell: pwsh
         run: |
           Set-StrictMode -Version Latest
@@ -112,6 +177,10 @@ jobs:
               -MaximumCommandMinutes 60
 
           if ($LASTEXITCODE -ne 0) {
+              Write-Warning (
+                  "Watcher exited with code $LASTEXITCODE. " +
+                  'The replacement stage will continue the branch chain.'
+              )
               exit $LASTEXITCODE
           }
 
@@ -121,7 +190,6 @@ jobs:
       - name: Dispatch replacement for the same branch
         if: always()
         shell: pwsh
-        working-directory: repository
         env:
           WORKFLOW_FILE: continuous-worker.yml
         run: |
@@ -129,31 +197,78 @@ jobs:
           $ErrorActionPreference = 'Stop'
 
           & git check-ref-format --branch $env:WATCH_BRANCH *> $null
-
           if ($LASTEXITCODE -ne 0) {
               throw "Invalid monitored branch: $env:WATCH_BRANCH"
           }
 
-          $fetchRefSpec = (
-              '+refs/heads/{0}:refs/remotes/origin/{0}' -f
-              $env:WATCH_BRANCH
-          )
+          $repository = Join-Path $env:GITHUB_WORKSPACE 'repository'
+          $sourceSha = ''
 
-          & git fetch --no-tags origin $fetchRefSpec
+          if (Test-Path -LiteralPath (Join-Path $repository '.git')) {
+              $sourceSha = (
+                  & git -C $repository rev-parse --verify HEAD
+              ).Trim()
+          }
+
+          if (
+              $LASTEXITCODE -ne 0 -or
+              [string]::IsNullOrWhiteSpace($sourceSha)
+          ) {
+              $encodedControl = [Uri]::EscapeDataString(
+                  $env:CONTROL_BRANCH
+              )
+              $sourceSha = (
+                  & gh api `
+                      "repos/$env:GITHUB_REPOSITORY/git/ref/heads/$encodedControl" `
+                      --jq '.object.sha'
+              ).Trim()
+          }
+
+          if (
+              $LASTEXITCODE -ne 0 -or
+              [string]::IsNullOrWhiteSpace($sourceSha)
+          ) {
+              throw 'Could not resolve a source commit for branch recovery.'
+          }
+
+          $encodedBranch = [Uri]::EscapeDataString($env:WATCH_BRANCH)
+          & gh api `
+              "repos/$env:GITHUB_REPOSITORY/git/ref/heads/$encodedBranch" `
+              --silent *> $null
 
           if ($LASTEXITCODE -ne 0) {
-              throw (
-                  'Could not fetch monitored branch ' +
-                  "$env:WATCH_BRANCH."
+              Write-Warning (
+                  "Remote branch $env:WATCH_BRANCH disappeared. " +
+                  "Restoring it from $sourceSha."
               )
+
+              & gh api `
+                  --method POST `
+                  "repos/$env:GITHUB_REPOSITORY/git/refs" `
+                  -f "ref=refs/heads/$env:WATCH_BRANCH" `
+                  -f "sha=$sourceSha" `
+                  --silent *> $null
+
+              if ($LASTEXITCODE -ne 0) {
+                  & gh api `
+                      "repos/$env:GITHUB_REPOSITORY/git/ref/heads/$encodedBranch" `
+                      --silent *> $null
+
+                  if ($LASTEXITCODE -ne 0) {
+                      throw (
+                          "Could not restore monitored branch " +
+                          "$env:WATCH_BRANCH."
+                      )
+                  }
+              }
           }
 
           $stopReference = (
-              'refs/remotes/origin/{0}:.continuous-worker.stop' -f
-              $env:WATCH_BRANCH
+              "repos/$env:GITHUB_REPOSITORY/contents/" +
+              '.continuous-worker.stop' +
+              "?ref=$encodedBranch"
           )
-
-          & git cat-file -e $stopReference 2>$null
+          & gh api $stopReference --silent *> $null
 
           if ($LASTEXITCODE -eq 0) {
               Write-Host (
@@ -163,23 +278,31 @@ jobs:
               exit 0
           }
 
-          # Replacement runs always load the workflow definition from the
-          # default branch and continue monitoring the same WATCH_BRANCH.
-          & gh workflow run $env:WORKFLOW_FILE `
-              --repo $env:GITHUB_REPOSITORY `
-              --ref $env:CONTROL_BRANCH `
-              --raw-field "branch=$env:WATCH_BRANCH"
+          for ($attempt = 1; $attempt -le 6; $attempt++) {
+              & gh workflow run $env:WORKFLOW_FILE `
+                  --repo $env:GITHUB_REPOSITORY `
+                  --ref $env:CONTROL_BRANCH `
+                  --raw-field "branch=$env:WATCH_BRANCH"
+              $dispatchExitCode = $LASTEXITCODE
 
-          if ($LASTEXITCODE -ne 0) {
-              throw (
-                  'Could not dispatch replacement for ' +
-                  "$env:WATCH_BRANCH."
+              if ($dispatchExitCode -eq 0) {
+                  Write-Host (
+                      'Replacement dispatched for branch ' +
+                      "$env:WATCH_BRANCH."
+                  )
+                  exit 0
+              }
+
+              Write-Warning (
+                  "Replacement dispatch attempt $attempt failed " +
+                  "with exit code $dispatchExitCode."
               )
+              Start-Sleep -Seconds ([Math]::Min(10 * $attempt, 60))
           }
 
-          Write-Host (
-              'Replacement dispatched for branch ' +
-              "$env:WATCH_BRANCH."
+          throw (
+              'Could not dispatch a replacement for ' +
+              "$env:WATCH_BRANCH after six attempts."
           )
 
       # Explicit save is used so Cargo state is uploaded even when the watcher
