@@ -1,0 +1,54 @@
+=== STANDARD OUTPUT ===
+CHECK UI layout release validation: start
+CHECK cargo fmt: start
+CHECK cargo fmt: passed
+CHECK cargo clippy: start
+CHECK cargo clippy: passed
+CHECK cargo test: start
+
+running 15 tests
+test audio::tests::default_output_label_is_stable ... ok
+test notification::tests::popup_size_falls_back_before_window_metrics_are_ready ... ok
+test config::tests::old_settings_receive_defaults ... ok
+test config::tests::settings_json_round_trip ... ok
+test protocol::tests::ignores_keepalive_event ... ok
+test protocol::tests::parses_message_event ... ok
+test protocol::tests::strips_header_injection ... ok
+test protocol::tests::truncates_at_character_boundary ... ok
+test protocol::tests::validates_topics ... ok
+test tests::retained_history_is_small_and_bounded ... ok
+test timefmt::tests::formats_epoch ... ok
+test timefmt::tests::formats_known_timestamp ... ok
+test winhttp::tests::parses_https_server ... ok
+test winhttp::tests::parses_ipv6_authority ... ok
+test winhttp::tests::parses_self_hosted_path_and_port ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+CHECK cargo test: passed
+CHECK release build x86_64-pc-windows-msvc: start
+CHECK release build x86_64-pc-windows-msvc: passed
+CHECK release executable: passed (D:\a\ntfy-windows-client\ntfy-windows-client\repository\target\x86_64-pc-windows-msvc\release\ntfy-windows-client.exe)
+CHECK UI geometry screenshot: start
+CHECK UI geometry pixels: header_accent=167 body_accent=0 content_light=167
+CHECK UI geometry screenshot: passed
+CHECK foreground UI smoke: start
+CHECK foreground UI smoke: passed
+CHECK active background listener working set: start
+CHECK memory sample: working_set=434176 private=3452928 threads=11
+CHECK memory sample: working_set=434176 private=3452928 threads=11
+CHECK memory sample: working_set=434176 private=3452928 threads=11
+CHECK active background listener working set: passed
+CHECK release package: start
+CHECK packaged file: ntfy-windows-client.exe
+CHECK packaged file: README.md
+CHECK packaged file: LICENSE
+CHECK release package: passed (D:\a\ntfy-windows-client\ntfy-windows-client\repository\output\ntfy-windows-client-x64.zip)
+CHECK UI layout release validation: passed
+
+
+=== STANDARD ERROR ===
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.80s
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.63s
+[1m[92m     Running[0m unittests src\main.rs (target\debug\deps\ntfy_windows_client-869ceeffc55e605b.exe)
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 0.63s

@@ -1,0 +1,33 @@
+{
+  "executable": "D:\\a\\ntfy-windows-client\\ntfy-windows-client\\repository\\target\\x86_64-pc-windows-msvc\\release\\ntfy-windows-client.exe",
+  "target": "x86_64-pc-windows-msvc",
+  "listener_topic": "worker-ui-30523540108-1",
+  "idle_working_set_limit_bytes": 2097152,
+  "samples": [
+    {
+      "sampled_utc": "2026-07-30T07:53:05.5336466+00:00",
+      "working_set_bytes": 434176,
+      "private_bytes": 3452928,
+      "handles": 345,
+      "threads": 11
+    },
+    {
+      "sampled_utc": "2026-07-30T07:53:09.5525158+00:00",
+      "working_set_bytes": 434176,
+      "private_bytes": 3452928,
+      "handles": 345,
+      "threads": 11
+    },
+    {
+      "sampled_utc": "2026-07-30T07:53:13.5616937+00:00",
+      "working_set_bytes": 434176,
+      "private_bytes": 3452928,
+      "handles": 345,
+      "threads": 11
+    }
+  ],
+  "final_working_set_bytes": 434176,
+  "final_private_bytes": 3452928,
+  "final_thread_count": 11,
+  "within_idle_working_set_limit": true
+}

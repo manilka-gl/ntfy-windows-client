@@ -1,0 +1,13 @@
+{
+  "screenshot": "D:\\a\\ntfy-windows-client\\ntfy-windows-client\\repository\\output\\ui-layout-smoke.png",
+  "window_width": 976,
+  "window_height": 719,
+  "header_scan_bottom": 145,
+  "body_scan_top": 220,
+  "body_scan_bottom": 520,
+  "header_accent_pixels": 167,
+  "body_accent_pixels": 0,
+  "content_light_pixels": 167,
+  "header_branding_detected": true,
+  "content_detected": true
+}

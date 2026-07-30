@@ -1,0 +1,11 @@
+{
+  "package": "D:\\a\\ntfy-windows-client\\ntfy-windows-client\\repository\\output\\ntfy-windows-client-x64.zip",
+  "size_bytes": 5830736,
+  "sha256": "f76a6e6ccff853e11aa5e797cc05a6e229ecc564fd654036e2b69d12775ea6ac",
+  "contains": [
+    "ntfy-windows-client.exe",
+    "README.md",
+    "LICENSE"
+  ],
+  "source_commit": "11b9a9ce192cc45e91d91568c153d0c623576ba8"
+}

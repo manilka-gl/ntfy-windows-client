@@ -1,0 +1,18 @@
+{
+  "command_file": "051-verify-ui-layout-process-window.ps1",
+  "command_path": "input/051-verify-ui-layout-process-window.ps1",
+  "command_sha256": "f4ac9f8db3ec9a92c4b4593b036bf4b8a81ac6f18c08a64534a10a473d592035",
+  "source_commit": "11b9a9ce192cc45e91d91568c153d0c623576ba8",
+  "status": "success",
+  "exit_code": 0,
+  "timed_out": false,
+  "started_utc": "2026-07-30T07:52:51.4167439+00:00",
+  "finished_utc": "2026-07-30T07:53:14.5811764+00:00",
+  "duration_seconds": 23.164,
+  "log_file": "f4ac9f8db3ec9a92c4b4593b036bf4b8a81ac6f18c08a64534a10a473d592035.log",
+  "branch": "fix/ui-layout-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30523540108",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000405"
+}
