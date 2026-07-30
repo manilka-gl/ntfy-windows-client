@@ -1,0 +1,56 @@
+[
+  {
+    "file": "inspect16-page-connection.gif",
+    "width": 300,
+    "height": 236,
+    "size_bytes": 3862,
+    "sha256": "57780e1907e3d64851bf294e03b825715df4e9d103c6f7087d8de2b87475f679",
+    "source": "inspect-page-connection.jpg",
+    "palette": "16-color"
+  },
+  {
+    "file": "inspect16-page-notifications.gif",
+    "width": 300,
+    "height": 236,
+    "size_bytes": 3925,
+    "sha256": "5d4d3c1a544966fbab76040d573e388a88c041226e08362d33395d3075305d7f",
+    "source": "inspect-page-notifications.jpg",
+    "palette": "16-color"
+  },
+  {
+    "file": "inspect16-page-publish.gif",
+    "width": 300,
+    "height": 236,
+    "size_bytes": 3462,
+    "sha256": "74b42742fd387866f216f3882223edb639c6b041e093f87de17397a07dd4a6b6",
+    "source": "inspect-page-publish.jpg",
+    "palette": "16-color"
+  },
+  {
+    "file": "inspect16-page-history.gif",
+    "width": 300,
+    "height": 236,
+    "size_bytes": 3134,
+    "sha256": "2db5fedb4c5f4f80c184f4d8b8f40a6c21bbdaf3cf45a38116a29e54247baba4",
+    "source": "inspect-page-history.jpg",
+    "palette": "16-color"
+  },
+  {
+    "file": "inspect16-popup-short.gif",
+    "width": 300,
+    "height": 88,
+    "size_bytes": 1677,
+    "sha256": "86e7aa60a6331b351cef5daa2c939f242d023be3d603973ac99f996fe723075f",
+    "source": "inspect-popup-short.jpg",
+    "palette": "16-color"
+  },
+  {
+    "file": "inspect16-popup-long.gif",
+    "width": 300,
+    "height": 196,
+    "size_bytes": 4560,
+    "sha256": "567e4784b3b99e4a6d891a4fbd5102026f406d8befcfe9a3e6b90e581a244a3e",
+    "source": "inspect-popup-long.jpg",
+    "palette": "16-color"
+  }
+]

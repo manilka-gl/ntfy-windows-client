@@ -1,0 +1,12 @@
+=== STANDARD OUTPUT ===
+CHECK 16-color inspection GIFs: start
+CHECK 16-color image: inspect16-page-connection.gif (3862 bytes)
+CHECK 16-color image: inspect16-page-notifications.gif (3925 bytes)
+CHECK 16-color image: inspect16-page-publish.gif (3462 bytes)
+CHECK 16-color image: inspect16-page-history.gif (3134 bytes)
+CHECK 16-color image: inspect16-popup-short.gif (1677 bytes)
+CHECK 16-color image: inspect16-popup-long.gif (4560 bytes)
+CHECK 16-color inspection GIFs: passed
+
+
+=== STANDARD ERROR ===
