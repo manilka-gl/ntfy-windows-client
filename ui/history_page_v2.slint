@@ -8,35 +8,43 @@ export component HistoryPage inherits Rectangle {
     background: #00000000;
 
     Text {
-        width: parent.width - 110px;
+        x: 0px;
+        y: 0px;
+        width: parent.width - 118px;
         height: 30px;
         text: "Recent notifications";
         color: Theme.text;
         font-size: 23px;
         font-weight: 700;
+        vertical-alignment: center;
     }
 
     Text {
-        y: 32px;
-        width: parent.width - 110px;
+        x: 0px;
+        y: 34px;
+        width: parent.width - 118px;
         height: 20px;
-        text: "Bounded to 32 messages and 1 KiB per body.";
+        text: "Stores up to 32 messages with 1 KiB retained per body.";
         color: Theme.secondary;
         font-size: 12px;
+        vertical-alignment: center;
     }
 
     Button {
-        x: parent.width - 90px;
-        y: 4px;
-        width: 90px;
+        x: parent.width - 96px;
+        y: 2px;
+        width: 96px;
+        height: 30px;
         text: "Clear";
+        enabled: root.notifications.length > 0;
         clicked => { root.clear-notifications(); }
     }
 
     if root.notifications.length == 0: Rectangle {
-        y: 68px;
+        x: 0px;
+        y: 70px;
         width: parent.width;
-        height: parent.height - 68px;
+        height: parent.height - 70px;
         border-radius: 12px;
         background: Theme.panel;
         border-width: 1px;
@@ -44,7 +52,7 @@ export component HistoryPage inherits Rectangle {
 
         Text {
             x: 24px;
-            y: parent.height / 2 - 20px;
+            y: parent.height / 2 - 24px;
             width: parent.width - 48px;
             height: 24px;
             text: "No notifications yet";
@@ -52,24 +60,27 @@ export component HistoryPage inherits Rectangle {
             font-size: 16px;
             font-weight: 700;
             horizontal-alignment: center;
+            vertical-alignment: center;
         }
 
         Text {
             x: 24px;
-            y: parent.height / 2 + 8px;
+            y: parent.height / 2 + 6px;
             width: parent.width - 48px;
-            height: 20px;
-            text: "Background messages appear here when the window is reopened.";
+            height: 22px;
+            text: "Messages received while the window is closed appear here when it is reopened.";
             color: Theme.muted;
             font-size: 11px;
             horizontal-alignment: center;
+            vertical-alignment: center;
         }
     }
 
     if root.notifications.length > 0: history-list := ListView {
-        y: 68px;
+        x: 0px;
+        y: 70px;
         width: parent.width;
-        height: parent.height - 68px;
+        height: parent.height - 70px;
 
         for item in root.notifications: MessageRow {
             item: item;
