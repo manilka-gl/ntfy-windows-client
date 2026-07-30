@@ -29,7 +29,7 @@ export component AppWindow inherits Window {
     in-out property <string> status-text: "Ready";
     in property <[string]> audio-outputs;
     in property <[NotificationItem]> notifications;
-    property <int> page: 0;
+    in-out property <int> page: 0;
 
     callback toggle-subscription();
     callback publish(string, string);
