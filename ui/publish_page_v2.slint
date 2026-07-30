@@ -14,25 +14,31 @@ export component PublishPage inherits Rectangle {
     background: #00000000;
 
     Text {
+        x: 0px;
+        y: 0px;
         width: parent.width;
         height: 30px;
         text: "Publish";
         color: Theme.text;
         font-size: 23px;
         font-weight: 700;
+        vertical-alignment: center;
     }
 
     Text {
-        y: 32px;
+        x: 0px;
+        y: 34px;
         width: parent.width;
         height: 20px;
-        text: "Send directly through native WinHTTP.";
+        text: "Send a message directly through native WinHTTP.";
         color: Theme.secondary;
         font-size: 12px;
+        vertical-alignment: center;
     }
 
     Rectangle {
-        y: 68px;
+        x: 0px;
+        y: 70px;
         width: parent.width;
         height: 316px;
         border-radius: 12px;
@@ -65,16 +71,18 @@ export component PublishPage inherits Rectangle {
 
                 Text {
                     text: root.topic == ""
-                        ? "Configure a topic first."
+                        ? "Configure a topic on the Connection page first."
                         : "Destination: " + root.topic;
                     color: Theme.muted;
                     font-size: 10px;
                     vertical-alignment: center;
+                    overflow: elide;
                 }
 
                 Rectangle { horizontal-stretch: 1; }
 
                 Button {
+                    width: 78px;
                     text: "Send";
                     enabled: publish-body.text != "" && root.topic != "";
                     clicked => {
