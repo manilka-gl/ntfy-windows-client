@@ -110,7 +110,7 @@ export component PublishPage inherits Rectangle {
 
                 Text {
                     width: 86px;
-                    text: publish-body.text.length + " characters";
+                    text: publish-body.text == "" ? "Awaiting message" : "Ready to send";
                     color: Theme.muted;
                     font-size: 9px;
                     horizontal-alignment: right;
