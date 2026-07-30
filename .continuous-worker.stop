@@ -1,0 +1,7 @@
+completed_utc: 2026-07-30T07:53:14Z
+branch: fix/ui-layout-20260730
+final_command_sha256: f4ac9f8db3ec9a92c4b4593b036bf4b8a81ac6f18c08a64534a10a473d592035
+result: success
+package: output/ntfy-windows-client-x64.zip
+package_sha256: f76a6e6ccff853e11aa5e797cc05a6e229ecc564fd654036e2b69d12775ea6ac
+visual_check: output/ui-layout-smoke.png
