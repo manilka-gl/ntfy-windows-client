@@ -103,25 +103,37 @@ pub fn output_names() -> Vec<String> {
     outputs
 }
 
-pub fn play(output_name: &str) {
-    if output_name.is_empty() || output_name == DEFAULT_OUTPUT_LABEL {
-        unsafe {
-            MessageBeep(0x0000_0040);
-        }
-        return;
-    }
-
-    let output_name = output_name.to_owned();
-    let _ = thread::Builder::new()
-        .name("ntfy-sound".into())
-        .stack_size(128 * 1024)
-        .spawn(move || {
-            if play_tone(&output_name).is_err() {
-                unsafe {
-                    MessageBeep(0x0000_0040);
+pub fn play(output_names: &[String]) {
+    for (index, output_name) in normalized_outputs(output_names).into_iter().enumerate() {
+        let _ = thread::Builder::new()
+            .name(format!("ntfy-sound-{index}"))
+            .stack_size(128 * 1024)
+            .spawn(move || {
+                if output_name.is_empty() || play_tone(&output_name).is_err() {
+                    unsafe {
+                        MessageBeep(0x0000_0040);
+                    }
                 }
-            }
-        });
+            });
+    }
+}
+
+fn normalized_outputs(output_names: &[String]) -> Vec<String> {
+    if output_names.is_empty() {
+        return vec![String::new()];
+    }
+    let mut outputs = Vec::with_capacity(output_names.len());
+    for output in output_names {
+        let output = if output.is_empty() || output == DEFAULT_OUTPUT_LABEL {
+            String::new()
+        } else {
+            output.clone()
+        };
+        if !outputs.iter().any(|existing| existing == &output) {
+            outputs.push(output);
+        }
+    }
+    outputs
 }
 
 fn play_tone(output_name: &str) -> Result<(), ()> {
@@ -216,10 +228,24 @@ fn find_device(output_name: &str) -> Option<u32> {
 
 #[cfg(test)]
 mod tests {
-    use super::DEFAULT_OUTPUT_LABEL;
+    use super::{DEFAULT_OUTPUT_LABEL, normalized_outputs};
 
     #[test]
     fn default_output_label_is_stable() {
         assert_eq!(DEFAULT_OUTPUT_LABEL, "System default");
+    }
+
+    #[test]
+    fn output_targets_are_deduplicated_and_defaulted() {
+        assert_eq!(normalized_outputs(&[]), vec![""]);
+        assert_eq!(
+            normalized_outputs(&[
+                DEFAULT_OUTPUT_LABEL.to_owned(),
+                String::new(),
+                "Headphones".to_owned(),
+                "Headphones".to_owned(),
+            ]),
+            vec!["", "Headphones"]
+        );
     }
 }

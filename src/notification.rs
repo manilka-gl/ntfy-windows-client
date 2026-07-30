@@ -33,8 +33,8 @@ impl Presenter {
         }
     }
 
-    pub fn play_sound(&self, output_name: &str) {
-        audio::play(output_name);
+    pub fn play_sound(&self, output_names: &[String]) {
+        audio::play(output_names);
     }
 
     pub fn show(
@@ -44,14 +44,14 @@ impl Presenter {
         meta: &str,
         placement: i32,
         play_sound: bool,
-        output_name: &str,
+        output_names: &[String],
     ) {
         let popup = {
             let mut slot = self.popup.borrow_mut();
             if slot.is_none() {
                 let Ok(popup) = NotificationPopup::new() else {
                     if play_sound {
-                        self.play_sound(output_name);
+                        self.play_sound(output_names);
                     }
                     return;
                 };
@@ -88,7 +88,7 @@ impl Presenter {
         });
 
         if play_sound {
-            self.play_sound(output_name);
+            self.play_sound(output_names);
         }
 
         let display_time = display_time_for_lines(body_lines);

@@ -183,7 +183,11 @@ fn hydrate_ui(ui: &AppWindow, state: &SharedState) {
     ui.set_auto_connect(state.settings.auto_connect);
     ui.set_connected(state.connected);
     ui.set_status_text(state.status.clone().into());
-    set_audio_outputs(ui, &state.audio_outputs, &state.settings.audio_output);
+    set_audio_outputs(
+        ui,
+        &state.audio_outputs,
+        &state.settings.selected_audio_outputs(),
+    );
     let rows = state
         .history
         .iter()
@@ -286,7 +290,7 @@ fn configure_window(
         let outputs = audio::output_names();
         let selected = ui_weak
             .upgrade()
-            .map(|ui| selected_audio_output(&ui, &state_for_audio))
+            .map(|ui| selected_audio_outputs(&ui, &state_for_audio))
             .unwrap_or_default();
         {
             let mut state = state_for_audio.lock().expect("runtime state poisoned");
@@ -490,10 +494,10 @@ fn receive_message(state: &SharedState, bridge: &UiBridge, message: Message) {
                 &meta,
                 preferences.placement,
                 preferences.sound,
-                &preferences.audio_output,
+                &preferences.audio_outputs,
             );
         } else if preferences.sound {
-            presenter.play_sound(&preferences.audio_output);
+            presenter.play_sound(&preferences.audio_outputs);
         }
     });
 }
@@ -502,7 +506,7 @@ struct NotificationPreferences {
     notifications: bool,
     sound: bool,
     placement: i32,
-    audio_output: String,
+    audio_outputs: Vec<String>,
 }
 
 fn notification_preferences(state: &SharedState, bridge: &UiBridge) -> NotificationPreferences {
@@ -511,7 +515,7 @@ fn notification_preferences(state: &SharedState, bridge: &UiBridge) -> Notificat
             notifications: ui.get_notifications_enabled(),
             sound: ui.get_sound_enabled(),
             placement: ui.get_placement_index().clamp(0, 8),
-            audio_output: selected_audio_output(&ui, state),
+            audio_outputs: selected_audio_outputs(&ui, state),
         };
     }
     let state = state.lock().expect("runtime state poisoned");
@@ -519,7 +523,7 @@ fn notification_preferences(state: &SharedState, bridge: &UiBridge) -> Notificat
         notifications: state.settings.notifications_enabled,
         sound: state.settings.sound_enabled,
         placement: i32::from(state.settings.placement.min(8)),
-        audio_output: state.settings.audio_output.clone(),
+        audio_outputs: state.settings.selected_audio_outputs(),
     }
 }
 
@@ -543,7 +547,8 @@ fn settings_from_ui(ui: &AppWindow, state: &SharedState) -> Settings {
         topic: ui.get_topic().trim().to_owned(),
         notifications_enabled: ui.get_notifications_enabled(),
         sound_enabled: ui.get_sound_enabled(),
-        audio_output: selected_audio_output(ui, state),
+        audio_outputs: persisted_audio_outputs(selected_audio_outputs(ui, state)),
+        audio_output: String::new(),
         placement: u8::try_from(ui.get_placement_index().clamp(0, 8)).unwrap_or(2),
         auto_connect: ui.get_auto_connect(),
     }
@@ -582,30 +587,72 @@ fn current_ui(bridge: &UiBridge) -> Option<AppWindow> {
         .and_then(|current| current.as_ref().and_then(slint::Weak::upgrade))
 }
 
-fn selected_audio_output(ui: &AppWindow, state: &SharedState) -> String {
-    let index = usize::try_from(ui.get_audio_output_index()).unwrap_or(0);
+fn selected_audio_outputs(ui: &AppWindow, state: &SharedState) -> Vec<String> {
+    let primary_index = usize::try_from(ui.get_audio_output_index()).unwrap_or(0);
+    let additional_index = usize::try_from(ui.get_additional_audio_output_index()).unwrap_or(0);
     let state = state.lock().expect("runtime state poisoned");
-    match state.audio_outputs.get(index) {
+    let mut selected = Vec::with_capacity(2);
+    selected.push(canonical_audio_output(
+        state.audio_outputs.get(primary_index),
+    ));
+    if additional_index > 0
+        && let Some(output) = state.audio_outputs.get(additional_index - 1)
+    {
+        let output = canonical_audio_output(Some(output));
+        if !selected.iter().any(|existing| existing == &output) {
+            selected.push(output);
+        }
+    }
+    selected
+}
+
+fn canonical_audio_output(output: Option<&String>) -> String {
+    match output {
         Some(name) if name != DEFAULT_OUTPUT_LABEL => name.clone(),
         _ => String::new(),
     }
 }
 
-fn set_audio_outputs(ui: &AppWindow, outputs: &[String], selected: &str) {
-    let index = if selected.is_empty() {
-        0
-    } else {
-        outputs
-            .iter()
-            .position(|name| name == selected)
-            .unwrap_or(0)
-    };
+fn persisted_audio_outputs(mut outputs: Vec<String>) -> Vec<String> {
+    if outputs.len() == 1 && outputs[0].is_empty() {
+        outputs.clear();
+    }
+    outputs
+}
+
+fn set_audio_outputs(ui: &AppWindow, outputs: &[String], selected: &[String]) {
+    let primary = selected.first().map(String::as_str).unwrap_or_default();
+    let primary_index = audio_output_index(outputs, primary).unwrap_or(0);
+    let additional_index = selected
+        .get(1)
+        .and_then(|output| audio_output_index(outputs, output))
+        .map(|index| index + 1)
+        .unwrap_or(0);
+
     let model = outputs
         .iter()
         .map(|output| SharedString::from(output.as_str()))
         .collect::<Vec<_>>();
     ui.set_audio_outputs(ModelRc::from(Rc::new(VecModel::from(model))));
-    ui.set_audio_output_index(i32::try_from(index).unwrap_or(0));
+
+    let mut additional_model = Vec::with_capacity(outputs.len() + 1);
+    additional_model.push(SharedString::from("None"));
+    additional_model.extend(
+        outputs
+            .iter()
+            .map(|output| SharedString::from(output.as_str())),
+    );
+    ui.set_additional_audio_outputs(ModelRc::from(Rc::new(VecModel::from(additional_model))));
+    ui.set_audio_output_index(i32::try_from(primary_index).unwrap_or(0));
+    ui.set_additional_audio_output_index(i32::try_from(additional_index).unwrap_or(0));
+}
+
+fn audio_output_index(outputs: &[String], selected: &str) -> Option<usize> {
+    if selected.is_empty() {
+        Some(0)
+    } else {
+        outputs.iter().position(|name| name == selected)
+    }
 }
 
 fn notification_item(record: HistoryRecord) -> NotificationItem {

@@ -25,9 +25,11 @@ export component AppWindow inherits Window {
     in-out property <bool> auto-connect: true;
     in-out property <int> placement-index: 2;
     in-out property <int> audio-output-index: 0;
+    in-out property <int> additional-audio-output-index: 0;
     in-out property <bool> connected: false;
     in-out property <string> status-text: "Ready";
     in property <[string]> audio-outputs;
+    in property <[string]> additional-audio-outputs;
     in property <[NotificationItem]> notifications;
     in-out property <int> page: 0;
 
@@ -190,7 +192,9 @@ export component AppWindow inherits Window {
             sound-enabled <=> root.sound-enabled;
             placement-index <=> root.placement-index;
             audio-output-index <=> root.audio-output-index;
+            additional-audio-output-index <=> root.additional-audio-output-index;
             audio-outputs: root.audio-outputs;
+            additional-audio-outputs: root.additional-audio-outputs;
             save-settings => { root.save-settings(); }
             refresh-audio-outputs => { root.refresh-audio-outputs(); }
         }

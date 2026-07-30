@@ -17,7 +17,9 @@ export component NotificationSettingsPage inherits Rectangle {
     in-out property <bool> sound-enabled;
     in-out property <int> placement-index;
     in-out property <int> audio-output-index;
+    in-out property <int> additional-audio-output-index;
     in property <[string]> audio-outputs;
+    in property <[string]> additional-audio-outputs;
     callback save-settings();
     callback refresh-audio-outputs();
 
@@ -34,7 +36,7 @@ export component NotificationSettingsPage inherits Rectangle {
         x: 0px;
         y: 29px;
         width: parent.width;
-        text: "Adaptive desktop cards, selectable audio, and safe nine-point screen placement.";
+        text: "Choose one output, or add a second device to play both at the same time.";
     }
 
     Rectangle {
@@ -109,7 +111,7 @@ export component NotificationSettingsPage inherits Rectangle {
 
             FieldLabel {
                 height: 14px;
-                text: "AUDIO OUTPUT";
+                text: "PRIMARY AUDIO OUTPUT";
             }
             HorizontalBox {
                 height: 32px;
@@ -133,6 +135,17 @@ export component NotificationSettingsPage inherits Rectangle {
 
             FieldLabel {
                 height: 14px;
+                text: "ADDITIONAL OUTPUT (OPTIONAL)";
+            }
+            ComboBox {
+                height: 32px;
+                model: root.additional-audio-outputs;
+                current-index <=> root.additional-audio-output-index;
+                enabled: root.sound-enabled;
+            }
+
+            FieldLabel {
+                height: 14px;
                 text: "SCREEN POSITION";
             }
             ComboBox {
@@ -143,38 +156,6 @@ export component NotificationSettingsPage inherits Rectangle {
                     "Bottom left", "Bottom centre", "Bottom right"
                 ];
                 current-index <=> root.placement-index;
-            }
-
-            Rectangle {
-                height: 44px;
-                border-radius: 8px;
-                background: #0c151f;
-                border-width: 1px;
-                border-color: Theme.border;
-
-                Text {
-                    x: 10px;
-                    y: 5px;
-                    width: parent.width - 20px;
-                    height: 16px;
-                    text: "Adaptive notification surface";
-                    color: Theme.text;
-                    font-size: 10px;
-                    font-weight: 680;
-                    vertical-alignment: center;
-                }
-
-                Text {
-                    x: 10px;
-                    y: 22px;
-                    width: parent.width - 20px;
-                    height: 15px;
-                    text: "Short messages stay compact; longer bodies expand only as needed.";
-                    color: Theme.muted;
-                    font-size: 8px;
-                    vertical-alignment: center;
-                    overflow: elide;
-                }
             }
 
             Rectangle { vertical-stretch: 1; }

@@ -14,6 +14,9 @@ pub struct Settings {
     pub topic: String,
     pub notifications_enabled: bool,
     pub sound_enabled: bool,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub audio_outputs: Vec<String>,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub audio_output: String,
     pub placement: u8,
     pub auto_connect: bool,
@@ -26,6 +29,7 @@ impl Default for Settings {
             topic: String::new(),
             notifications_enabled: true,
             sound_enabled: true,
+            audio_outputs: Vec::new(),
             audio_output: String::new(),
             placement: 2,
             auto_connect: true,
@@ -37,6 +41,30 @@ impl Settings {
     #[must_use]
     pub fn load() -> Self {
         Self::load_from(&settings_path()).unwrap_or_default()
+    }
+
+    #[must_use]
+    pub fn selected_audio_outputs(&self) -> Vec<String> {
+        let selected = if self.audio_outputs.is_empty() {
+            if self.audio_output.is_empty() {
+                vec![String::new()]
+            } else {
+                vec![self.audio_output.clone()]
+            }
+        } else {
+            self.audio_outputs.clone()
+        };
+
+        let mut unique = Vec::with_capacity(selected.len());
+        for output in selected {
+            if !unique.iter().any(|existing| existing == &output) {
+                unique.push(output);
+            }
+        }
+        if unique.is_empty() {
+            unique.push(String::new());
+        }
+        unique
     }
 
     pub fn save(&self) -> io::Result<()> {
@@ -93,7 +121,8 @@ mod tests {
             topic: "alerts".into(),
             notifications_enabled: false,
             sound_enabled: false,
-            audio_output: "Headphones".into(),
+            audio_outputs: vec!["Speakers".into(), "Headphones".into()],
+            audio_output: String::new(),
             placement: 8,
             auto_connect: false,
         };
@@ -103,13 +132,22 @@ mod tests {
     }
 
     #[test]
+    fn legacy_single_audio_output_is_preserved() {
+        let decoded: Settings = serde_json::from_str(
+            r#"{"server_url":"https://ntfy.sh","topic":"alerts","notifications_enabled":true,"audio_output":"Headphones"}"#,
+        )
+        .unwrap();
+        assert_eq!(decoded.selected_audio_outputs(), vec!["Headphones"]);
+    }
+
+    #[test]
     fn old_settings_receive_defaults() {
         let decoded: Settings = serde_json::from_str(
             r#"{"server_url":"https://ntfy.sh","topic":"alerts","notifications_enabled":true}"#,
         )
         .unwrap();
         assert!(decoded.sound_enabled);
-        assert!(decoded.audio_output.is_empty());
+        assert_eq!(decoded.selected_audio_outputs(), vec![""]);
         assert_eq!(decoded.placement, 2);
         assert!(decoded.auto_connect);
     }

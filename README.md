@@ -9,7 +9,7 @@ A native Windows desktop client for [ntfy](https://ntfy.sh), written in Rust and
 - Opaque Slint interface forced to the winit software renderer; no GPU renderer, transparency, blur, or idle animation.
 - Compact tabbed interface for connection, notification, publishing, and bounded history settings.
 - Readable 404 × 180 desktop popup with nine positions and physical-pixel fallback sizing so the complete window remains inside the Windows work area.
-- Selectable notification audio output: Windows system default or a specific waveform output device.
+- Selectable notification audio outputs: Windows system default or specific waveform devices, with optional simultaneous playback on a second output.
 - Automatic reconnect with bounded exponential backoff and resume from the last ntfy message ID.
 - Optional bearer authentication. Tokens remain in memory and are never written to settings.
 
