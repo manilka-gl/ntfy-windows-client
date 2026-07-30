@@ -1,0 +1,33 @@
+{
+  "executable": "D:\\a\\ntfy-windows-client\\ntfy-windows-client\\repository\\target\\x86_64-pc-windows-msvc\\release\\ntfy-windows-client.exe",
+  "target": "x86_64-pc-windows-msvc",
+  "listener_topic": "worker-memory-30528605565-1",
+  "idle_working_set_limit_bytes": 1048576,
+  "samples": [
+    {
+      "sampled_utc": "2026-07-30T09:17:41.9241843+00:00",
+      "working_set_bytes": 442368,
+      "private_bytes": 3686400,
+      "handles": 343,
+      "threads": 11
+    },
+    {
+      "sampled_utc": "2026-07-30T09:17:45.9370954+00:00",
+      "working_set_bytes": 442368,
+      "private_bytes": 3686400,
+      "handles": 343,
+      "threads": 11
+    },
+    {
+      "sampled_utc": "2026-07-30T09:17:49.9406643+00:00",
+      "working_set_bytes": 442368,
+      "private_bytes": 3686400,
+      "handles": 343,
+      "threads": 11
+    }
+  ],
+  "final_working_set_bytes": 442368,
+  "final_private_bytes": 3686400,
+  "final_thread_count": 11,
+  "within_idle_working_set_limit": true
+}
