@@ -108,7 +108,7 @@ fn visual_line_count(text: &str, columns: usize) -> usize {
     text.lines()
         .map(|line| {
             let characters = line.chars().count().max(1);
-            (characters + columns - 1) / columns
+            characters.div_ceil(columns)
         })
         .sum::<usize>()
         .max(1)
