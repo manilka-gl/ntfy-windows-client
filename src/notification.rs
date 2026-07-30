@@ -196,8 +196,8 @@ fn work_area() -> RECT {
 #[cfg(test)]
 mod tests {
     use super::{
-        POPUP_MAX_LOGICAL_HEIGHT, POPUP_MIN_LOGICAL_HEIGHT, display_time_for_lines,
-        physical_edge, popup_logical_height_for_lines, visual_line_count,
+        POPUP_MAX_LOGICAL_HEIGHT, POPUP_MIN_LOGICAL_HEIGHT, display_time_for_lines, physical_edge,
+        popup_logical_height_for_lines, visual_line_count,
     };
 
     #[test]
