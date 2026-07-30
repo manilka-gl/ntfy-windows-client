@@ -1,6 +1,6 @@
 use std::{
     ffi::c_void,
-    mem::size_of,
+    mem::{size_of, size_of_val},
     ptr, thread,
     time::{Duration, Instant},
 };
@@ -9,9 +9,12 @@ pub const DEFAULT_OUTPUT_LABEL: &str = "System default";
 
 const MMSYSERR_NOERROR: u32 = 0;
 const WAVE_FORMAT_PCM: u16 = 1;
+const WAVE_MAPPER: u32 = u32::MAX;
 const WHDR_DONE: u32 = 0x0000_0001;
 const SAMPLE_RATE: u32 = 16_000;
 const TONE_MILLISECONDS: u32 = 140;
+const OUTPUT_START_STAGGER: Duration = Duration::from_millis(28);
+const PLAYBACK_TIMEOUT: Duration = Duration::from_secs(1);
 
 #[repr(C)]
 #[derive(Default)]
@@ -75,6 +78,12 @@ unsafe extern "system" {
     fn MessageBeep(kind: u32) -> i32;
 }
 
+struct PreparedOutput {
+    handle: WaveOut,
+    header: Box<WaveHeader>,
+    written: bool,
+}
+
 #[must_use]
 pub fn output_names() -> Vec<String> {
     let mut outputs = vec![DEFAULT_OUTPUT_LABEL.to_owned()];
@@ -89,12 +98,7 @@ pub fn output_names() -> Vec<String> {
             )
         };
         if result == MMSYSERR_NOERROR {
-            let end = caps
-                .name
-                .iter()
-                .position(|character| *character == 0)
-                .unwrap_or(caps.name.len());
-            let name = String::from_utf16_lossy(&caps.name[..end]);
+            let name = caps_name(&caps);
             if !name.is_empty() && !outputs.iter().any(|existing| existing == &name) {
                 outputs.push(name);
             }
@@ -104,18 +108,17 @@ pub fn output_names() -> Vec<String> {
 }
 
 pub fn play(output_names: &[String]) {
-    for (index, output_name) in normalized_outputs(output_names).into_iter().enumerate() {
-        let _ = thread::Builder::new()
-            .name(format!("ntfy-sound-{index}"))
-            .stack_size(128 * 1024)
-            .spawn(move || {
-                if output_name.is_empty() || play_tone(&output_name).is_err() {
-                    unsafe {
-                        MessageBeep(0x0000_0040);
-                    }
+    let outputs = normalized_outputs(output_names);
+    let _ = thread::Builder::new()
+        .name("ntfy-sound".to_owned())
+        .stack_size(192 * 1024)
+        .spawn(move || {
+            if play_outputs(&outputs).is_err() {
+                unsafe {
+                    MessageBeep(0x0000_0040);
                 }
-            });
-    }
+            }
+        });
 }
 
 fn normalized_outputs(output_names: &[String]) -> Vec<String> {
@@ -136,8 +139,8 @@ fn normalized_outputs(output_names: &[String]) -> Vec<String> {
     outputs
 }
 
-fn play_tone(output_name: &str) -> Result<(), ()> {
-    let device_id = find_device(output_name).ok_or(())?;
+fn play_outputs(output_names: &[String]) -> Result<(), ()> {
+    let mut samples = tone_samples();
     let format = WaveFormatEx {
         format_tag: WAVE_FORMAT_PCM,
         channels: 1,
@@ -147,6 +150,38 @@ fn play_tone(output_name: &str) -> Result<(), ()> {
         bits_per_sample: 16,
         extra_size: 0,
     };
+    let header_size = size_of::<WaveHeader>() as u32;
+    let mut prepared = Vec::with_capacity(output_names.len());
+
+    for output_name in output_names {
+        if let Some(output) = prepare_output(output_name, &format, &mut samples, header_size) {
+            prepared.push(output);
+        }
+    }
+    if prepared.is_empty() {
+        return Err(());
+    }
+
+    let mut wrote_any = false;
+    for (index, output) in prepared.iter_mut().enumerate() {
+        if index > 0 {
+            thread::sleep(OUTPUT_START_STAGGER);
+        }
+        output.written = unsafe {
+            waveOutWrite(output.handle, output.header.as_mut(), header_size) == MMSYSERR_NOERROR
+        };
+        wrote_any |= output.written;
+    }
+
+    if wrote_any {
+        wait_for_completion(&prepared);
+    }
+    cleanup_outputs(&mut prepared, header_size);
+
+    wrote_any.then_some(()).ok_or(())
+}
+
+fn tone_samples() -> Vec<i16> {
     let sample_count = (SAMPLE_RATE * TONE_MILLISECONDS / 1000) as usize;
     let mut samples = Vec::with_capacity(sample_count);
     for index in 0..sample_count {
@@ -154,53 +189,80 @@ fn play_tone(output_name: &str) -> Result<(), ()> {
         let envelope = 1.0 - index as f32 / sample_count as f32;
         samples.push((phase.sin() * envelope * 7_000.0) as i16);
     }
+    samples
+}
 
-    let mut output = ptr::null_mut();
-    if unsafe { waveOutOpen(&raw mut output, device_id, &raw const format, 0, 0, 0) }
-        != MMSYSERR_NOERROR
-    {
-        return Err(());
+fn prepare_output(
+    output_name: &str,
+    format: &WaveFormatEx,
+    samples: &mut [i16],
+    header_size: u32,
+) -> Option<PreparedOutput> {
+    let device_id = device_id(output_name)?;
+    let mut handle = ptr::null_mut();
+    if unsafe { waveOutOpen(&raw mut handle, device_id, format, 0, 0, 0) } != MMSYSERR_NOERROR {
+        return None;
     }
 
-    let mut header = WaveHeader {
+    let mut header = Box::new(WaveHeader {
         data: samples.as_mut_ptr().cast::<i8>(),
-        buffer_length: (samples.len() * size_of::<i16>()) as u32,
+        buffer_length: u32::try_from(size_of_val(samples)).unwrap_or(u32::MAX),
         bytes_recorded: 0,
         user: 0,
         flags: 0,
         loops: 0,
         next: ptr::null_mut(),
         reserved: 0,
-    };
-    let header_size = size_of::<WaveHeader>() as u32;
-    let prepared = unsafe { waveOutPrepareHeader(output, &raw mut header, header_size) };
-    if prepared != MMSYSERR_NOERROR {
+    });
+    if unsafe { waveOutPrepareHeader(handle, header.as_mut(), header_size) } != MMSYSERR_NOERROR {
         unsafe {
-            waveOutClose(output);
+            waveOutClose(handle);
         }
-        return Err(());
+        return None;
     }
 
-    let written = unsafe { waveOutWrite(output, &raw mut header, header_size) };
-    if written == MMSYSERR_NOERROR {
-        let deadline = Instant::now() + Duration::from_secs(1);
-        while Instant::now() < deadline
-            && unsafe { ptr::read_volatile(&raw const header.flags) } & WHDR_DONE == 0
-        {
-            thread::sleep(Duration::from_millis(5));
+    Some(PreparedOutput {
+        handle,
+        header,
+        written: false,
+    })
+}
+
+fn wait_for_completion(outputs: &[PreparedOutput]) {
+    let deadline = Instant::now() + PLAYBACK_TIMEOUT;
+    while Instant::now() < deadline {
+        let complete = outputs.iter().all(|output| {
+            !output.written
+                || unsafe { ptr::read_volatile(&raw const output.header.flags) } & WHDR_DONE != 0
+        });
+        if complete {
+            return;
         }
-        if unsafe { ptr::read_volatile(&raw const header.flags) } & WHDR_DONE == 0 {
+        thread::sleep(Duration::from_millis(4));
+    }
+}
+
+fn cleanup_outputs(outputs: &mut [PreparedOutput], header_size: u32) {
+    for output in outputs.iter_mut() {
+        let done = unsafe { ptr::read_volatile(&raw const output.header.flags) } & WHDR_DONE != 0;
+        if output.written && !done {
             unsafe {
-                waveOutReset(output);
+                waveOutReset(output.handle);
             }
         }
+        unsafe {
+            waveOutUnprepareHeader(output.handle, output.header.as_mut(), header_size);
+            waveOutClose(output.handle);
+        }
     }
+}
 
-    unsafe {
-        waveOutUnprepareHeader(output, &raw mut header, header_size);
-        waveOutClose(output);
+fn device_id(output_name: &str) -> Option<u32> {
+    if output_name.is_empty() {
+        Some(WAVE_MAPPER)
+    } else {
+        find_device(output_name)
     }
-    (written == MMSYSERR_NOERROR).then_some(()).ok_or(())
 }
 
 fn find_device(output_name: &str) -> Option<u32> {
@@ -214,25 +276,31 @@ fn find_device(output_name: &str) -> Option<u32> {
                 size_of::<WaveOutCapsW>() as u32,
             )
         };
-        if result != MMSYSERR_NOERROR {
-            return false;
-        }
-        let end = caps
-            .name
-            .iter()
-            .position(|character| *character == 0)
-            .unwrap_or(caps.name.len());
-        String::from_utf16_lossy(&caps.name[..end]) == output_name
+        result == MMSYSERR_NOERROR && caps_name(&caps) == output_name
     })
+}
+
+fn caps_name(caps: &WaveOutCapsW) -> String {
+    let end = caps
+        .name
+        .iter()
+        .position(|character| *character == 0)
+        .unwrap_or(caps.name.len());
+    String::from_utf16_lossy(&caps.name[..end])
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{DEFAULT_OUTPUT_LABEL, normalized_outputs};
+    use super::{DEFAULT_OUTPUT_LABEL, WAVE_MAPPER, device_id, normalized_outputs};
 
     #[test]
     fn default_output_label_is_stable() {
         assert_eq!(DEFAULT_OUTPUT_LABEL, "System default");
+    }
+
+    #[test]
+    fn default_output_uses_wave_mapper() {
+        assert_eq!(device_id(""), Some(WAVE_MAPPER));
     }
 
     #[test]
@@ -241,11 +309,11 @@ mod tests {
         assert_eq!(
             normalized_outputs(&[
                 DEFAULT_OUTPUT_LABEL.to_owned(),
-                String::new(),
-                "Headphones".to_owned(),
-                "Headphones".to_owned(),
+                DEFAULT_OUTPUT_LABEL.to_owned(),
+                "Speakers".to_owned(),
+                "Speakers".to_owned(),
             ]),
-            vec!["", "Headphones"]
+            vec!["", "Speakers"]
         );
     }
 }

@@ -40,10 +40,10 @@ export component NotificationSettingsPage inherits Rectangle {
     }
 
     Rectangle {
-        x: 0px;
+        x: parent.width > 980px ? (parent.width - 980px) / 2 : 0px;
         y: 54px;
-        width: parent.width;
-        height: parent.height - 54px;
+        width: parent.width > 980px ? 980px : parent.width;
+        height: parent.height > 394px ? 340px : parent.height - 54px;
         border-radius: 12px;
         background: Theme.panel;
         border-width: 1px;
@@ -55,7 +55,7 @@ export component NotificationSettingsPage inherits Rectangle {
             y: 0px;
             width: 3px;
             height: parent.height;
-            background: Theme.violet;
+            background: Theme.accent;
         }
 
         VerticalBox {
@@ -63,7 +63,7 @@ export component NotificationSettingsPage inherits Rectangle {
             y: 12px;
             width: parent.width - 32px;
             height: parent.height - 24px;
-            spacing: 4px;
+            spacing: 7px;
 
             HorizontalBox {
                 height: 38px;
@@ -72,9 +72,9 @@ export component NotificationSettingsPage inherits Rectangle {
                 Rectangle {
                     horizontal-stretch: 1;
                     border-radius: 8px;
-                    background: #0c151f;
+                    background: Theme.chrome;
                     border-width: 1px;
-                    border-color: root.notifications-enabled ? #285b4b : Theme.border;
+                    border-color: root.notifications-enabled ? #477766 : Theme.border;
 
                     CheckBox {
                         x: 10px;
@@ -89,9 +89,9 @@ export component NotificationSettingsPage inherits Rectangle {
                 Rectangle {
                     horizontal-stretch: 1;
                     border-radius: 8px;
-                    background: #0c151f;
+                    background: Theme.chrome;
                     border-width: 1px;
-                    border-color: root.sound-enabled ? #31526b : Theme.border;
+                    border-color: root.sound-enabled ? #48667a : Theme.border;
 
                     CheckBox {
                         x: 10px;
@@ -135,7 +135,7 @@ export component NotificationSettingsPage inherits Rectangle {
 
             FieldLabel {
                 height: 14px;
-                text: "ADDITIONAL OUTPUT (OPTIONAL)";
+                text: "SECOND AUDIO OUTPUT · OPTIONAL";
             }
             ComboBox {
                 height: 32px;

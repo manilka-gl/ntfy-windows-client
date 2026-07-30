@@ -38,10 +38,10 @@ export component ConnectionPage inherits Rectangle {
     }
 
     Rectangle {
-        x: 0px;
+        x: parent.width > 1040px ? (parent.width - 1040px) / 2 : 0px;
         y: 54px;
-        width: parent.width;
-        height: parent.height - 54px;
+        width: parent.width > 1040px ? 1040px : parent.width;
+        height: parent.height > 430px ? 376px : parent.height - 54px;
         border-radius: 12px;
         background: Theme.panel;
         border-width: 1px;
@@ -128,9 +128,9 @@ export component ConnectionPage inherits Rectangle {
             Rectangle {
                 height: 52px;
                 border-radius: 9px;
-                background: #0c151f;
+                background: Theme.chrome;
                 border-width: 1px;
-                border-color: root.connected ? #245c49 : Theme.border;
+                border-color: root.connected ? #477766 : Theme.border;
 
                 Rectangle {
                     x: 12px;

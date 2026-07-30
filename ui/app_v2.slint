@@ -55,7 +55,7 @@ export component AppWindow inherits Window {
             border-radius: 9px;
             background: Theme.accent-soft;
             border-width: 1px;
-            border-color: #27684f;
+            border-color: #477766;
 
             Text {
                 x: 0px;
@@ -117,7 +117,7 @@ export component AppWindow inherits Window {
         y: 58px;
         width: parent.width;
         height: 46px;
-        background: #09111a;
+        background: #0d141c;
 
         HorizontalBox {
             x: 18px;
@@ -162,9 +162,9 @@ export component AppWindow inherits Window {
     }
 
     Rectangle {
-        x: 20px;
+        x: parent.width > 1240px ? (parent.width - 1200px) / 2 : 20px;
         y: 118px;
-        width: parent.width - 40px;
+        width: parent.width > 1240px ? 1200px : parent.width - 40px;
         height: parent.height - 154px;
         background: #00000000;
         clip: true;

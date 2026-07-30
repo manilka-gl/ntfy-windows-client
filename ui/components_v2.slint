@@ -7,22 +7,22 @@ export struct NotificationItem {
 }
 
 export global Theme {
-    out property <color> bg: #070b11;
-    out property <color> chrome: #0c131d;
-    out property <color> panel: #101a26;
-    out property <color> panel-raised: #142232;
-    out property <color> hover: #192a3c;
-    out property <color> border: #223246;
-    out property <color> border-strong: #35516d;
-    out property <color> text: #f3f8ff;
-    out property <color> secondary: #a7b8cc;
-    out property <color> muted: #687b91;
-    out property <color> accent: #35f2a1;
-    out property <color> accent-soft: #103a2b;
-    out property <color> cyan: #4cc9ff;
-    out property <color> violet: #9d8cff;
-    out property <color> warning: #ffce5c;
-    out property <color> danger: #ff718d;
+    out property <color> bg: #0b1016;
+    out property <color> chrome: #101720;
+    out property <color> panel: #151e28;
+    out property <color> panel-raised: #1a2632;
+    out property <color> hover: #202e3b;
+    out property <color> border: #2a3948;
+    out property <color> border-strong: #3b5062;
+    out property <color> text: #edf2f7;
+    out property <color> secondary: #b3c0cc;
+    out property <color> muted: #7c8b99;
+    out property <color> accent: #5ca88f;
+    out property <color> accent-soft: #18352d;
+    out property <color> cyan: #70a8c2;
+    out property <color> violet: #8192b5;
+    out property <color> warning: #d6ad62;
+    out property <color> danger: #d77a88;
 }
 
 export component Tab inherits Rectangle {
@@ -32,9 +32,9 @@ export component Tab inherits Rectangle {
 
     height: 34px;
     border-radius: 9px;
-    background: selected ? #142a32 : tab-touch.has-hover ? Theme.hover : #00000000;
+    background: selected ? #1a2b30 : tab-touch.has-hover ? Theme.hover : #00000000;
     border-width: 1px;
-    border-color: selected ? #2b6656 : tab-touch.has-hover ? Theme.border : #00000000;
+    border-color: selected ? #3f6f63 : tab-touch.has-hover ? Theme.border : #00000000;
 
     Text {
         x: 10px;
@@ -99,10 +99,10 @@ export component CompactButton inherits Rectangle {
     border-radius: 8px;
     opacity: root.enabled ? 1 : 0.42;
     background: root.primary
-        ? (button-touch.has-hover ? #1f6a50 : #18523f)
+        ? (button-touch.has-hover ? #477e6c : #386757)
         : (button-touch.has-hover ? Theme.hover : #121d2a);
     border-width: 1px;
-    border-color: root.primary ? #2a8f69 : Theme.border;
+    border-color: root.primary ? #5a907e : Theme.border;
 
     Text {
         x: 10px;
@@ -110,7 +110,7 @@ export component CompactButton inherits Rectangle {
         width: parent.width - 20px;
         height: parent.height;
         text: root.label;
-        color: root.primary ? #eafff5 : Theme.secondary;
+        color: root.primary ? #f2fbf7 : Theme.secondary;
         font-size: 10px;
         font-weight: root.primary ? 700 : 620;
         horizontal-alignment: center;
@@ -133,7 +133,7 @@ export component StatusPill inherits Rectangle {
     border-radius: 15px;
     background: root.active ? Theme.accent-soft : #151f2c;
     border-width: 1px;
-    border-color: root.active ? #27684f : Theme.border;
+    border-color: root.active ? #477766 : Theme.border;
 
     Rectangle {
         x: 12px;
@@ -150,7 +150,7 @@ export component StatusPill inherits Rectangle {
         width: parent.width - 38px;
         height: parent.height;
         text: root.active ? root.active-label : root.inactive-label;
-        color: root.active ? #c8ffe6 : Theme.secondary;
+        color: root.active ? #d9f0e7 : Theme.secondary;
         font-size: 10px;
         font-weight: 680;
         horizontal-alignment: center;
