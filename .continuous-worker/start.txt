@@ -1,4 +1,0 @@
-branch: fix/ui-layout-20260730
-started_utc: 2026-07-30T08:32:00Z
-purpose: validate full-desktop containment, minimum-size page layouts, adaptive popup geometry, sub-1-MiB listener memory, and release packaging
-command: input/060-validate-compact-ui.ps1
