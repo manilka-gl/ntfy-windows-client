@@ -1,0 +1,18 @@
+{
+  "command_file": "069-chunk-visual-contact-payload.ps1",
+  "command_path": "input/069-chunk-visual-contact-payload.ps1",
+  "command_sha256": "8539820008315920bc0aa667cc4d4d406d9cfdab9ab886b43a35cf15eef5e73f",
+  "source_commit": "ad30e7cd235485580c57bc9be19a1e1aad6d0008",
+  "status": "success",
+  "exit_code": 0,
+  "timed_out": false,
+  "started_utc": "2026-07-30T09:35:56.0225789+00:00",
+  "finished_utc": "2026-07-30T09:35:56.4394295+00:00",
+  "duration_seconds": 0.417,
+  "log_file": "8539820008315920bc0aa667cc4d4d406d9cfdab9ab886b43a35cf15eef5e73f.log",
+  "branch": "fix/ui-layout-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30528605565",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000406"
+}
