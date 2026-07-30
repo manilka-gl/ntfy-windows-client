@@ -57,27 +57,27 @@ export component NotificationSettingsPage inherits Rectangle {
         }
 
         VerticalBox {
-            x: 18px;
-            y: 14px;
-            width: parent.width - 36px;
-            height: parent.height - 28px;
-            spacing: 6px;
+            x: 16px;
+            y: 12px;
+            width: parent.width - 32px;
+            height: parent.height - 24px;
+            spacing: 4px;
 
             HorizontalBox {
-                height: 44px;
-                spacing: 10px;
+                height: 38px;
+                spacing: 8px;
 
                 Rectangle {
                     horizontal-stretch: 1;
-                    border-radius: 9px;
+                    border-radius: 8px;
                     background: #0c151f;
                     border-width: 1px;
                     border-color: root.notifications-enabled ? #285b4b : Theme.border;
 
                     CheckBox {
-                        x: 12px;
-                        y: 7px;
-                        width: parent.width - 24px;
+                        x: 10px;
+                        y: 4px;
+                        width: parent.width - 20px;
                         height: 30px;
                         text: "Show desktop popup";
                         checked <=> root.notifications-enabled;
@@ -86,17 +86,17 @@ export component NotificationSettingsPage inherits Rectangle {
 
                 Rectangle {
                     horizontal-stretch: 1;
-                    border-radius: 9px;
+                    border-radius: 8px;
                     background: #0c151f;
                     border-width: 1px;
                     border-color: root.sound-enabled ? #31526b : Theme.border;
 
                     CheckBox {
-                        x: 12px;
-                        y: 7px;
-                        width: parent.width - 24px;
+                        x: 10px;
+                        y: 4px;
+                        width: parent.width - 20px;
                         height: 30px;
-                        text: "Play notification sound";
+                        text: "Play sound";
                         checked <=> root.sound-enabled;
                     }
                 }
@@ -107,10 +107,13 @@ export component NotificationSettingsPage inherits Rectangle {
                 background: Theme.border;
             }
 
-            FieldLabel { text: "AUDIO OUTPUT"; }
+            FieldLabel {
+                height: 14px;
+                text: "AUDIO OUTPUT";
+            }
             HorizontalBox {
-                height: 34px;
-                spacing: 8px;
+                height: 32px;
+                spacing: 7px;
 
                 ComboBox {
                     horizontal-stretch: 1;
@@ -120,16 +123,20 @@ export component NotificationSettingsPage inherits Rectangle {
                 }
 
                 CompactButton {
-                    width: 82px;
+                    width: 78px;
+                    height: 32px;
                     label: "Refresh";
                     enabled: root.sound-enabled;
                     clicked => { root.refresh-audio-outputs(); }
                 }
             }
 
-            FieldLabel { text: "SCREEN POSITION"; }
+            FieldLabel {
+                height: 14px;
+                text: "SCREEN POSITION";
+            }
             ComboBox {
-                height: 34px;
+                height: 32px;
                 model: [
                     "Top left", "Top centre", "Top right",
                     "Middle left", "Centre", "Middle right",
@@ -139,32 +146,32 @@ export component NotificationSettingsPage inherits Rectangle {
             }
 
             Rectangle {
-                height: 52px;
-                border-radius: 9px;
+                height: 44px;
+                border-radius: 8px;
                 background: #0c151f;
                 border-width: 1px;
                 border-color: Theme.border;
 
                 Text {
-                    x: 12px;
-                    y: 7px;
-                    width: parent.width - 24px;
-                    height: 18px;
+                    x: 10px;
+                    y: 5px;
+                    width: parent.width - 20px;
+                    height: 16px;
                     text: "Adaptive notification surface";
                     color: Theme.text;
-                    font-size: 11px;
+                    font-size: 10px;
                     font-weight: 680;
                     vertical-alignment: center;
                 }
 
                 Text {
-                    x: 12px;
-                    y: 25px;
-                    width: parent.width - 24px;
-                    height: 18px;
-                    text: "Short messages stay compact; longer bodies expand only as much as needed.";
+                    x: 10px;
+                    y: 22px;
+                    width: parent.width - 20px;
+                    height: 15px;
+                    text: "Short messages stay compact; longer bodies expand only as needed.";
                     color: Theme.muted;
-                    font-size: 9px;
+                    font-size: 8px;
                     vertical-alignment: center;
                     overflow: elide;
                 }
@@ -173,10 +180,11 @@ export component NotificationSettingsPage inherits Rectangle {
             Rectangle { vertical-stretch: 1; }
 
             HorizontalBox {
-                height: 32px;
+                height: 30px;
                 Rectangle { horizontal-stretch: 1; }
                 CompactButton {
-                    width: 108px;
+                    width: 104px;
+                    height: 30px;
                     primary: true;
                     label: "Save settings";
                     clicked => { root.save-settings(); }
