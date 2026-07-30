@@ -6,7 +6,9 @@ $source = [IO.File]::ReadAllText($sourcePath)
 
 $oldAttempts = 'for ($attempt = 1; $attempt -le 40; $attempt++) {'
 $newAttempts = 'for ($attempt = 1; $attempt -le 80; $attempt++) {'
-$oldLookup = "$windowHandle = [NtfyWindowCapture]::FindWindow(`$null, 'ntfy for Windows')"
+$oldLookup = @'
+$windowHandle = [NtfyWindowCapture]::FindWindow($null, 'ntfy for Windows')
+'@.TrimEnd()
 $newLookup = @'
 $uiProcess.Refresh()
         $windowHandle = $uiProcess.MainWindowHandle
