@@ -1,3 +1,1 @@
-GitHub connector capability audit
-Created: 2026-07-30
-Purpose: exercise create_file, fetch_file, update_file, and delete_file on an isolated branch.
+GitHub connector update test.
