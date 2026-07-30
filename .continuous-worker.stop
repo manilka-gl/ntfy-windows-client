@@ -1,0 +1,5 @@
+2026-07-30T17:35:39Z
+Completed selectable notification audio outputs feature.
+Verified cargo fmt, Clippy with warnings denied, tests, x64 Windows release build, pushed commit, executable artifact, and codebase snapshot.
+Command: 20260730T171850Z-e729d7f5
+Commit: 2c1888db07886e2d6d5a9a8b940b9a4e8ac8477c
