@@ -1,0 +1,22 @@
+=== STANDARD OUTPUT ===
+CHECK compact UI release validation: start
+CHECK cargo fmt: start
+Diff in \\?\D:\a\ntfy-windows-client\ntfy-windows-client\repository\src\notification.rs:196:
+ #[cfg(test)]
+ mod tests {
+     use super::{
+[31m-        POPUP_MAX_LOGICAL_HEIGHT, POPUP_MIN_LOGICAL_HEIGHT, display_time_for_lines,
+[0m[31m-        physical_edge, popup_logical_height_for_lines, visual_line_count,
+[0m[32m+        POPUP_MAX_LOGICAL_HEIGHT, POPUP_MIN_LOGICAL_HEIGHT, display_time_for_lines, physical_edge,
+[0m[32m+        popup_logical_height_for_lines, visual_line_count,
+[0m     };
+ 
+     #[test]
+
+
+=== STANDARD ERROR ===
+[31;1mException: [0mD:\a\ntfy-windows-client\ntfy-windows-client\repository\input\060-validate-compact-ui.ps1:16[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  16 | [0m         [36;1mthrow "CHECK ${Label}: failed with exit code $LASTEXITCODE"[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mCHECK cargo fmt: failed with exit code 1[0m
