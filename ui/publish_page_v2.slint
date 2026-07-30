@@ -83,10 +83,17 @@ export component PublishPage inherits Rectangle {
 
                 Rectangle {
                     width: 8px;
-                    height: 8px;
-                    border-radius: 4px;
-                    background: root.topic == "" ? Theme.danger : Theme.accent;
-                    vertical-alignment: center;
+                    height: 34px;
+                    background: #00000000;
+
+                    Rectangle {
+                        x: 0px;
+                        y: 13px;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 4px;
+                        background: root.topic == "" ? Theme.danger : Theme.accent;
+                    }
                 }
 
                 Text {
