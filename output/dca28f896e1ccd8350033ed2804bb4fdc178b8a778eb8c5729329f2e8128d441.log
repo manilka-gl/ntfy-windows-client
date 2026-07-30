@@ -1,0 +1,9 @@
+=== STANDARD OUTPUT ===
+
+
+=== STANDARD ERROR ===
+[31;1mInvalidOperation: [0mD:\a\ntfy-windows-client\ntfy-windows-client\repository\input\051-verify-ui-layout-process-window.ps1:9[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m   9 | [0m $oldLookup = "[36;1m$windowHandle[0m = [NtfyWindowCapture]::FindWindow(`$null, .[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m               ~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mThe variable '$windowHandle' cannot be retrieved because it has not been set.[0m
