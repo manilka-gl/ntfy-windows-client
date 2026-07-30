@@ -7,19 +7,22 @@ export struct NotificationItem {
 }
 
 export global Theme {
-    out property <color> bg: #0b1017;
-    out property <color> chrome: #111923;
-    out property <color> panel: #16202c;
-    out property <color> hover: #1c2937;
-    out property <color> border: #2a394b;
-    out property <color> text: #f2f5f9;
-    out property <color> secondary: #aab5c4;
-    out property <color> muted: #748196;
-    out property <color> accent: #4ade80;
-    out property <color> accent-soft: #173b29;
-    out property <color> blue: #60a5fa;
-    out property <color> warning: #fbbf24;
-    out property <color> danger: #fb7185;
+    out property <color> bg: #070b11;
+    out property <color> chrome: #0c131d;
+    out property <color> panel: #101a26;
+    out property <color> panel-raised: #142232;
+    out property <color> hover: #192a3c;
+    out property <color> border: #223246;
+    out property <color> border-strong: #35516d;
+    out property <color> text: #f3f8ff;
+    out property <color> secondary: #a7b8cc;
+    out property <color> muted: #687b91;
+    out property <color> accent: #35f2a1;
+    out property <color> accent-soft: #103a2b;
+    out property <color> cyan: #4cc9ff;
+    out property <color> violet: #9d8cff;
+    out property <color> warning: #ffce5c;
+    out property <color> danger: #ff718d;
 }
 
 export component Tab inherits Rectangle {
@@ -27,21 +30,33 @@ export component Tab inherits Rectangle {
     in property <bool> selected;
     callback activated();
 
-    height: 36px;
-    border-radius: 8px;
-    background: selected ? #203044 : tab-touch.has-hover ? Theme.hover : #00000000;
-    border-width: selected ? 1px : 0px;
-    border-color: selected ? #3a5069 : #00000000;
+    height: 34px;
+    border-radius: 9px;
+    background: selected ? #142a32 : tab-touch.has-hover ? Theme.hover : #00000000;
+    border-width: 1px;
+    border-color: selected ? #2b6656 : tab-touch.has-hover ? Theme.border : #00000000;
 
     Text {
-        width: parent.width;
+        x: 10px;
+        y: 0px;
+        width: parent.width - 20px;
         height: parent.height;
         text: root.label;
         color: root.selected ? Theme.text : Theme.secondary;
-        font-size: 12px;
-        font-weight: root.selected ? 700 : 550;
+        font-size: 11px;
+        font-weight: root.selected ? 700 : 560;
         horizontal-alignment: center;
         vertical-alignment: center;
+        overflow: elide;
+    }
+
+    Rectangle {
+        x: 14px;
+        y: parent.height - 2px;
+        width: parent.width - 28px;
+        height: 2px;
+        border-radius: 1px;
+        background: root.selected ? Theme.accent : #00000000;
     }
 
     tab-touch := TouchArea {
@@ -49,77 +64,169 @@ export component Tab inherits Rectangle {
     }
 }
 
-export component FieldLabel inherits Text {
-    height: 18px;
-    color: Theme.secondary;
-    font-size: 11px;
-    font-weight: 650;
+export component PageTitle inherits Text {
+    height: 28px;
+    color: Theme.text;
+    font-size: 20px;
+    font-weight: 740;
     vertical-alignment: center;
+}
+
+export component PageHint inherits Text {
+    height: 18px;
+    color: Theme.muted;
+    font-size: 10px;
+    vertical-alignment: center;
+    overflow: elide;
+}
+
+export component FieldLabel inherits Text {
+    height: 16px;
+    color: Theme.secondary;
+    font-size: 10px;
+    font-weight: 680;
+    vertical-alignment: center;
+}
+
+export component CompactButton inherits Rectangle {
+    in property <string> label;
+    in property <bool> primary: false;
+    in property <bool> enabled: true;
+    callback clicked();
+
+    height: 32px;
+    min-width: 72px;
+    border-radius: 8px;
+    opacity: root.enabled ? 1 : 0.42;
+    background: root.primary
+        ? (button-touch.has-hover ? #1f6a50 : #18523f)
+        : (button-touch.has-hover ? Theme.hover : #121d2a);
+    border-width: 1px;
+    border-color: root.primary ? #2a8f69 : Theme.border;
+
+    Text {
+        x: 10px;
+        y: 0px;
+        width: parent.width - 20px;
+        height: parent.height;
+        text: root.label;
+        color: root.primary ? #eafff5 : Theme.secondary;
+        font-size: 10px;
+        font-weight: root.primary ? 700 : 620;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        overflow: elide;
+    }
+
+    button-touch := TouchArea {
+        enabled: root.enabled;
+        clicked => { root.clicked(); }
+    }
+}
+
+export component StatusPill inherits Rectangle {
+    in property <bool> active;
+    in property <string> active-label: "Listening";
+    in property <string> inactive-label: "Offline";
+
+    height: 30px;
+    border-radius: 15px;
+    background: root.active ? Theme.accent-soft : #151f2c;
+    border-width: 1px;
+    border-color: root.active ? #27684f : Theme.border;
+
+    Rectangle {
+        x: 12px;
+        y: 11px;
+        width: 8px;
+        height: 8px;
+        border-radius: 4px;
+        background: root.active ? Theme.accent : Theme.muted;
+    }
+
+    Text {
+        x: 28px;
+        y: 0px;
+        width: parent.width - 38px;
+        height: parent.height;
+        text: root.active ? root.active-label : root.inactive-label;
+        color: root.active ? #c8ffe6 : Theme.secondary;
+        font-size: 10px;
+        font-weight: 680;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        overflow: elide;
+    }
 }
 
 export component MessageRow inherits Rectangle {
     in property <NotificationItem> item;
 
-    height: 104px;
+    height: 88px;
     border-radius: 10px;
-    background: row-touch.has-hover ? Theme.hover : Theme.panel;
+    background: row-touch.has-hover ? Theme.panel-raised : Theme.panel;
     border-width: 1px;
     border-color: item.priority >= 5 ? Theme.danger :
                   item.priority == 4 ? Theme.warning : Theme.border;
 
     Rectangle {
-        width: 4px;
+        x: 0px;
+        y: 0px;
+        width: 3px;
         height: parent.height;
         border-radius: 2px;
         background: item.priority >= 5 ? Theme.danger :
-                    item.priority == 4 ? Theme.warning : Theme.blue;
+                    item.priority == 4 ? Theme.warning : Theme.cyan;
     }
 
     Text {
-        x: 16px;
-        y: 10px;
-        width: parent.width - 126px;
-        height: 22px;
+        x: 14px;
+        y: 8px;
+        width: parent.width - 122px;
+        height: 20px;
         text: item.title;
         color: Theme.text;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
         overflow: elide;
+        vertical-alignment: center;
     }
 
     Text {
-        x: parent.width - 104px;
-        y: 11px;
-        width: 88px;
+        x: parent.width - 100px;
+        y: 8px;
+        width: 84px;
         height: 20px;
         text: item.topic;
         color: Theme.muted;
-        font-size: 10px;
+        font-size: 9px;
         horizontal-alignment: right;
+        vertical-alignment: center;
         overflow: elide;
     }
 
     Text {
-        x: 16px;
-        y: 36px;
-        width: parent.width - 32px;
-        height: 40px;
+        x: 14px;
+        y: 31px;
+        width: parent.width - 28px;
+        height: 34px;
         text: item.message;
         color: Theme.secondary;
-        font-size: 12px;
+        font-size: 11px;
         wrap: word-wrap;
         overflow: elide;
     }
 
     Text {
-        x: 16px;
-        y: 82px;
-        width: parent.width - 32px;
-        height: 15px;
+        x: 14px;
+        y: 68px;
+        width: parent.width - 28px;
+        height: 13px;
         text: item.meta;
         color: Theme.muted;
-        font-size: 9px;
+        font-size: 8px;
         overflow: elide;
+        vertical-alignment: center;
     }
 
     row-touch := TouchArea {}
