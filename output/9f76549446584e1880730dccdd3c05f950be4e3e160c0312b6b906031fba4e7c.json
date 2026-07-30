@@ -1,0 +1,18 @@
+{
+  "command_file": "068-export-tiny-contact-sheet-base64.ps1",
+  "command_path": "input/068-export-tiny-contact-sheet-base64.ps1",
+  "command_sha256": "9f76549446584e1880730dccdd3c05f950be4e3e160c0312b6b906031fba4e7c",
+  "source_commit": "90eb2e25fa8e4755647d6498393b0d9589b42303",
+  "status": "success",
+  "exit_code": 0,
+  "timed_out": false,
+  "started_utc": "2026-07-30T09:33:49.7848633+00:00",
+  "finished_utc": "2026-07-30T09:33:50.1891715+00:00",
+  "duration_seconds": 0.404,
+  "log_file": "9f76549446584e1880730dccdd3c05f950be4e3e160c0312b6b906031fba4e7c.log",
+  "branch": "fix/ui-layout-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30528605565",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000406"
+}
