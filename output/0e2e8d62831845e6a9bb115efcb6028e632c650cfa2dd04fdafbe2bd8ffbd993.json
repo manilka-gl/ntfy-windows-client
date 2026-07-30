@@ -1,0 +1,18 @@
+{
+  "command_file": "066-build-visual-contact-sheet.ps1",
+  "command_path": "input/066-build-visual-contact-sheet.ps1",
+  "command_sha256": "0e2e8d62831845e6a9bb115efcb6028e632c650cfa2dd04fdafbe2bd8ffbd993",
+  "source_commit": "54f58a13cc5f0adc6a875e358c29e8b7dd30a02c",
+  "status": "success",
+  "exit_code": 0,
+  "timed_out": false,
+  "started_utc": "2026-07-30T09:27:27.6935596+00:00",
+  "finished_utc": "2026-07-30T09:27:28.4354885+00:00",
+  "duration_seconds": 0.742,
+  "log_file": "0e2e8d62831845e6a9bb115efcb6028e632c650cfa2dd04fdafbe2bd8ffbd993.log",
+  "branch": "fix/ui-layout-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30528605565",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000406"
+}
