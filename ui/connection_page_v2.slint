@@ -19,27 +19,33 @@ export component ConnectionPage inherits Rectangle {
     background: #00000000;
 
     Text {
+        x: 0px;
+        y: 0px;
         width: parent.width;
         height: 30px;
         text: "Connection";
         color: Theme.text;
         font-size: 23px;
         font-weight: 700;
+        vertical-alignment: center;
     }
 
     Text {
-        y: 32px;
+        x: 0px;
+        y: 34px;
         width: parent.width;
         height: 20px;
         text: "Configure one lightweight streaming subscription.";
         color: Theme.secondary;
         font-size: 12px;
+        vertical-alignment: center;
     }
 
     Rectangle {
-        y: 68px;
+        x: 0px;
+        y: 70px;
         width: parent.width;
-        height: 278px;
+        height: 250px;
         border-radius: 12px;
         background: Theme.panel;
         border-width: 1px;
@@ -100,10 +106,12 @@ export component ConnectionPage inherits Rectangle {
                 }
                 Rectangle { horizontal-stretch: 1; }
                 Button {
+                    width: 72px;
                     text: "Save";
                     clicked => { root.save-settings(); }
                 }
                 Button {
+                    width: 104px;
                     text: root.connected ? "Disconnect" : "Subscribe";
                     clicked => { root.toggle-subscription(); }
                 }
@@ -112,9 +120,10 @@ export component ConnectionPage inherits Rectangle {
     }
 
     Rectangle {
-        y: 362px;
+        x: 0px;
+        y: 336px;
         width: parent.width;
-        height: 82px;
+        height: 84px;
         border-radius: 12px;
         background: #121a24;
         border-width: 1px;
@@ -129,19 +138,21 @@ export component ConnectionPage inherits Rectangle {
             color: Theme.text;
             font-size: 14px;
             font-weight: 700;
+            vertical-alignment: center;
         }
 
         Text {
             x: 18px;
             y: 40px;
             width: parent.width - 36px;
-            height: 28px;
+            height: 30px;
             text: root.connected
-                ? "Close the window to destroy the UI while the tray listener remains active."
+                ? "Close the window to release the interface while the tray listener remains active."
                 : "Tokens are never persisted. Open the tray icon to restore the interface.";
             color: Theme.secondary;
             font-size: 11px;
             wrap: word-wrap;
+            vertical-alignment: center;
         }
     }
 }
