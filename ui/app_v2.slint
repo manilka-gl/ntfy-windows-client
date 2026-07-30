@@ -11,10 +11,10 @@ export { NotificationPopup } from "popup_v2.slint";
 export component AppWindow inherits Window {
     title: "ntfy for Windows";
     icon: @image-url("assets/icon.svg");
-    preferred-width: 860px;
-    preferred-height: 600px;
-    min-width: 720px;
-    min-height: 540px;
+    preferred-width: 960px;
+    preferred-height: 680px;
+    min-width: 760px;
+    min-height: 620px;
     background: Theme.bg;
 
     in-out property <string> server-url: "https://ntfy.sh";
@@ -39,55 +39,60 @@ export component AppWindow inherits Window {
     callback quit();
 
     Rectangle {
+        x: 0px;
+        y: 0px;
         width: parent.width;
-        height: 60px;
+        height: 72px;
         background: Theme.chrome;
 
         Text {
-            x: 20px;
-            y: 10px;
+            x: 24px;
+            y: 13px;
             width: 58px;
-            height: 32px;
+            height: 34px;
             text: "ntfy";
             color: Theme.accent;
             font-size: 25px;
             font-weight: 800;
+            vertical-alignment: center;
         }
 
         Text {
-            x: 82px;
-            y: 12px;
-            width: parent.width - 300px;
+            x: 86px;
+            y: 15px;
+            width: parent.width - 320px;
             height: 20px;
             text: "Windows notification listener";
             color: Theme.text;
             font-size: 13px;
             font-weight: 650;
+            vertical-alignment: center;
         }
 
         Text {
-            x: 82px;
-            y: 32px;
-            width: parent.width - 300px;
+            x: 86px;
+            y: 37px;
+            width: parent.width - 320px;
             height: 16px;
-            text: "Native networking · UI released when closed";
+            text: "Native WinHTTP · interface released when closed";
             color: Theme.muted;
             font-size: 10px;
+            vertical-alignment: center;
         }
 
         Rectangle {
-            x: parent.width - 148px;
-            y: 15px;
+            x: parent.width - 150px;
+            y: 20px;
             width: 126px;
-            height: 30px;
-            border-radius: 15px;
+            height: 32px;
+            border-radius: 16px;
             background: root.connected ? Theme.accent-soft : #202a37;
             border-width: 1px;
             border-color: root.connected ? #286044 : Theme.border;
 
             Rectangle {
                 x: 13px;
-                y: 10px;
+                y: 11px;
                 width: 8px;
                 height: 8px;
                 border-radius: 4px;
@@ -96,6 +101,7 @@ export component AppWindow inherits Window {
 
             Text {
                 x: 29px;
+                y: 0px;
                 width: 82px;
                 height: parent.height;
                 text: root.connected ? "Listening" : "Offline";
@@ -108,6 +114,7 @@ export component AppWindow inherits Window {
         }
 
         Rectangle {
+            x: 0px;
             y: parent.height - 1px;
             width: parent.width;
             height: 1px;
@@ -117,15 +124,15 @@ export component AppWindow inherits Window {
 
     Rectangle {
         x: 0px;
-        y: 60px;
+        y: 72px;
         width: parent.width;
         height: 52px;
         background: Theme.chrome;
 
         HorizontalBox {
-            x: 18px;
+            x: 24px;
             y: 8px;
-            width: parent.width - 36px;
+            width: parent.width - 48px;
             height: 36px;
             spacing: 8px;
 
@@ -156,6 +163,7 @@ export component AppWindow inherits Window {
         }
 
         Rectangle {
+            x: 0px;
             y: parent.height - 1px;
             width: parent.width;
             height: 1px;
@@ -164,13 +172,16 @@ export component AppWindow inherits Window {
     }
 
     Rectangle {
-        x: 26px;
-        y: 132px;
-        width: parent.width - 52px;
-        height: parent.height - 184px;
+        x: 32px;
+        y: 144px;
+        width: parent.width - 64px;
+        height: parent.height - 190px;
         background: #00000000;
+        clip: true;
 
         if root.page == 0: ConnectionPage {
+            x: 0px;
+            y: 0px;
             width: parent.width;
             height: parent.height;
             server-url <=> root.server-url;
@@ -183,6 +194,8 @@ export component AppWindow inherits Window {
         }
 
         if root.page == 1: NotificationSettingsPage {
+            x: 0px;
+            y: 0px;
             width: parent.width;
             height: parent.height;
             notifications-enabled <=> root.notifications-enabled;
@@ -195,6 +208,8 @@ export component AppWindow inherits Window {
         }
 
         if root.page == 2: PublishPage {
+            x: 0px;
+            y: 0px;
             width: parent.width;
             height: parent.height;
             topic: root.topic;
@@ -202,6 +217,8 @@ export component AppWindow inherits Window {
         }
 
         if root.page == 3: HistoryPage {
+            x: 0px;
+            y: 0px;
             width: parent.width;
             height: parent.height;
             notifications: root.notifications;
@@ -211,21 +228,24 @@ export component AppWindow inherits Window {
 
     Rectangle {
         x: 0px;
-        y: parent.height - 32px;
+        y: parent.height - 34px;
         width: parent.width;
-        height: 32px;
+        height: 34px;
         background: Theme.chrome;
 
         Rectangle {
+            x: 0px;
+            y: 0px;
             width: parent.width;
             height: 1px;
             background: Theme.border;
         }
 
         Text {
-            x: 14px;
-            width: parent.width - 108px;
-            height: parent.height;
+            x: 16px;
+            y: 1px;
+            width: parent.width - 112px;
+            height: parent.height - 1px;
             text: root.status-text;
             color: Theme.muted;
             font-size: 10px;
@@ -234,9 +254,9 @@ export component AppWindow inherits Window {
         }
 
         Button {
-            x: parent.width - 76px;
-            y: 4px;
-            width: 64px;
+            x: parent.width - 82px;
+            y: 5px;
+            width: 66px;
             height: 24px;
             text: "Quit";
             clicked => { root.quit(); }
