@@ -1,0 +1,28 @@
+=== STANDARD OUTPUT ===
+COMMAND REVISION: 064 after publish string compatibility fix
+CHECK compact UI release validation: start
+CHECK cargo fmt: start
+CHECK cargo fmt: passed
+CHECK cargo clippy: start
+
+
+=== STANDARD ERROR ===
+[1m[92m   Compiling[0m ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client\repository)
+[1m[91merror[0m[1m[97m: manually reimplementing `div_ceil`[0m
+   [1m[96m--> [0msrc\notification.rs:111:13
+    [1m[96m|[0m
+[1m[96m111[0m [1m[96m|[0m             (characters + columns - 1) / columns
+    [1m[96m|[0m             [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mhelp: consider using `.div_ceil()`: `characters.div_ceil(columns)`[0m
+    [1m[96m|[0m
+    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#manual_div_ceil
+    [1m[96m= [0m[1m[97mnote[0m: `-D clippy::manual-div-ceil` implied by `-D warnings`
+    [1m[96m= [0m[1m[97mhelp[0m: to override `-D warnings` add `#[allow(clippy::manual_div_ceil)]`
+
+[1m[91merror[0m: could not compile `ntfy-windows-client` (bin "ntfy-windows-client" test) due to 1 previous error
+[1m[93mwarning[0m: build failed, waiting for other jobs to finish...
+[1m[91merror[0m: could not compile `ntfy-windows-client` (bin "ntfy-windows-client") due to 1 previous error
+[31;1mException: [0mD:\a\_temp\061-validate-compact-ui-patched.ps1:16[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  16 | [0m         [36;1mthrow "CHECK ${Label}: failed with exit code $LASTEXITCODE"[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mCHECK cargo clippy: failed with exit code 101[0m
