@@ -11,10 +11,10 @@ export { NotificationPopup } from "popup_v2.slint";
 export component AppWindow inherits Window {
     title: "ntfy for Windows";
     icon: @image-url("assets/icon.svg");
-    preferred-width: 860px;
-    preferred-height: 580px;
-    min-width: 720px;
-    min-height: 520px;
+    preferred-width: 780px;
+    preferred-height: 520px;
+    min-width: 640px;
+    min-height: 480px;
     background: Theme.bg;
 
     in-out property <string> server-url: "https://ntfy.sh";
