@@ -1,0 +1,18 @@
+{
+  "command_file": "062-validate-compact-ui.ps1",
+  "command_path": "input/062-validate-compact-ui.ps1",
+  "command_sha256": "6e7007d33b849d4aed85bb2cc0744e22c368b15d4310d313b8ca88e8aab02dc0",
+  "source_commit": "27ea2b1d3be7ab37fb4745606a28ea83fefc9be4",
+  "status": "command_failed",
+  "exit_code": 1,
+  "timed_out": false,
+  "started_utc": "2026-07-30T09:01:37.2956830+00:00",
+  "finished_utc": "2026-07-30T09:01:39.0035257+00:00",
+  "duration_seconds": 1.708,
+  "log_file": "6e7007d33b849d4aed85bb2cc0744e22c368b15d4310d313b8ca88e8aab02dc0.log",
+  "branch": "fix/ui-layout-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30528605565",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000406"
+}

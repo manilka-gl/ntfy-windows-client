@@ -1,0 +1,28 @@
+=== STANDARD OUTPUT ===
+CHECK compact UI release validation: start
+CHECK cargo fmt: start
+CHECK cargo fmt: passed
+CHECK cargo clippy: start
+
+
+=== STANDARD ERROR ===
+[1m[92m   Compiling[0m ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client\repository)
+[1m[91merror[0m: failed to run custom build command for `ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client\repository)`
+
+Caused by:
+  process didn't exit successfully: `D:\a\ntfy-windows-client\ntfy-windows-client\repository\target\debug\build\ntfy-windows-client-144130444a1428b1\build-script-build` (exit code: 101)
+  --- stderr
+  [1m[91merror[0m[1m[97m: Cannot access the field 'length' of string[0m
+     [1m[96m--> [0mD:\a\ntfy-windows-client\ntfy-windows-client\repository\ui\publish_page_v2.slint:113:45
+      [1m[96m|[0m
+  [1m[96m113[0m [1m[96m|[0m                     text: publish-body.text.length + " characters";
+      [1m[96m|[0m                                             [1m[91m^^^^^^[0m
+
+  thread 'main' (1888) panicked at build.rs:6:10:
+  failed to compile Slint interface: CompileError(["D:\\a\\ntfy-windows-client\\ntfy-windows-client\\repository\\ui\\publish_page_v2.slint:113: Cannot access the field 'length' of string"])
+  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+[31;1mException: [0mD:\a\_temp\061-validate-compact-ui-patched.ps1:16[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  16 | [0m         [36;1mthrow "CHECK ${Label}: failed with exit code $LASTEXITCODE"[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mCHECK cargo clippy: failed with exit code 101[0m
