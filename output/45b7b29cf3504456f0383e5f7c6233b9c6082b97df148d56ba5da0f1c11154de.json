@@ -1,0 +1,18 @@
+{
+  "command_file": "071-build-readable-inspection-images.ps1",
+  "command_path": "input/071-build-readable-inspection-images.ps1",
+  "command_sha256": "45b7b29cf3504456f0383e5f7c6233b9c6082b97df148d56ba5da0f1c11154de",
+  "source_commit": "2b0c116ffc65330ef40be2aa939515ab6fd49fd7",
+  "status": "success",
+  "exit_code": 0,
+  "timed_out": false,
+  "started_utc": "2026-07-30T09:59:48.2813788+00:00",
+  "finished_utc": "2026-07-30T09:59:48.9340075+00:00",
+  "duration_seconds": 0.653,
+  "log_file": "45b7b29cf3504456f0383e5f7c6233b9c6082b97df148d56ba5da0f1c11154de.log",
+  "branch": "fix/ui-layout-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30528605565",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000406"
+}

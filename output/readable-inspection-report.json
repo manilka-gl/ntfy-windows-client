@@ -1,0 +1,56 @@
+[
+  {
+    "kind": "page",
+    "name": "connection",
+    "file": "inspect-page-connection.jpg",
+    "width": 420,
+    "height": 331,
+    "size_bytes": 10042,
+    "sha256": "50c065227b30933cc08ba3ebc023ad2e6b69b355b3eaf07e19fc308667ab1407"
+  },
+  {
+    "kind": "page",
+    "name": "notifications",
+    "file": "inspect-page-notifications.jpg",
+    "width": 420,
+    "height": 331,
+    "size_bytes": 10287,
+    "sha256": "77f0a839a7249d6faa7230b2d81ec2ef7a9b6c2c95ada837f92bd8c4d3ecc0f1"
+  },
+  {
+    "kind": "page",
+    "name": "publish",
+    "file": "inspect-page-publish.jpg",
+    "width": 420,
+    "height": 331,
+    "size_bytes": 9152,
+    "sha256": "4c1fccbaa7f173228416f2909930d819f7cbd1ecf0bbebabd18a6c0b694277b9"
+  },
+  {
+    "kind": "page",
+    "name": "history",
+    "file": "inspect-page-history.jpg",
+    "width": 420,
+    "height": 331,
+    "size_bytes": 8291,
+    "sha256": "234005ad03753ee90b2d51daa0dc50fd685aaa5342091fa52fb433c51a5fd1bb"
+  },
+  {
+    "kind": "popup",
+    "name": "short",
+    "file": "inspect-popup-short.jpg",
+    "width": 380,
+    "height": 112,
+    "size_bytes": 3347,
+    "sha256": "46200874cde45b495197d84e84177457c9613b79ff440b2203409537bd41f760"
+  },
+  {
+    "kind": "popup",
+    "name": "long",
+    "file": "inspect-popup-long.jpg",
+    "width": 380,
+    "height": 248,
+    "size_bytes": 9118,
+    "sha256": "dd177fa826cab7b06b685058eedaccf49ea6a97e8cf75055f05e2ee3343e278a"
+  }
+]

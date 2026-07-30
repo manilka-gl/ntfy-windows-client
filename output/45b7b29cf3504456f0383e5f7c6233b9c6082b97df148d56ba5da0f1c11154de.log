@@ -1,0 +1,12 @@
+=== STANDARD OUTPUT ===
+CHECK readable inspection images: start
+CHECK readable page image: inspect-page-connection.jpg (10042 bytes)
+CHECK readable page image: inspect-page-notifications.jpg (10287 bytes)
+CHECK readable page image: inspect-page-publish.jpg (9152 bytes)
+CHECK readable page image: inspect-page-history.jpg (8291 bytes)
+CHECK readable popup image: inspect-popup-short.jpg (3347 bytes)
+CHECK readable popup image: inspect-popup-long.jpg (9118 bytes)
+CHECK readable inspection images: passed
+
+
+=== STANDARD ERROR ===
