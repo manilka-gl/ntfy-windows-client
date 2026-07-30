@@ -1,0 +1,3 @@
+branch: agent/audio-output-selection
+started_utc: 2026-07-30T16:51:00Z
+purpose: resume Windows worker and implement selectable notification audio outputs, including simultaneous laptop speakers and connected headphones
