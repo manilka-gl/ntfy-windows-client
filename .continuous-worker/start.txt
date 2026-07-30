@@ -1,3 +1,4 @@
-fix/memory-notification-ui-20260730
-started: 2026-07-30T03:17:00+05:30
-purpose: worker recovery, notification rendering, UI, and memory verification
+branch: fix/ui-layout-20260730
+started_utc: 2026-07-30T07:27:00Z
+purpose: validate corrected ntfy window geometry, visual header placement, release build, memory, and packaging
+command: input/050-verify-ui-layout.ps1
