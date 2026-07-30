@@ -19,4 +19,4 @@ $patchedPath = Join-Path $env:RUNNER_TEMP '061-validate-compact-ui-patched.ps1'
     [Text.UTF8Encoding]::new($false)
 )
 
-& $patchedPath
+. $patchedPath
