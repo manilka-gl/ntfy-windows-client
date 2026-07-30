@@ -1,3 +1,0 @@
-branch: agent/audio-output-selection
-started_utc: 2026-07-30T16:15:00Z
-purpose: add selectable notification audio outputs on Windows, supporting one or multiple devices such as laptop speakers and connected headphones
