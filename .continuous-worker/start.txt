@@ -1,3 +1,0 @@
-branch: agent/audio-output-selection
-started_utc: 2026-07-30T18:02:00Z
-purpose: fix UI alignment and dark theme polish, prevent duplicate popups during dual-output audio playback, verify Windows build, and merge to main
