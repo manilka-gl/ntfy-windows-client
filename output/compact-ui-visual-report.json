@@ -12,18 +12,18 @@
     "height": 720
   },
   "preferred_window": {
-    "handle": 196954,
-    "left": 104,
-    "top": 104,
-    "right": 900,
-    "bottom": 663,
+    "handle": 983068,
+    "left": 26,
+    "top": 26,
+    "right": 822,
+    "bottom": 585,
     "width": 796,
     "height": 559
   },
   "preferred_width_ratio": 0.77734375,
   "preferred_height_ratio": 0.7763888888888889,
   "minimum_window": {
-    "handle": 196954,
+    "handle": 983068,
     "left": 182,
     "top": 100,
     "right": 842,
@@ -36,7 +36,7 @@
       "page": "connection",
       "screenshot": "desktop-page-connection.png",
       "window": {
-        "handle": 196954,
+        "handle": 983068,
         "left": 182,
         "top": 100,
         "right": 842,
@@ -50,7 +50,7 @@
       "page": "notifications",
       "screenshot": "desktop-page-notifications.png",
       "window": {
-        "handle": 196954,
+        "handle": 983068,
         "left": 182,
         "top": 100,
         "right": 842,
@@ -64,7 +64,7 @@
       "page": "publish",
       "screenshot": "desktop-page-publish.png",
       "window": {
-        "handle": 196954,
+        "handle": 983068,
         "left": 182,
         "top": 100,
         "right": 842,
@@ -78,7 +78,7 @@
       "page": "history",
       "screenshot": "desktop-page-history.png",
       "window": {
-        "handle": 196954,
+        "handle": 983068,
         "left": 182,
         "top": 100,
         "right": 842,
@@ -90,7 +90,7 @@
     }
   ],
   "popup_short": {
-    "handle": 262478,
+    "handle": 590170,
     "left": 628,
     "top": 16,
     "right": 1008,
@@ -99,7 +99,7 @@
     "height": 112
   },
   "popup_long": {
-    "handle": 262478,
+    "handle": 590170,
     "left": 628,
     "top": 16,
     "right": 1008,

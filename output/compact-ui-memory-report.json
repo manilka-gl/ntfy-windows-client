@@ -5,29 +5,29 @@
   "idle_working_set_limit_bytes": 1048576,
   "samples": [
     {
-      "sampled_utc": "2026-07-30T09:17:41.9241843+00:00",
-      "working_set_bytes": 442368,
-      "private_bytes": 3686400,
+      "sampled_utc": "2026-07-30T09:51:13.1292180+00:00",
+      "working_set_bytes": 438272,
+      "private_bytes": 3448832,
       "handles": 343,
       "threads": 11
     },
     {
-      "sampled_utc": "2026-07-30T09:17:45.9370954+00:00",
-      "working_set_bytes": 442368,
-      "private_bytes": 3686400,
+      "sampled_utc": "2026-07-30T09:51:17.1403239+00:00",
+      "working_set_bytes": 438272,
+      "private_bytes": 3448832,
       "handles": 343,
       "threads": 11
     },
     {
-      "sampled_utc": "2026-07-30T09:17:49.9406643+00:00",
+      "sampled_utc": "2026-07-30T09:51:21.1444081+00:00",
       "working_set_bytes": 442368,
-      "private_bytes": 3686400,
+      "private_bytes": 3448832,
       "handles": 343,
       "threads": 11
     }
   ],
   "final_working_set_bytes": 442368,
-  "final_private_bytes": 3686400,
+  "final_private_bytes": 3448832,
   "final_thread_count": 11,
   "within_idle_working_set_limit": true
 }
