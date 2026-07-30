@@ -1,0 +1,13 @@
+=== STANDARD OUTPUT ===
+CHECK worker recovery revision 3: start
+CHECK worker-control-parse: start
+CHECK parsed: scripts/watch-input.ps1
+CHECK parsed: scripts/watch-input-fixed.ps1
+CHECK malformed-input-detection: start
+CHECK malformed input detected: Missing closing '}' in statement block or type definition.
+CHECK monitored branch exists: fix/memory-notification-ui-20260730
+CHECK cargo fmt: passed
+CHECK worker recovery diagnostic: passed
+
+
+=== STANDARD ERROR ===

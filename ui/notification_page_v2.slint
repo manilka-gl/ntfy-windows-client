@@ -1,0 +1,142 @@
+import {
+    Button,
+    CheckBox,
+    ComboBox,
+    HorizontalBox,
+    VerticalBox,
+} from "std-widgets.slint";
+import { FieldLabel, Theme } from "components_v2.slint";
+
+export component NotificationSettingsPage inherits Rectangle {
+    in-out property <bool> notifications-enabled;
+    in-out property <bool> sound-enabled;
+    in-out property <int> placement-index;
+    in-out property <int> audio-output-index;
+    in property <[string]> audio-outputs;
+    callback save-settings();
+    callback refresh-audio-outputs();
+
+    background: #00000000;
+
+    Text {
+        width: parent.width;
+        height: 30px;
+        text: "Notifications";
+        color: Theme.text;
+        font-size: 23px;
+        font-weight: 700;
+    }
+
+    Text {
+        y: 32px;
+        width: parent.width;
+        height: 20px;
+        text: "Readable popups with bounded content and safe screen placement.";
+        color: Theme.secondary;
+        font-size: 12px;
+    }
+
+    Rectangle {
+        y: 68px;
+        width: parent.width;
+        height: 338px;
+        border-radius: 12px;
+        background: Theme.panel;
+        border-width: 1px;
+        border-color: Theme.border;
+
+        VerticalBox {
+            x: 18px;
+            y: 16px;
+            width: parent.width - 36px;
+            height: parent.height - 32px;
+            spacing: 10px;
+
+            HorizontalBox {
+                height: 40px;
+                CheckBox {
+                    text: "Show desktop popup";
+                    checked <=> root.notifications-enabled;
+                }
+                Rectangle { horizontal-stretch: 1; }
+                CheckBox {
+                    text: "Play sound";
+                    checked <=> root.sound-enabled;
+                }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: Theme.border;
+            }
+
+            FieldLabel { text: "AUDIO OUTPUT"; }
+            HorizontalBox {
+                height: 38px;
+                spacing: 8px;
+
+                ComboBox {
+                    horizontal-stretch: 1;
+                    model: root.audio-outputs;
+                    current-index <=> root.audio-output-index;
+                    enabled: root.sound-enabled;
+                }
+
+                Button {
+                    text: "Refresh";
+                    clicked => { root.refresh-audio-outputs(); }
+                }
+            }
+
+            FieldLabel { text: "POPUP POSITION"; }
+            ComboBox {
+                height: 38px;
+                model: [
+                    "Top left", "Top centre", "Top right",
+                    "Middle left", "Centre", "Middle right",
+                    "Bottom left", "Bottom centre", "Bottom right"
+                ];
+                current-index <=> root.placement-index;
+            }
+
+            Rectangle {
+                height: 64px;
+                border-radius: 8px;
+                background: #121a24;
+                border-width: 1px;
+                border-color: Theme.border;
+
+                Text {
+                    x: 12px;
+                    y: 8px;
+                    width: parent.width - 24px;
+                    height: 18px;
+                    text: "Complete popup rendering";
+                    color: Theme.text;
+                    font-size: 11px;
+                    font-weight: 650;
+                }
+
+                Text {
+                    x: 12px;
+                    y: 29px;
+                    width: parent.width - 24px;
+                    height: 26px;
+                    text: "A physical-size fallback keeps the full 404 × 180 popup inside the Windows work area.";
+                    color: Theme.muted;
+                    font-size: 10px;
+                    wrap: word-wrap;
+                }
+            }
+
+            HorizontalBox {
+                height: 38px;
+                Rectangle { horizontal-stretch: 1; }
+                Button {
+                    text: "Save settings";
+                    clicked => { root.save-settings(); }
+                }
+            }
+        }
+    }
+}

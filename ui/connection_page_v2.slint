@@ -1,0 +1,147 @@
+import {
+    Button,
+    CheckBox,
+    HorizontalBox,
+    LineEdit,
+    VerticalBox,
+} from "std-widgets.slint";
+import { FieldLabel, Theme } from "components_v2.slint";
+
+export component ConnectionPage inherits Rectangle {
+    in-out property <string> server-url;
+    in-out property <string> topic;
+    in-out property <string> token;
+    in-out property <bool> auto-connect;
+    in property <bool> connected;
+    callback toggle-subscription();
+    callback save-settings();
+
+    background: #00000000;
+
+    Text {
+        width: parent.width;
+        height: 30px;
+        text: "Connection";
+        color: Theme.text;
+        font-size: 23px;
+        font-weight: 700;
+    }
+
+    Text {
+        y: 32px;
+        width: parent.width;
+        height: 20px;
+        text: "Configure one lightweight streaming subscription.";
+        color: Theme.secondary;
+        font-size: 12px;
+    }
+
+    Rectangle {
+        y: 68px;
+        width: parent.width;
+        height: 278px;
+        border-radius: 12px;
+        background: Theme.panel;
+        border-width: 1px;
+        border-color: Theme.border;
+
+        VerticalBox {
+            x: 18px;
+            y: 16px;
+            width: parent.width - 36px;
+            height: parent.height - 32px;
+            spacing: 8px;
+
+            FieldLabel { text: "SERVER URL"; }
+            LineEdit {
+                height: 38px;
+                text <=> root.server-url;
+                placeholder-text: "https://ntfy.sh";
+            }
+
+            HorizontalBox {
+                height: 68px;
+                spacing: 12px;
+
+                VerticalBox {
+                    spacing: 5px;
+                    FieldLabel { text: "TOPIC"; }
+                    LineEdit {
+                        height: 38px;
+                        text <=> root.topic;
+                        placeholder-text: "alerts";
+                    }
+                }
+
+                VerticalBox {
+                    spacing: 5px;
+                    FieldLabel { text: "ACCESS TOKEN"; }
+                    LineEdit {
+                        height: 38px;
+                        text <=> root.token;
+                        input-type: password;
+                        placeholder-text: "Optional · held in memory";
+                    }
+                }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: Theme.border;
+            }
+
+            HorizontalBox {
+                height: 40px;
+                spacing: 8px;
+
+                CheckBox {
+                    text: "Connect automatically";
+                    checked <=> root.auto-connect;
+                }
+                Rectangle { horizontal-stretch: 1; }
+                Button {
+                    text: "Save";
+                    clicked => { root.save-settings(); }
+                }
+                Button {
+                    text: root.connected ? "Disconnect" : "Subscribe";
+                    clicked => { root.toggle-subscription(); }
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        y: 362px;
+        width: parent.width;
+        height: 82px;
+        border-radius: 12px;
+        background: #121a24;
+        border-width: 1px;
+        border-color: Theme.border;
+
+        Text {
+            x: 18px;
+            y: 12px;
+            width: parent.width - 36px;
+            height: 24px;
+            text: root.connected ? "Subscription active" : "Background listener idle";
+            color: Theme.text;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        Text {
+            x: 18px;
+            y: 40px;
+            width: parent.width - 36px;
+            height: 28px;
+            text: root.connected
+                ? "Close the window to destroy the UI while the tray listener remains active."
+                : "Tokens are never persisted. Open the tray icon to restore the interface.";
+            color: Theme.secondary;
+            font-size: 11px;
+            wrap: word-wrap;
+        }
+    }
+}

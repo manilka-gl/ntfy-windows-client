@@ -1,0 +1,17 @@
+=== STANDARD OUTPUT ===
+CHECK worker-control-parse: start
+CHECK parsed: scripts/watch-input.ps1
+CHECK parsed: scripts/watch-input-fixed.ps1
+CHECK malformed-child-isolation: start
+CHECK malformed child rejected with exit code 1
+CHECK monitored branch exists: fix/memory-notification-ui-20260730
+CHECK cargo fmt: passed
+CHECK worker recovery diagnostic: passed
+
+
+=== STANDARD ERROR ===
+[31;1mParserError: [0mD:\a\_temp\ntfy-malformed-input.ps1:2[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m   2 | [0m function Broken [36;1m{[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m                 ~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mMissing closing '}' in statement block or type definition.[0m

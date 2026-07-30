@@ -1,0 +1,9 @@
+=== STANDARD OUTPUT ===
+CHECK rustfmt export: start
+CHECK exported: src/main.rs
+CHECK exported: src/notification.rs
+CHECK exported: src/memory.rs
+CHECK rustfmt export: passed
+
+
+=== STANDARD ERROR ===

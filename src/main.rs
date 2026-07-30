@@ -2,6 +2,7 @@
 
 mod audio;
 mod config;
+mod memory;
 mod notification;
 mod protocol;
 mod timefmt;
@@ -24,8 +25,10 @@ use winhttp::{ClientConfig, Controller, Event};
 
 slint::include_modules!();
 
-const HISTORY_LIMIT: usize = 64;
-const HISTORY_BODY_LIMIT: usize = 2048;
+const HISTORY_LIMIT: usize = 32;
+const HISTORY_BODY_LIMIT: usize = 1024;
+const BACKGROUND_TRIM_DELAY: Duration = Duration::from_secs(2);
+const UI_RELEASE_DELAY: Duration = Duration::from_millis(80);
 
 type SharedState = Arc<Mutex<RuntimeState>>;
 type UiBridge = Arc<Mutex<Option<slint::Weak<AppWindow>>>>;
@@ -61,7 +64,9 @@ impl RuntimeState {
             connected: false,
             status: "Ready".to_owned(),
             history: VecDeque::with_capacity(HISTORY_LIMIT),
-            audio_outputs: audio::output_names(),
+            // Enumerating wave devices loads additional multimedia state.
+            // Keep the tray-only path minimal and enumerate when the UI opens.
+            audio_outputs: vec![DEFAULT_OUTPUT_LABEL.to_owned()],
         }
     }
 }
@@ -89,6 +94,8 @@ fn main() -> Result<(), slint::PlatformError> {
 
     if !background {
         open_window(&owner, &bridge, &state, &tray, Rc::clone(&controller))?;
+    } else {
+        Timer::single_shot(BACKGROUND_TRIM_DELAY, memory::trim_working_set);
     }
 
     let auto_connect = {
@@ -133,6 +140,7 @@ fn open_window(
         return Ok(());
     }
 
+    ensure_audio_outputs(state);
     let ui = AppWindow::new()?;
     hydrate_ui(&ui, state);
     configure_window(
@@ -149,6 +157,19 @@ fn open_window(
     ui.show()?;
     *owner.borrow_mut() = Some(ui);
     Ok(())
+}
+
+fn ensure_audio_outputs(state: &SharedState) {
+    let needs_refresh = {
+        let state = state.lock().expect("runtime state poisoned");
+        state.audio_outputs.len() == 1 && state.audio_outputs[0] == DEFAULT_OUTPUT_LABEL
+    };
+    if !needs_refresh {
+        return;
+    }
+
+    let outputs = audio::output_names();
+    state.lock().expect("runtime state poisoned").audio_outputs = outputs;
 }
 
 fn hydrate_ui(ui: &AppWindow, state: &SharedState) {
@@ -288,8 +309,9 @@ fn configure_window(
             *current = None;
         }
         if let Some(owner) = owner.upgrade() {
-            Timer::single_shot(Duration::ZERO, move || {
+            Timer::single_shot(UI_RELEASE_DELAY, move || {
                 owner.borrow_mut().take();
+                memory::trim_working_set();
             });
         }
         CloseRequestResponse::HideWindow
@@ -356,6 +378,7 @@ fn toggle_subscription(
         controller.borrow_mut().stop();
         set_connected(state, bridge, Some(tray), false);
         set_status(state, bridge, "Disconnected");
+        memory::trim_working_set();
     } else {
         start_subscription(state, bridge, tray, controller);
     }
@@ -429,7 +452,7 @@ fn receive_message(state: &SharedState, bridge: &UiBridge, message: Message) {
     };
     let meta = format!("{time} · priority {priority}{tags}");
     let preferences = notification_preferences(state, bridge);
-    let popup_body = preferences.notifications.then(|| truncate(&body, 420));
+    let popup_body = preferences.notifications.then(|| truncate(&body, 640));
     let record = HistoryRecord {
         topic,
         title: title.clone(),
@@ -602,8 +625,8 @@ mod tests {
     #[test]
     fn retained_history_is_small_and_bounded() {
         const {
-            assert!(HISTORY_LIMIT <= 64);
-            assert!(HISTORY_BODY_LIMIT <= 2048);
+            assert!(HISTORY_LIMIT <= 32);
+            assert!(HISTORY_BODY_LIMIT <= 1024);
         }
     }
 }

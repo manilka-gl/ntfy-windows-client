@@ -1,0 +1,41 @@
+=== STANDARD OUTPUT ===
+CHECK cargo fmt: start
+Diff in \\?\D:\a\ntfy-windows-client\ntfy-windows-client\repository\src\main.rs:169:
+     }
+ 
+     let outputs = audio::output_names();
+[31m-    state
+[0m[31m-        .lock()
+[0m[31m-        .expect("runtime state poisoned")
+[0m[31m-        .audio_outputs = outputs;
+[0m[32m+    state.lock().expect("runtime state poisoned").audio_outputs = outputs;
+[0m }
+ 
+ fn hydrate_ui(ui: &AppWindow, state: &SharedState) {
+Diff in \\?\D:\a\ntfy-windows-client\ntfy-windows-client\repository\src\notification.rs:95:
+     let work = work_area();
+     let measured = popup.window().size();
+     let scale = popup.window().scale_factor().max(1.0);
+[31m-    let width = physical_edge(
+[0m[31m-        measured.width,
+[0m[31m-        POPUP_LOGICAL_WIDTH,
+[0m[31m-        scale,
+[0m[31m-    );
+[0m[31m-    let height = physical_edge(
+[0m[31m-        measured.height,
+[0m[31m-        POPUP_LOGICAL_HEIGHT,
+[0m[31m-        scale,
+[0m[31m-    );
+[0m[32m+    let width = physical_edge(measured.width, POPUP_LOGICAL_WIDTH, scale);
+[0m[32m+    let height = physical_edge(measured.height, POPUP_LOGICAL_HEIGHT, scale);
+[0m 
+     let min_x = work.left.saturating_add(MARGIN);
+     let max_x = work
+
+
+=== STANDARD ERROR ===
+[31;1mException: [0mD:\a\ntfy-windows-client\ntfy-windows-client\repository\input\010-verify-release.ps1:16[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  16 | [0m         [36;1mthrow "CHECK ${Label}: failed with exit code $LASTEXITCODE"[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mCHECK cargo fmt: failed with exit code 1[0m

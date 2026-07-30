@@ -1,0 +1,18 @@
+{
+  "command_file": "005-export-rustfmt.ps1",
+  "command_path": "input/005-export-rustfmt.ps1",
+  "command_sha256": "c1a974b418e8d51a101fb0b13a29d4a3797b195906005c6d587f926caae6226c",
+  "source_commit": "c55149611a1c543fe89c7f1cf0e203ccb140a924",
+  "status": "success",
+  "exit_code": 0,
+  "timed_out": false,
+  "started_utc": "2026-07-29T22:40:30.5056687+00:00",
+  "finished_utc": "2026-07-29T22:40:34.1958386+00:00",
+  "duration_seconds": 3.69,
+  "log_file": "c1a974b418e8d51a101fb0b13a29d4a3797b195906005c6d587f926caae6226c.log",
+  "branch": "fix/memory-notification-ui-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30496741981",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000401"
+}
