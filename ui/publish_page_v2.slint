@@ -1,11 +1,16 @@
 import {
-    Button,
     HorizontalBox,
     LineEdit,
     TextEdit,
     VerticalBox,
 } from "std-widgets.slint";
-import { FieldLabel, Theme } from "components_v2.slint";
+import {
+    CompactButton,
+    FieldLabel,
+    PageHint,
+    PageTitle,
+    Theme,
+} from "components_v2.slint";
 
 export component PublishPage inherits Rectangle {
     in property <string> topic;
@@ -13,77 +18,102 @@ export component PublishPage inherits Rectangle {
 
     background: #00000000;
 
-    Text {
+    PageTitle {
         x: 0px;
         y: 0px;
         width: parent.width;
-        height: 30px;
         text: "Publish";
-        color: Theme.text;
-        font-size: 23px;
-        font-weight: 700;
-        vertical-alignment: center;
     }
 
-    Text {
+    PageHint {
         x: 0px;
-        y: 34px;
+        y: 29px;
         width: parent.width;
-        height: 20px;
-        text: "Send a message directly through native WinHTTP.";
-        color: Theme.secondary;
-        font-size: 12px;
-        vertical-alignment: center;
+        text: "Compose and send directly through native WinHTTP without opening a browser.";
     }
 
     Rectangle {
         x: 0px;
-        y: 70px;
+        y: 54px;
         width: parent.width;
-        height: 316px;
+        height: parent.height - 54px;
         border-radius: 12px;
         background: Theme.panel;
         border-width: 1px;
         border-color: Theme.border;
+        clip: true;
+
+        Rectangle {
+            x: 0px;
+            y: 0px;
+            width: 3px;
+            height: parent.height;
+            background: Theme.cyan;
+        }
 
         VerticalBox {
             x: 18px;
-            y: 16px;
+            y: 14px;
             width: parent.width - 36px;
-            height: parent.height - 32px;
-            spacing: 8px;
+            height: parent.height - 28px;
+            spacing: 6px;
 
-            FieldLabel { text: "TITLE"; }
+            FieldLabel { text: "TITLE · OPTIONAL"; }
             publish-title := LineEdit {
-                height: 38px;
-                placeholder-text: "Optional title";
+                height: 34px;
+                placeholder-text: "A concise notification title";
             }
 
             FieldLabel { text: "MESSAGE"; }
             publish-body := TextEdit {
-                height: 132px;
-                placeholder-text: "Type a message";
+                vertical-stretch: 1;
+                min-height: 96px;
+                placeholder-text: "Type the notification body";
                 wrap: word-wrap;
             }
 
+            Rectangle {
+                height: 1px;
+                background: Theme.border;
+            }
+
             HorizontalBox {
-                height: 40px;
+                height: 34px;
+                spacing: 8px;
+
+                Rectangle {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 4px;
+                    background: root.topic == "" ? Theme.danger : Theme.accent;
+                    vertical-alignment: center;
+                }
 
                 Text {
                     text: root.topic == ""
-                        ? "Configure a topic on the Connection page first."
-                        : "Destination: " + root.topic;
-                    color: Theme.muted;
-                    font-size: 10px;
+                        ? "Select a topic on the Connection page"
+                        : "Destination  //  " + root.topic;
+                    color: root.topic == "" ? Theme.danger : Theme.muted;
+                    font-size: 9px;
                     vertical-alignment: center;
                     overflow: elide;
                 }
 
                 Rectangle { horizontal-stretch: 1; }
 
-                Button {
-                    width: 78px;
-                    text: "Send";
+                Text {
+                    width: 86px;
+                    text: publish-body.text.length + " characters";
+                    color: Theme.muted;
+                    font-size: 9px;
+                    horizontal-alignment: right;
+                    vertical-alignment: center;
+                }
+
+                CompactButton {
+                    width: 76px;
+                    primary: true;
+                    label: "Send";
                     enabled: publish-body.text != "" && root.topic != "";
                     clicked => {
                         root.publish(publish-title.text, publish-body.text);
