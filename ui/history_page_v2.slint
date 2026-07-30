@@ -1,5 +1,12 @@
-import { Button, ListView } from "std-widgets.slint";
-import { MessageRow, NotificationItem, Theme } from "components_v2.slint";
+import { ListView } from "std-widgets.slint";
+import {
+    CompactButton,
+    MessageRow,
+    NotificationItem,
+    PageHint,
+    PageTitle,
+    Theme,
+} from "components_v2.slint";
 
 export component HistoryPage inherits Rectangle {
     in property <[NotificationItem]> notifications;
@@ -7,57 +14,71 @@ export component HistoryPage inherits Rectangle {
 
     background: #00000000;
 
-    Text {
+    PageTitle {
         x: 0px;
         y: 0px;
-        width: parent.width - 118px;
-        height: 30px;
-        text: "Recent notifications";
-        color: Theme.text;
-        font-size: 23px;
-        font-weight: 700;
-        vertical-alignment: center;
+        width: parent.width - 108px;
+        text: "History";
     }
 
-    Text {
+    PageHint {
         x: 0px;
-        y: 34px;
-        width: parent.width - 118px;
-        height: 20px;
-        text: "Stores up to 32 messages with 1 KiB retained per body.";
-        color: Theme.secondary;
-        font-size: 12px;
-        vertical-alignment: center;
+        y: 29px;
+        width: parent.width - 108px;
+        text: root.notifications.length + " retained · maximum 32 messages · 1 KiB per body";
     }
 
-    Button {
-        x: parent.width - 96px;
-        y: 2px;
-        width: 96px;
-        height: 30px;
-        text: "Clear";
+    CompactButton {
+        x: parent.width - 92px;
+        y: 3px;
+        width: 92px;
+        label: "Clear all";
         enabled: root.notifications.length > 0;
         clicked => { root.clear-notifications(); }
     }
 
     if root.notifications.length == 0: Rectangle {
         x: 0px;
-        y: 70px;
+        y: 54px;
         width: parent.width;
-        height: parent.height - 70px;
+        height: parent.height - 54px;
         border-radius: 12px;
         background: Theme.panel;
         border-width: 1px;
         border-color: Theme.border;
 
+        Rectangle {
+            x: parent.width / 2 - 23px;
+            y: parent.height / 2 - 54px;
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: #0c1721;
+            border-width: 1px;
+            border-color: Theme.border;
+
+            Text {
+                x: 0px;
+                y: 0px;
+                width: parent.width;
+                height: parent.height;
+                text: "//";
+                color: Theme.cyan;
+                font-size: 16px;
+                font-weight: 760;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+
         Text {
             x: 24px;
-            y: parent.height / 2 - 24px;
+            y: parent.height / 2 + 2px;
             width: parent.width - 48px;
-            height: 24px;
-            text: "No notifications yet";
+            height: 22px;
+            text: "No notifications captured";
             color: Theme.text;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
             horizontal-alignment: center;
             vertical-alignment: center;
@@ -65,22 +86,23 @@ export component HistoryPage inherits Rectangle {
 
         Text {
             x: 24px;
-            y: parent.height / 2 + 6px;
+            y: parent.height / 2 + 27px;
             width: parent.width - 48px;
-            height: 22px;
-            text: "Messages received while the window is closed appear here when it is reopened.";
+            height: 18px;
+            text: "Background messages appear here when the interface is restored.";
             color: Theme.muted;
-            font-size: 11px;
+            font-size: 9px;
             horizontal-alignment: center;
             vertical-alignment: center;
+            overflow: elide;
         }
     }
 
     if root.notifications.length > 0: history-list := ListView {
         x: 0px;
-        y: 70px;
+        y: 54px;
         width: parent.width;
-        height: parent.height - 70px;
+        height: parent.height - 54px;
 
         for item in root.notifications: MessageRow {
             item: item;
