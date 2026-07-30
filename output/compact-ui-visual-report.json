@@ -12,18 +12,18 @@
     "height": 720
   },
   "preferred_window": {
-    "handle": 983068,
-    "left": 26,
-    "top": 26,
-    "right": 822,
-    "bottom": 585,
+    "handle": 983152,
+    "left": 104,
+    "top": 104,
+    "right": 900,
+    "bottom": 663,
     "width": 796,
     "height": 559
   },
   "preferred_width_ratio": 0.77734375,
   "preferred_height_ratio": 0.7763888888888889,
   "minimum_window": {
-    "handle": 983068,
+    "handle": 983152,
     "left": 182,
     "top": 100,
     "right": 842,
@@ -33,10 +33,15 @@
   },
   "pages": [
     {
+      "page_index": 0,
       "page": "connection",
+      "process_id": 8936,
+      "launch_argument": "--page=0",
       "screenshot": "desktop-page-connection.png",
+      "window_crop": "window-page-connection.png",
+      "crop_sha256": "f78d1167f2fae5b9cedc74b8a53362b45a824670198d9203e6221d16705ed5e6",
       "window": {
-        "handle": 983068,
+        "handle": 1245296,
         "left": 182,
         "top": 100,
         "right": 842,
@@ -44,13 +49,19 @@
         "width": 660,
         "height": 520
       },
-      "inside_work_area": true
+      "inside_work_area": true,
+      "selected_before_first_show": true
     },
     {
+      "page_index": 1,
       "page": "notifications",
+      "process_id": 8132,
+      "launch_argument": "--page=1",
       "screenshot": "desktop-page-notifications.png",
+      "window_crop": "window-page-notifications.png",
+      "crop_sha256": "7be443315a2555dbce60a261ad8fad4e13cb1aa94bbe5ffe4ed985a4add3a25c",
       "window": {
-        "handle": 983068,
+        "handle": 983184,
         "left": 182,
         "top": 100,
         "right": 842,
@@ -58,13 +69,19 @@
         "width": 660,
         "height": 520
       },
-      "inside_work_area": true
+      "inside_work_area": true,
+      "selected_before_first_show": true
     },
     {
+      "page_index": 2,
       "page": "publish",
+      "process_id": 1984,
+      "launch_argument": "--page=2",
       "screenshot": "desktop-page-publish.png",
+      "window_crop": "window-page-publish.png",
+      "crop_sha256": "1162d05f75f0dfa0e33a2fed13221970e71e2cdeb4941dc43a700e71a114e7c3",
       "window": {
-        "handle": 983068,
+        "handle": 1638428,
         "left": 182,
         "top": 100,
         "right": 842,
@@ -72,13 +89,19 @@
         "width": 660,
         "height": 520
       },
-      "inside_work_area": true
+      "inside_work_area": true,
+      "selected_before_first_show": true
     },
     {
+      "page_index": 3,
       "page": "history",
+      "process_id": 5324,
+      "launch_argument": "--page=3",
       "screenshot": "desktop-page-history.png",
+      "window_crop": "window-page-history.png",
+      "crop_sha256": "35fbae2bb82c5c99263ba23c755e2cf2267755e14f4c47ca155887045253b758",
       "window": {
-        "handle": 983068,
+        "handle": 1114256,
         "left": 182,
         "top": 100,
         "right": 842,
@@ -86,11 +109,12 @@
         "width": 660,
         "height": 520
       },
-      "inside_work_area": true
+      "inside_work_area": true,
+      "selected_before_first_show": true
     }
   ],
   "popup_short": {
-    "handle": 590170,
+    "handle": 655696,
     "left": 628,
     "top": 16,
     "right": 1008,
@@ -99,7 +123,7 @@
     "height": 112
   },
   "popup_long": {
-    "handle": 590170,
+    "handle": 655696,
     "left": 628,
     "top": 16,
     "right": 1008,
@@ -109,5 +133,9 @@
   },
   "popup_height_growth": 136,
   "all_windows_inside_work_area": true,
-  "screenshots_are_full_desktop_and_annotated": true
+  "screenshots_are_full_desktop_and_annotated": true,
+  "page_capture_mode": "separate-process-initial-page",
+  "page_capture_click_timing_used": false,
+  "deterministic_page_crop_hashes_unique": true,
+  "visual_page_executable": "D:\\a\\ntfy-windows-client\\ntfy-windows-client\\repository\\target\\x86_64-pc-windows-msvc\\release\\examples\\visual_page.exe"
 }

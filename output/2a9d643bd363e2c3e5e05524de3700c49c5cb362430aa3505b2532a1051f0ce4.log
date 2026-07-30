@@ -1,0 +1,96 @@
+=== STANDARD OUTPUT ===
+COMMAND REVISION: 070 deterministic initial-page validation
+CHECK compact UI release validation: start
+CHECK cargo fmt: start
+CHECK cargo fmt: passed
+CHECK cargo clippy: start
+CHECK cargo clippy: passed
+CHECK cargo test: start
+
+running 18 tests
+test audio::tests::default_output_label_is_stable ... ok
+test config::tests::old_settings_receive_defaults ... ok
+test config::tests::settings_json_round_trip ... ok
+test notification::tests::explicit_and_wrapped_lines_are_counted ... ok
+test notification::tests::longer_notifications_remain_visible_longer ... ok
+test notification::tests::popup_height_grows_with_wrapped_message_lines ... ok
+test notification::tests::popup_size_falls_back_before_window_metrics_are_ready ... ok
+test protocol::tests::ignores_keepalive_event ... ok
+test protocol::tests::parses_message_event ... ok
+test protocol::tests::strips_header_injection ... ok
+test protocol::tests::truncates_at_character_boundary ... ok
+test protocol::tests::validates_topics ... ok
+test tests::retained_history_is_small_and_bounded ... ok
+test timefmt::tests::formats_epoch ... ok
+test timefmt::tests::formats_known_timestamp ... ok
+test winhttp::tests::parses_https_server ... ok
+test winhttp::tests::parses_ipv6_authority ... ok
+test winhttp::tests::parses_self_hosted_path_and_port ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+CHECK cargo test: passed
+CHECK release build x86_64-pc-windows-msvc: start
+CHECK release build x86_64-pc-windows-msvc: passed
+CHECK release executable: passed (D:\a\ntfy-windows-client\ntfy-windows-client\repository\target\x86_64-pc-windows-msvc\release\ntfy-windows-client.exe)
+CHECK desktop geometry: desktop=1024x768 work=1024x720
+CHECK full-desktop application geometry: start
+CHECK annotated desktop: desktop-preferred-window.png
+CHECK annotated desktop: desktop-page-connection.png
+CHECK annotated desktop: desktop-page-notifications.png
+CHECK annotated desktop: desktop-page-publish.png
+CHECK annotated desktop: desktop-page-history.png
+CHECK full-desktop application geometry: passed
+CHECK adaptive popup geometry: start
+CHECK annotated desktop: desktop-popup-short.png
+CHECK annotated desktop: desktop-popup-long.png
+CHECK adaptive popup geometry: passed (short=112, long=248)
+CHECK foreground UI smoke: start
+CHECK foreground UI smoke: passed
+CHECK active background listener below 1 MiB: start
+CHECK memory sample: working_set=438272 private=3497984 threads=11
+CHECK memory sample: working_set=438272 private=3497984 threads=11
+CHECK memory sample: working_set=438272 private=3497984 threads=11
+CHECK active background listener below 1 MiB: passed
+CHECK release package: start
+CHECK packaged file: ntfy-windows-client.exe
+CHECK packaged file: README.md
+CHECK packaged file: LICENSE
+CHECK release package: passed (D:\a\ntfy-windows-client\ntfy-windows-client\repository\output\ntfy-windows-client-x64.zip)
+CHECK compact UI release validation: passed
+CHECK deterministic visual-page example build: start
+CHECK deterministic visual-page example build: passed (D:\a\ntfy-windows-client\ntfy-windows-client\repository\target\x86_64-pc-windows-msvc\release\examples\visual_page.exe)
+CHECK deterministic initial page captures: start
+CHECK deterministic page 0 (connection): start
+CHECK annotated desktop: desktop-page-connection.png
+CHECK deterministic page 0 (connection): passed window=660x520 crop_sha256=f78d1167f2fae5b9cedc74b8a53362b45a824670198d9203e6221d16705ed5e6
+CHECK deterministic page 1 (notifications): start
+CHECK annotated desktop: desktop-page-notifications.png
+CHECK deterministic page 1 (notifications): passed window=660x520 crop_sha256=7be443315a2555dbce60a261ad8fad4e13cb1aa94bbe5ffe4ed985a4add3a25c
+CHECK deterministic page 2 (publish): start
+CHECK annotated desktop: desktop-page-publish.png
+CHECK deterministic page 2 (publish): passed window=660x520 crop_sha256=1162d05f75f0dfa0e33a2fed13221970e71e2cdeb4941dc43a700e71a114e7c3
+CHECK deterministic page 3 (history): start
+CHECK annotated desktop: desktop-page-history.png
+CHECK deterministic page 3 (history): passed window=660x520 crop_sha256=35fbae2bb82c5c99263ba23c755e2cf2267755e14f4c47ca155887045253b758
+CHECK deterministic initial page captures: passed
+CHECK regenerate deterministic visual evidence: start
+CHECK visual inspection contact sheet: start
+CHECK visual inspection contact sheet: passed (96455 bytes)
+CHECK tiny visual inspection contact sheet: start
+CHECK tiny visual inspection contact sheet: passed (22126 bytes)
+CHECK visual contact sheet inspection payload: start
+CHECK visual contact sheet inspection payload: passed (29504 characters)
+CHECK chunked visual contact sheet payload: start
+CHECK chunked visual contact sheet payload: passed (30 chunks)
+CHECK regenerate deterministic visual evidence: passed
+CHECK deterministic compact UI validation: passed
+
+
+=== STANDARD ERROR ===
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 0.56s
+[1m[92m     Running[0m unittests src\main.rs (target\debug\deps\ntfy_windows_client-869ceeffc55e605b.exe)
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 0.59s
+[1m[92m   Compiling[0m ntfy-windows-client v0.2.0 (D:\a\ntfy-windows-client\ntfy-windows-client\repository)
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 2m 09s

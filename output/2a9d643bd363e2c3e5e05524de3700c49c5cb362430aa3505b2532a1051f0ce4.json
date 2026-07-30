@@ -1,0 +1,18 @@
+{
+  "command_file": "070-validate-deterministic-pages.ps1",
+  "command_path": "input/070-validate-deterministic-pages.ps1",
+  "command_sha256": "2a9d643bd363e2c3e5e05524de3700c49c5cb362430aa3505b2532a1051f0ce4",
+  "source_commit": "b2def72f8986869c2c6342a5ee622a7a61f90532",
+  "status": "success",
+  "exit_code": 0,
+  "timed_out": false,
+  "started_utc": "2026-07-30T09:51:27.0946094+00:00",
+  "finished_utc": "2026-07-30T09:54:20.9804756+00:00",
+  "duration_seconds": 173.886,
+  "log_file": "2a9d643bd363e2c3e5e05524de3700c49c5cb362430aa3505b2532a1051f0ce4.log",
+  "branch": "fix/ui-layout-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30528605565",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000406"
+}
