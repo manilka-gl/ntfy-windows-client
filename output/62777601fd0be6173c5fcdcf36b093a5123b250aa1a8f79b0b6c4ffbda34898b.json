@@ -1,0 +1,18 @@
+{
+  "command_file": "072-build-indexed-inspection-gifs.ps1",
+  "command_path": "input/072-build-indexed-inspection-gifs.ps1",
+  "command_sha256": "62777601fd0be6173c5fcdcf36b093a5123b250aa1a8f79b0b6c4ffbda34898b",
+  "source_commit": "cc4967affaf6993d69b1091b2f0d2993aef896e6",
+  "status": "command_failed",
+  "exit_code": 1,
+  "timed_out": false,
+  "started_utc": "2026-07-30T10:05:49.3101458+00:00",
+  "finished_utc": "2026-07-30T10:05:49.9158208+00:00",
+  "duration_seconds": 0.606,
+  "log_file": "62777601fd0be6173c5fcdcf36b093a5123b250aa1a8f79b0b6c4ffbda34898b.log",
+  "branch": "fix/ui-layout-20260730",
+  "repository": "manilka-gl/ntfy-windows-client",
+  "workflow_run_id": "30528605565",
+  "workflow_run_attempt": "1",
+  "runner_name": "GitHub Actions 1000000406"
+}

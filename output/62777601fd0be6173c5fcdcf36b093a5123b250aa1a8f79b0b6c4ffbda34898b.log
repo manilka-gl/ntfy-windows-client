@@ -1,0 +1,10 @@
+=== STANDARD OUTPUT ===
+CHECK indexed inspection GIFs: start
+
+
+=== STANDARD ERROR ===
+[31;1mException: [0mD:\a\ntfy-windows-client\ntfy-windows-client\repository\input\072-build-indexed-inspection-gifs.ps1:50[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  50 | [0m         [36;1mthrow "$($item.target) is too large for direct retrieval: $($[0m .[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1minspect-page-connection.gif is too large for direct retrieval: 32413 bytes.[0m
