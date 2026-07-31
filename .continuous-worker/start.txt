@@ -1,2 +1,0 @@
-2026-07-31T06:04:30Z
-Task: refine the native Slint dashboard on main against the supplied frontend header references, build on Windows, capture screenshots, verify, iterate, and push.
