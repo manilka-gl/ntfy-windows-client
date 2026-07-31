@@ -1,0 +1,2 @@
+2026-07-31T06:51:00Z
+Implement the frontend dashboard UI in Slint from the supplied reference package, build on Windows, capture screenshots, validate, and push successful changes to main.
