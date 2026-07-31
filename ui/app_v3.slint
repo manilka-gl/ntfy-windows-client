@@ -1,0 +1,1400 @@
+import {
+    CheckBox,
+    ComboBox,
+    LineEdit,
+    ListView,
+    ScrollView,
+    Slider,
+} from "std-widgets.slint";
+
+export struct NotificationItem {
+    topic: string,
+    title: string,
+    message: string,
+    meta: string,
+    priority: int,
+}
+
+struct ActivityItem {
+    topic: string,
+    title: string,
+    message: string,
+    meta: string,
+    priority: int,
+    color: color,
+}
+
+struct TopicItem {
+    icon: string,
+    name: string,
+    address: string,
+    unread: string,
+    color: color,
+    pinned: bool,
+    muted: bool,
+}
+
+struct RuleItem {
+    name: string,
+    scope: string,
+    summary: string,
+    enabled: bool,
+    warning: bool,
+}
+
+struct ServerItem {
+    host: string,
+    detail: string,
+    protocol: string,
+    auth: string,
+    last-label: string,
+    last-value: string,
+    reconnects: string,
+    connected: bool,
+    error: bool,
+}
+
+struct SettingItem {
+    title: string,
+    detail: string,
+    note: string,
+    enabled: bool,
+    interactive: bool,
+}
+
+struct FactItem {
+    label: string,
+    value: string,
+}
+
+export global Theme {
+    out property <color> background: #141625;
+    out property <color> background-deep: #11131f;
+    out property <color> chrome: #202230;
+    out property <color> sidebar: #1d1f2d;
+    out property <color> surface: #1d1f2d;
+    out property <color> surface-raised: #232532;
+    out property <color> surface-hover: #292b3b;
+    out property <color> border: #303244;
+    out property <color> border-soft: #292b3b;
+    out property <color> text: #e9e9ed;
+    out property <color> text-soft: #cfd3e5;
+    out property <color> muted: #75798c;
+    out property <color> muted-dark: #595d6c;
+    out property <color> accent: #968ae0;
+    out property <color> accent-bright: #b5abfc;
+    out property <color> accent-soft: #423a6a;
+    out property <color> accent-deep: #2b2741;
+    out property <color> green: #7fa88d;
+    out property <color> green-soft: #34483e;
+    out property <color> yellow: #c9a45c;
+    out property <color> yellow-soft: #4b402c;
+    out property <color> red: #cf5f63;
+    out property <color> red-soft: #4e2c35;
+    out property <color> blue-gray: #8d9bb8;
+}
+
+component AppMark inherits Rectangle {
+    in property <length> mark-size: 28px;
+    width: mark-size;
+    height: mark-size;
+    border-radius: mark-size / 4;
+    background: @linear-gradient(145deg, #a092ed, #5d5294);
+
+    Text {
+        text: "n";
+        color: #f5f4ff;
+        font-family: "Segoe UI";
+        font-size: parent.height * 0.56;
+        font-weight: 650;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+component ThinRule inherits Rectangle {
+    height: 1px;
+    background: Theme.border-soft;
+}
+
+component Badge inherits Rectangle {
+    in property <string> value;
+    in property <bool> danger: false;
+    visible: value != "";
+    width: value.character-count > 2 ? 31px : value.character-count > 1 ? 25px : 21px;
+    height: 20px;
+    border-radius: 10px;
+    background: danger ? Theme.red-soft : #37394b;
+
+    Text {
+        text: root.value;
+        color: root.danger ? #f0a1a6 : Theme.text-soft;
+        font-family: "Segoe UI";
+        font-size: 10px;
+        font-weight: 650;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+component ActionButton inherits Rectangle {
+    in property <string> label;
+    in property <string> icon: "";
+    in property <bool> primary: false;
+    in property <bool> ghost: false;
+    in property <bool> danger: false;
+    in property <bool> enabled: true;
+    callback clicked();
+
+    height: 30px;
+    min-width: 74px;
+    border-radius: 7px;
+    opacity: enabled ? 1 : 0.42;
+    background: primary
+        ? (button-area.has-hover ? #3a335b : #00000000)
+        : ghost
+            ? (button-area.has-hover ? #292b3b : #00000000)
+            : (button-area.has-hover ? #292b3b : #1b1d2b);
+    border-width: primary || !ghost ? 1px : 0px;
+    border-color: danger ? #714047 : primary ? Theme.accent : Theme.border;
+
+    Text {
+        x: 8px;
+        width: parent.width - 16px;
+        height: parent.height;
+        text: (root.icon == "" ? "" : root.icon + "  ") + root.label;
+        color: root.danger ? #e98990 : root.primary || root.ghost ? Theme.accent-bright : Theme.text-soft;
+        font-family: "Segoe UI";
+        font-size: 11px;
+        font-weight: 550;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        overflow: elide;
+    }
+
+    button-area := TouchArea {
+        enabled: root.enabled;
+        clicked => { root.clicked(); }
+    }
+}
+
+component Toggle inherits Rectangle {
+    in-out property <bool> checked;
+    callback toggled(bool);
+
+    width: 31px;
+    height: 18px;
+    border-radius: 9px;
+    background: checked ? #6d62a7 : #3b3d4d;
+
+    Rectangle {
+        x: root.checked ? 16px : 3px;
+        y: 3px;
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
+        background: root.checked ? #f5f4ff : #a7aaba;
+        animate x { duration: 110ms; easing: ease-out; }
+    }
+
+    TouchArea {
+        clicked => {
+            root.checked = !root.checked;
+            root.toggled(root.checked);
+        }
+    }
+}
+
+component NavRow inherits Rectangle {
+    in property <string> icon;
+    in property <string> label;
+    in property <string> badge: "";
+    in property <bool> selected: false;
+    callback activated();
+
+    height: 34px;
+    border-radius: 7px;
+    background: selected ? #3e3a5c : nav-touch.has-hover ? #292b3b : #00000000;
+
+    Rectangle {
+        visible: root.selected;
+        x: 0px;
+        width: 2px;
+        height: parent.height;
+        border-radius: 1px;
+        background: Theme.accent;
+    }
+
+    Text {
+        x: 11px;
+        y: 0px;
+        width: 24px;
+        height: parent.height;
+        text: root.icon;
+        color: root.selected ? Theme.accent-bright : Theme.text-soft;
+        font-family: "Segoe UI Symbol";
+        font-size: 13px;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+
+    Text {
+        x: 42px;
+        y: 0px;
+        width: parent.width - 84px;
+        height: parent.height;
+        text: root.label;
+        color: root.selected ? Theme.text : Theme.text-soft;
+        font-family: "Segoe UI";
+        font-size: 11.5px;
+        font-weight: root.selected ? 600 : 500;
+        vertical-alignment: center;
+    }
+
+    Badge {
+        x: parent.width - self.width - 9px;
+        y: 7px;
+        value: root.badge;
+    }
+
+    nav-touch := TouchArea { clicked => { root.activated(); } }
+}
+
+component PageTitle inherits Text {
+    color: Theme.text;
+    font-family: "Segoe UI";
+    font-size: 18px;
+    font-weight: 600;
+    vertical-alignment: center;
+}
+
+component PageSubtitle inherits Text {
+    color: Theme.muted;
+    font-family: "Segoe UI";
+    font-size: 11px;
+    vertical-alignment: center;
+    overflow: elide;
+}
+
+component Kicker inherits Text {
+    color: Theme.muted;
+    font-family: "Segoe UI";
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    vertical-alignment: center;
+}
+
+component PanelTitle inherits Text {
+    color: Theme.text;
+    font-family: "Segoe UI";
+    font-size: 12px;
+    font-weight: 600;
+    vertical-alignment: center;
+}
+
+component BodyText inherits Text {
+    color: Theme.text-soft;
+    font-family: "Segoe UI";
+    font-size: 11px;
+    vertical-alignment: center;
+}
+
+component MutedText inherits Text {
+    color: Theme.muted;
+    font-family: "Segoe UI";
+    font-size: 10px;
+    vertical-alignment: center;
+}
+
+component PriorityPill inherits Rectangle {
+    in property <int> priority: 3;
+    in property <string> label: priority >= 5 ? "Urgent" : priority == 4 ? "High" : priority == 3 ? "Default" : priority == 2 ? "Low" : "Min";
+    width: 70px;
+    height: 20px;
+    border-radius: 5px;
+    background: priority >= 5 ? #4e2c35 : priority == 4 ? #4b402c : priority == 3 ? #373358 : #343746;
+    border-width: 1px;
+    border-color: priority >= 5 ? #79404a : priority == 4 ? #6f5a31 : priority == 3 ? #554d82 : #4a4d5d;
+
+    Text {
+        text: root.label;
+        color: root.priority >= 5 ? #ed8189 : root.priority == 4 ? #e0bd72 : root.priority == 3 ? #aaa0ed : #a6a9b9;
+        font-family: "Segoe UI";
+        font-size: 9px;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+component SectionPanel inherits Rectangle {
+    border-radius: 8px;
+    background: #1d1f2ddd;
+    border-width: 1px;
+    border-color: Theme.border-soft;
+}
+
+component FieldBox inherits Rectangle {
+    in property <string> label;
+    in property <string> value;
+    height: 34px;
+    border-radius: 7px;
+    background: #232532;
+    border-width: 1px;
+    border-color: #3a3c4d;
+
+    Text {
+        x: 10px;
+        width: parent.width - 20px;
+        height: parent.height;
+        text: root.value;
+        color: Theme.text-soft;
+        font-family: "Segoe UI";
+        font-size: 11px;
+        vertical-alignment: center;
+        overflow: elide;
+    }
+}
+
+component SettingRow inherits Rectangle {
+    in property <string> title;
+    in property <string> detail;
+    in property <string> note: "";
+    in-out property <bool> enabled;
+    in property <bool> interactive: true;
+    callback toggled(bool);
+
+    height: 52px;
+    background: #00000000;
+
+    Text {
+        x: 14px;
+        y: 7px;
+        width: parent.width - 150px;
+        height: 18px;
+        text: root.title;
+        color: Theme.text;
+        font-family: "Segoe UI";
+        font-size: 11px;
+        font-weight: 540;
+        vertical-alignment: center;
+        overflow: elide;
+    }
+    Text {
+        x: 14px;
+        y: 25px;
+        width: parent.width - 150px;
+        height: 16px;
+        text: root.detail;
+        color: Theme.muted;
+        font-family: "Segoe UI";
+        font-size: 9.5px;
+        vertical-alignment: center;
+        overflow: elide;
+    }
+    Text {
+        x: parent.width - 185px;
+        y: 0px;
+        width: 125px;
+        height: parent.height;
+        text: root.note;
+        color: Theme.muted;
+        font-family: "Segoe UI";
+        font-size: 9.5px;
+        horizontal-alignment: right;
+        vertical-alignment: center;
+        overflow: elide;
+    }
+    Toggle {
+        visible: root.interactive;
+        x: parent.width - 45px;
+        y: 17px;
+        checked <=> root.enabled;
+        toggled(value) => { root.toggled(value); }
+    }
+    ThinRule {
+        x: 0px;
+        y: parent.height - 1px;
+        width: parent.width;
+    }
+}
+
+component DashboardPage inherits Rectangle {
+    in property <[NotificationItem]> notifications;
+    in property <int> unread-count;
+    in property <int> server-count;
+    in property <bool> connected;
+    callback go-history();
+    callback subscribe();
+    callback test-notification();
+    callback toggle-subscription();
+
+    background: #00000000;
+
+    for stat[index] in [
+        { label: "✉  UNREAD", value: "" + root.unread-count, note: "across 4 topics", color: Theme.accent-bright },
+        { label: "▥  TODAY", value: "214", note: "messages received", color: Theme.text },
+        { label: "△  URGENT · 24H", value: "3", note: "1 still unacknowledged", color: Theme.red },
+        { label: "⌁  UPTIME", value: root.connected ? "17h" : "—", note: root.connected ? "0 dropped connections" : "listener offline", color: Theme.green }
+    ] : SectionPanel {
+        x: 18px + index * ((parent.width - 72px) / 4 + 12px);
+        y: 18px;
+        width: (parent.width - 72px) / 4;
+        height: 93px;
+
+        Kicker { x: 14px; y: 9px; width: parent.width - 28px; height: 18px; text: stat.label; }
+        Text {
+            x: 14px;
+            y: 29px;
+            width: parent.width - 28px;
+            height: 31px;
+            text: stat.value;
+            color: stat.color;
+            font-family: "Segoe UI";
+            font-size: 24px;
+            font-weight: 500;
+            vertical-alignment: center;
+        }
+        MutedText { x: 14px; y: 65px; width: parent.width - 28px; height: 17px; text: stat.note; }
+    }
+
+    recent-panel := SectionPanel {
+        x: 18px;
+        y: 128px;
+        width: (parent.width - 52px) * 0.57;
+        height: 309px;
+        clip: true;
+
+        PanelTitle { x: 14px; y: 7px; width: parent.width - 120px; height: 27px; text: "Recent activity"; }
+        Text {
+            x: parent.width - 105px;
+            y: 7px;
+            width: 92px;
+            height: 27px;
+            text: "Open history";
+            color: Theme.accent-bright;
+            font-family: "Segoe UI";
+            font-size: 10px;
+            horizontal-alignment: right;
+            vertical-alignment: center;
+        }
+        TouchArea { x: parent.width - 112px; y: 0px; width: 112px; height: 40px; clicked => { root.go-history(); } }
+        ThinRule { x: 0px; y: 40px; width: parent.width; }
+
+        if root.notifications.length == 0: Rectangle {
+            x: 14px; y: 54px; width: parent.width - 28px; height: 92px; background: #00000000;
+            Text {
+                text: "No activity yet";
+                color: Theme.text-soft;
+                font-family: "Segoe UI";
+                font-size: 12px;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+
+        for item[index] in root.notifications : Rectangle {
+            visible: index < 5;
+            x: 0px;
+            y: 41px + index * 53px;
+            width: parent.width;
+            height: 53px;
+            background: activity-touch.has-hover ? #252737 : #00000000;
+
+            Rectangle {
+                x: 14px; y: 18px; width: 8px; height: 8px; border-radius: 4px;
+                background: item.priority >= 5 ? Theme.red : item.priority == 4 ? Theme.yellow : item.priority == 3 ? Theme.accent : Theme.muted-dark;
+            }
+            Text {
+                x: 31px; y: 6px; width: 117px; height: 20px;
+                text: item.topic;
+                color: item.priority >= 5 ? Theme.red : item.priority == 4 ? Theme.yellow : item.priority == 3 ? Theme.accent : Theme.blue-gray;
+                font-family: "Segoe UI"; font-size: 10.5px; font-weight: 550; vertical-alignment: center; overflow: elide;
+            }
+            Text {
+                x: 151px; y: 6px; width: parent.width - 275px; height: 20px;
+                text: item.title;
+                color: Theme.text; font-family: "Segoe UI"; font-size: 10.5px; font-weight: 520; vertical-alignment: center; overflow: elide;
+            }
+            Text {
+                x: 31px; y: 26px; width: parent.width - 155px; height: 18px;
+                text: item.message;
+                color: Theme.muted; font-family: "Segoe UI"; font-size: 9.5px; vertical-alignment: center; overflow: elide;
+            }
+            PriorityPill { x: parent.width - 114px; y: 7px; width: 62px; height: 18px; priority: item.priority; }
+            Text {
+                x: parent.width - 48px; y: 7px; width: 36px; height: 18px;
+                text: item.meta; color: Theme.muted-dark; font-family: "Segoe UI"; font-size: 8.5px; horizontal-alignment: right; vertical-alignment: center; overflow: elide;
+            }
+            ThinRule { y: parent.height - 1px; width: parent.width; }
+            activity-touch := TouchArea { clicked => { root.go-history(); } }
+        }
+    }
+
+    priority-panel := SectionPanel {
+        x: recent-panel.x + recent-panel.width + 14px;
+        y: 128px;
+        width: parent.width - self.x - 18px;
+        height: 164px;
+
+        PanelTitle { x: 14px; y: 8px; width: parent.width - 28px; height: 25px; text: "Priority mix · last 24h"; }
+
+        for p[index] in [
+            { label: "Urgent", count: "3", percent: 0.10, color: Theme.red },
+            { label: "High", count: "18", percent: 0.24, color: Theme.yellow },
+            { label: "Default", count: "121", percent: 0.80, color: Theme.accent },
+            { label: "Low", count: "54", percent: 0.44, color: #a4a7b9 },
+            { label: "Min", count: "18", percent: 0.18, color: #777b8d }
+        ] : Rectangle {
+            x: 14px; y: 37px + index * 23px; width: parent.width - 28px; height: 19px; background: #00000000;
+            MutedText { x: 0px; width: 54px; height: parent.height; text: p.label; }
+            Rectangle { x: 63px; y: 7px; width: parent.width - 94px; height: 5px; border-radius: 3px; background: #292b3b;
+                Rectangle { width: parent.width * p.percent; height: parent.height; border-radius: 3px; background: p.color; }
+            }
+            MutedText { x: parent.width - 25px; width: 25px; height: parent.height; text: p.count; horizontal-alignment: right; }
+        }
+    }
+
+    quick-panel := SectionPanel {
+        x: priority-panel.x;
+        y: 307px;
+        width: priority-panel.width;
+        height: 111px;
+        PanelTitle { x: 14px; y: 7px; width: parent.width - 28px; height: 25px; text: "Quick actions"; }
+        ActionButton { x: 14px; y: 38px; width: (parent.width - 35px) / 2; label: "Subscribe"; icon: "⊕"; clicked => { root.subscribe(); } }
+        ActionButton { x: parent.width / 2 + 4px; y: 38px; width: (parent.width - 35px) / 2; label: "Send test"; icon: "♧"; clicked => { root.test-notification(); } }
+        ActionButton { x: 14px; y: 74px; width: (parent.width - 35px) / 2; label: "Quiet hours"; icon: "◔"; }
+        ActionButton { x: parent.width / 2 + 4px; y: 74px; width: (parent.width - 35px) / 2; label: root.connected ? "Disconnect" : "Check conn."; icon: "⌁"; clicked => { root.toggle-subscription(); } }
+    }
+
+    server-panel := SectionPanel {
+        x: priority-panel.x;
+        y: 433px;
+        width: priority-panel.width;
+        height: 132px;
+        PanelTitle { x: 14px; y: 7px; width: parent.width - 28px; height: 25px; text: "Servers"; }
+        for sv[index] in [
+            { host: "https://ntfy.sh", latency: "41 ms", color: Theme.green },
+            { host: "https://ntfy.internal.lan", latency: "6 ms", color: Theme.green },
+            { host: "https://ntfy.lab.acme.dev", latency: "—", color: Theme.red }
+        ] : Rectangle {
+            x: 14px; y: 37px + index * 29px; width: parent.width - 28px; height: 24px; background: #00000000;
+            Rectangle { x: 0px; y: 8px; width: 8px; height: 8px; border-radius: 4px; background: sv.color; }
+            BodyText { x: 16px; width: parent.width - 80px; height: parent.height; text: sv.host; overflow: elide; }
+            MutedText { x: parent.width - 52px; width: 52px; height: parent.height; text: sv.latency; horizontal-alignment: right; }
+        }
+    }
+}
+
+component TopicsPage inherits Rectangle {
+    in-out property <string> server-url;
+    in-out property <string> topic;
+    in-out property <string> token;
+    in-out property <int> placement-index;
+    in-out property <int> audio-output-index;
+    in property <[string]> audio-outputs;
+    callback save-settings();
+    callback subscribe();
+
+    in-out property <int> selected-topic: 0;
+    in-out property <bool> quiet-hours: false;
+    in-out property <int> layout-index: 1;
+
+    background: #00000000;
+
+    left := Rectangle {
+        x: 18px; y: 18px; width: 290px; height: parent.height - 36px; background: #00000000;
+
+        Rectangle {
+            x: 0px; y: 0px; width: 214px; height: 34px; border-radius: 7px; background: #232532; border-width: 1px; border-color: #3a3c4d;
+            Text { x: 10px; width: 24px; height: parent.height; text: "⌕"; color: Theme.muted; font-family: "Segoe UI Symbol"; font-size: 15px; horizontal-alignment: center; vertical-alignment: center; }
+            Text { x: 36px; width: parent.width - 46px; height: parent.height; text: "Search topics"; color: Theme.muted; font-family: "Segoe UI"; font-size: 10.5px; vertical-alignment: center; }
+        }
+        ActionButton { x: 220px; y: 0px; width: 70px; height: 34px; ghost: true; label: "Unread"; icon: "≡"; }
+
+        for chip[index] in ["All groups", "Work", "Home", "Personal"] : Rectangle {
+            x: index == 0 ? 0px : index == 1 ? 82px : index == 2 ? 137px : 191px;
+            y: 41px;
+            width: index == 0 ? 76px : index == 3 ? 70px : 49px;
+            height: 24px;
+            border-radius: 12px;
+            background: index == 0 ? #3e3a5c : #00000000;
+            border-width: 1px;
+            border-color: index == 0 ? #5c5482 : Theme.border;
+            Text { text: chip; color: index == 0 ? Theme.text : Theme.text-soft; font-family: "Segoe UI"; font-size: 9.5px; horizontal-alignment: center; vertical-alignment: center; }
+        }
+
+        for t[index] in [
+            { icon: "♢", name: "Deployments", address: "ops-deploys · ntfy.sh", unread: "12", color: Theme.accent, pinned: true, muted: false },
+            { icon: "!", name: "Server Alerts", address: "infra-alerts · ntfy.internal.lan", unread: "4", color: Theme.red, pinned: true, muted: false },
+            { icon: "▤", name: "Backups", address: "nas-backup · ntfy.internal.lan", unread: "2", color: #9397ab, pinned: false, muted: true },
+            { icon: "♧", name: "Doorbell", address: "home-doorbell · ntfy.internal.lan", unread: "1", color: Theme.yellow, pinned: false, muted: false },
+            { icon: "⌘", name: "CI Builds", address: "ci-builds · ntfy.sh", unread: "", color: Theme.blue-gray, pinned: false, muted: false },
+            { icon: "⌁", name: "Price Watch", address: "price-watch · ntfy.sh", unread: "", color: #a7a1db, pinned: false, muted: false }
+        ] : Rectangle {
+            x: 0px; y: 75px + index * 53px; width: 290px; height: 47px; border-radius: 7px;
+            background: root.selected-topic == index ? #3b3858 : topic-touch.has-hover ? #252737 : #1d1f2d;
+            border-width: 1px;
+            border-color: root.selected-topic == index ? #5b5386 : Theme.border-soft;
+
+            Rectangle { x: 9px; y: 9px; width: 29px; height: 29px; border-radius: 7px; background: t.color.with-alpha(0.16); border-width: 1px; border-color: t.color.with-alpha(0.26);
+                Text { text: t.icon; color: t.color; font-family: "Segoe UI Symbol"; font-size: 13px; horizontal-alignment: center; vertical-alignment: center; }
+            }
+            Text { x: 47px; y: 5px; width: parent.width - 92px; height: 20px; text: t.name + (t.pinned ? "  ◆" : "") + (t.muted ? "  ◇" : ""); color: root.selected-topic == index ? Theme.text : Theme.text-soft; font-family: "Segoe UI"; font-size: 11px; font-weight: 560; vertical-alignment: center; overflow: elide; }
+            Text { x: 47px; y: 24px; width: parent.width - 86px; height: 16px; text: t.address; color: Theme.muted; font-family: "Segoe UI"; font-size: 9px; vertical-alignment: center; overflow: elide; }
+            Badge { x: parent.width - 32px; y: 13px; value: t.unread; danger: index == 1; }
+            topic-touch := TouchArea { clicked => { root.selected-topic = index; } }
+        }
+
+        ActionButton { x: 0px; y: 399px; width: 290px; label: "Subscribe to a topic"; icon: "+"; clicked => { root.subscribe(); } }
+    }
+
+    editor := SectionPanel {
+        x: 326px; y: 18px; width: parent.width - 344px; height: parent.height - 36px; clip: true;
+
+        Rectangle {
+            x: 0px; y: 0px; width: parent.width; height: 69px; background: #00000000;
+            Rectangle { x: 16px; y: 14px; width: 42px; height: 42px; border-radius: 9px; background: #403a61; border-width: 1px; border-color: #5e5687;
+                Text { text: "♢"; color: Theme.accent-bright; font-family: "Segoe UI Symbol"; font-size: 22px; horizontal-alignment: center; vertical-alignment: center; }
+            }
+            Text { x: 69px; y: 9px; width: parent.width - 350px; height: 25px; text: "Deployments"; color: Theme.text; font-family: "Segoe UI"; font-size: 16px; font-weight: 600; vertical-alignment: center; }
+            Rectangle { x: 172px; y: 13px; width: 48px; height: 20px; border-radius: 5px; background: #00000000; border-width: 1px; border-color: Theme.accent;
+                Text { text: "Work"; color: Theme.accent-bright; font-family: "Segoe UI"; font-size: 9px; horizontal-alignment: center; vertical-alignment: center; }
+            }
+            Text { x: 69px; y: 34px; width: parent.width - 310px; height: 19px; text: root.server-url + "/" + (root.topic == "" ? "ops-deploys" : root.topic); color: Theme.muted; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; overflow: elide; }
+            ActionButton { x: parent.width - 245px; y: 17px; width: 69px; ghost: true; label: "Unpin"; icon: "◇"; }
+            ActionButton { x: parent.width - 170px; y: 17px; width: 64px; ghost: true; label: "Mute"; icon: "♢"; }
+            ActionButton { x: parent.width - 94px; y: 17px; width: 66px; ghost: true; danger: true; label: "Delete"; icon: "×"; }
+            ThinRule { y: parent.height - 1px; width: parent.width; }
+        }
+
+        Kicker { x: 16px; y: 78px; width: 200px; height: 18px; text: "IDENTITY"; }
+        Text { x: 16px; y: 99px; width: (parent.width - 47px) / 2; height: 18px; text: "Display name"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        Text { x: parent.width / 2 + 6px; y: 99px; width: (parent.width - 47px) / 2; height: 18px; text: "Topic on server"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        FieldBox { x: 16px; y: 120px; width: (parent.width - 47px) / 2; value: "Deployments"; }
+        Rectangle { x: parent.width / 2 + 6px; y: 120px; width: (parent.width - 47px) / 2; height: 34px; border-radius: 7px; background: #232532; border-width: 1px; border-color: #3a3c4d;
+            LineEdit { x: 4px; y: 2px; width: parent.width - 8px; height: parent.height - 4px; text <=> root.topic; placeholder-text: "ops-deploys"; }
+        }
+        Text { x: 16px; y: 163px; width: 200px; height: 18px; text: "Accent colour"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        Text { x: 250px; y: 163px; width: 100px; height: 18px; text: "Icon"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        for swatch[index] in [Theme.accent, #a7a1db, #9397ab, #8d9bb8, Theme.yellow, Theme.red] : Rectangle {
+            x: 16px + index * 27px; y: 184px; width: 22px; height: 22px; border-radius: 6px; background: swatch; border-width: index == 0 ? 2px : 0px; border-color: #e7e5fe;
+        }
+        for icon[index] in ["♢", "!", "⌘", "▤", "♧", "⌁"] : Rectangle {
+            x: 250px + index * 29px; y: 182px; width: 24px; height: 24px; border-radius: 6px; background: index == 0 ? #403a61 : #292b3b;
+            Text { text: icon; color: index == 0 ? Theme.accent-bright : Theme.muted; font-family: "Segoe UI Symbol"; font-size: 11px; horizontal-alignment: center; vertical-alignment: center; }
+        }
+
+        Kicker { x: 16px; y: 218px; width: 200px; height: 18px; text: "DELIVERY"; }
+        Text { x: 16px; y: 240px; width: 150px; height: 18px; text: "Sound"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        Text { x: parent.width * 0.34; y: 240px; width: 170px; height: 18px; text: "Notification position"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        Text { x: parent.width * 0.67; y: 240px; width: 120px; height: 18px; text: "Monitor"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        ComboBox { x: 16px; y: 261px; width: parent.width * 0.28; height: 34px; model: root.audio-outputs; current-index <=> root.audio-output-index; }
+        ActionButton { x: parent.width * 0.28 + 24px; y: 262px; width: 32px; height: 32px; ghost: true; label: "▷"; }
+        ComboBox { x: parent.width * 0.34; y: 261px; width: parent.width * 0.28; height: 34px; model: ["Top left", "Top centre", "Top right", "Bottom left", "Bottom centre", "Bottom right"]; current-index <=> root.placement-index; }
+        ComboBox { x: parent.width * 0.67; y: 261px; width: parent.width * 0.30 - 16px; height: 34px; model: ["Monitor 1 · 2560×1600", "Follow cursor", "Monitor 2 · 1920×1080"]; current-index: 0; }
+
+        Text { x: 16px; y: 304px; width: 120px; height: 18px; text: "Layout"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        Rectangle { x: 16px; y: 325px; width: 183px; height: 28px; border-radius: 7px; border-width: 1px; border-color: Theme.border; background: #00000000;
+            for label[index] in ["Compact", "Standard", "Expanded"] : Rectangle {
+                x: index * 61px; width: 61px; height: parent.height; border-radius: 6px; background: root.layout-index == index ? #454064 : #00000000;
+                Text { text: label; color: root.layout-index == index ? Theme.text : Theme.muted; font-family: "Segoe UI"; font-size: 9px; horizontal-alignment: center; vertical-alignment: center; }
+                TouchArea { clicked => { root.layout-index = index; } }
+            }
+        }
+        Text { x: parent.width * 0.34; y: 304px; width: 150px; height: 18px; text: "Display duration · 8s"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        Slider { x: parent.width * 0.34; y: 330px; width: parent.width * 0.28; height: 20px; minimum: 3; maximum: 30; value: 8; }
+        Text { x: parent.width * 0.67; y: 304px; width: 170px; height: 18px; text: "Minimum priority shown"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        ComboBox { x: parent.width * 0.67; y: 325px; width: parent.width * 0.30 - 16px; height: 34px; model: ["Min (1)", "Low (2)", "Default (3)", "High (4)", "Urgent (5)"]; current-index: 1; }
+
+        Kicker { x: 16px; y: 374px; width: 240px; height: 18px; text: "QUIET HOURS & OVERRIDES"; }
+        Toggle { x: 16px; y: 405px; checked <=> root.quiet-hours; }
+        BodyText { x: 55px; y: 398px; width: 92px; height: 32px; text: root.quiet-hours ? "Quiet hours on" : "Quiet hours off"; }
+        FieldBox { x: 148px; y: 397px; width: 74px; value: "23:00"; }
+        MutedText { x: 225px; y: 397px; width: 26px; height: 34px; text: "to"; horizontal-alignment: center; }
+        FieldBox { x: 254px; y: 397px; width: 74px; value: "07:30"; }
+        Rectangle { x: 342px; y: 402px; width: 145px; height: 24px; border-radius: 6px; background: #453d6a;
+            Text { text: "Urgent still breaks through"; color: #dcd8ff; font-family: "Segoe UI"; font-size: 9px; horizontal-alignment: center; vertical-alignment: center; }
+        }
+        ActionButton { x: parent.width - 118px; y: 397px; width: 102px; primary: true; label: "Save profile"; clicked => { root.save-settings(); } }
+
+        Kicker { x: 16px; y: 443px; width: 150px; height: 18px; text: "LIVE PREVIEW"; }
+        ActionButton { x: parent.width - 145px; y: 438px; width: 129px; label: "Show on desktop"; icon: "⊙"; }
+        Rectangle { x: 16px; y: 468px; width: parent.width - 32px; height: parent.height - 484px; border-radius: 7px; background: #151725; border-width: 1px; border-color: #282a3b;
+            Rectangle { x: parent.width / 2 - 172px; y: 16px; width: 344px; height: 141px; border-radius: 9px; background: @linear-gradient(145deg, #222536, #1a1c29); border-width: 1px; border-color: #383a4d;
+                Rectangle { x: 0px; width: 3px; height: parent.height; border-radius: 2px; background: Theme.accent; }
+                Rectangle { x: 15px; y: 13px; width: 24px; height: 24px; border-radius: 6px; background: #3c365c;
+                    Text { text: "♢"; color: Theme.accent-bright; font-family: "Segoe UI Symbol"; font-size: 11px; horizontal-alignment: center; vertical-alignment: center; }
+                }
+                Kicker { x: 48px; y: 13px; width: 170px; height: 24px; text: "DEPLOYMENTS"; }
+                MutedText { x: parent.width - 52px; y: 13px; width: 38px; height: 24px; text: "now"; horizontal-alignment: right; }
+                Text { x: 15px; y: 45px; width: parent.width - 30px; height: 21px; text: "Deployment finished"; color: Theme.text; font-family: "Segoe UI"; font-size: 12px; font-weight: 600; vertical-alignment: center; }
+                Text { x: 15px; y: 66px; width: parent.width - 30px; height: 19px; text: "api-gateway v2.14.1 rolled out to 8 of 8 pods in 42s."; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; overflow: elide; }
+                Rectangle { x: 15px; y: 91px; width: 52px; height: 18px; border-radius: 5px; background: #3c3e4c; Text { text: "🚀 deploy"; color: Theme.text-soft; font-family: "Segoe UI Emoji"; font-size: 8.5px; horizontal-alignment: center; vertical-alignment: center; } }
+                Rectangle { x: 73px; y: 91px; width: 34px; height: 18px; border-radius: 5px; background: #3c3e4c; Text { text: "prod"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 8.5px; horizontal-alignment: center; vertical-alignment: center; } }
+                for action[index] in ["Open", "Copy", "Mute 1h"] : Text { x: 15px + index * 52px; y: 113px; width: 48px; height: 20px; text: action; color: Theme.accent-bright; font-family: "Segoe UI"; font-size: 9px; vertical-alignment: center; }
+            }
+        }
+    }
+}
+
+component HistoryPage inherits Rectangle {
+    in property <[NotificationItem]> notifications;
+    callback clear-notifications();
+    callback test-notification();
+
+    background: #00000000;
+
+    Rectangle { x: 18px; y: 18px; width: parent.width - 416px; height: 34px; border-radius: 7px; background: #232532; border-width: 1px; border-color: #3a3c4d;
+        Text { x: 11px; width: 22px; height: parent.height; text: "⌕"; color: Theme.muted; font-family: "Segoe UI Symbol"; font-size: 14px; horizontal-alignment: center; vertical-alignment: center; }
+        Text { x: 36px; width: parent.width - 46px; height: parent.height; text: "Search title, message, tag or sender"; color: Theme.muted; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+    }
+    ComboBox { x: parent.width - 390px; y: 18px; width: 136px; height: 34px; model: ["All topics", "Deployments", "Server Alerts", "Doorbell"]; current-index: 0; }
+    ComboBox { x: parent.width - 246px; y: 18px; width: 108px; height: 34px; model: ["All", "Unread", "Read"]; current-index: 0; }
+    ActionButton { x: parent.width - 130px; y: 20px; width: 112px; height: 30px; ghost: true; label: "Mark all read"; icon: "✓"; clicked => { root.clear-notifications(); } }
+
+    for chip[index] in ["All priorities", "Min", "Low", "Default", "High", "Urgent"] : Rectangle {
+        x: 18px + (index == 0 ? 0px : 85px + (index - 1) * 51px);
+        y: 61px;
+        width: index == 0 ? 78px : 46px;
+        height: 23px;
+        border-radius: 12px;
+        background: index == 0 ? #3e3a5c : #00000000;
+        border-width: 1px;
+        border-color: index == 0 ? #5e5687 : Theme.border;
+        Text { text: chip; color: index == 0 ? Theme.text : Theme.text-soft; font-family: "Segoe UI"; font-size: 9px; horizontal-alignment: center; vertical-alignment: center; }
+    }
+
+    table := SectionPanel {
+        x: 18px; y: 94px; width: parent.width - 332px; height: 585px; clip: true;
+
+        Kicker { x: 45px; y: 6px; width: parent.width - 500px; height: 24px; text: "MESSAGE"; }
+        Kicker { x: parent.width - 303px; y: 6px; width: 92px; height: 24px; text: "TOPIC"; }
+        Kicker { x: parent.width - 211px; y: 6px; width: 78px; height: 24px; text: "PRIORITY"; }
+        Kicker { x: parent.width - 125px; y: 6px; width: 90px; height: 24px; text: "RECEIVED"; }
+        ThinRule { y: 31px; width: parent.width; }
+
+        if root.notifications.length == 0: Text {
+            x: 0px; y: 70px; width: parent.width; height: 80px; text: "No notifications retained"; color: Theme.muted; font-family: "Segoe UI"; font-size: 12px; horizontal-alignment: center; vertical-alignment: center;
+        }
+
+        for item[index] in root.notifications : Rectangle {
+            visible: index < 10;
+            x: 0px; y: 32px + index * 51px; width: parent.width; height: 51px;
+            background: index == 0 ? #2a2b3b : history-touch.has-hover ? #252737 : #00000000;
+
+            Rectangle { visible: index == 0; x: 0px; width: 3px; height: parent.height; background: Theme.red; }
+            Rectangle { x: 14px; y: 20px; width: 8px; height: 8px; border-radius: 4px; background: item.priority >= 5 ? Theme.red : item.priority == 4 ? Theme.yellow : item.priority == 3 ? Theme.accent : Theme.muted-dark; }
+            Text { x: 46px; y: 5px; width: parent.width - 402px; height: 20px; text: item.title; color: index == 0 ? Theme.text : Theme.text-soft; font-family: "Segoe UI"; font-size: 10.5px; font-weight: index == 0 ? 600 : 500; vertical-alignment: center; overflow: elide; }
+            Text { x: 46px; y: 24px; width: parent.width - 402px; height: 18px; text: item.message; color: Theme.muted; font-family: "Segoe UI"; font-size: 9.5px; vertical-alignment: center; overflow: elide; }
+            Text { x: parent.width - 303px; y: 0px; width: 89px; height: parent.height; text: item.topic; color: item.priority >= 5 ? Theme.red : item.priority == 4 ? Theme.yellow : item.priority == 3 ? Theme.accent : Theme.blue-gray; font-family: "Segoe UI"; font-size: 9.5px; vertical-alignment: center; overflow: elide; }
+            PriorityPill { x: parent.width - 211px; y: 16px; width: 72px; height: 19px; priority: item.priority; }
+            MutedText { x: parent.width - 126px; y: 0px; width: 72px; height: parent.height; text: item.meta; overflow: elide; }
+            Text { x: parent.width - 30px; y: 0px; width: 20px; height: parent.height; text: "›"; color: Theme.muted-dark; font-family: "Segoe UI Symbol"; font-size: 16px; horizontal-alignment: center; vertical-alignment: center; }
+            ThinRule { y: parent.height - 1px; width: parent.width; }
+            history-touch := TouchArea {}
+        }
+
+        MutedText { x: 12px; y: parent.height - 30px; width: 160px; height: 24px; text: root.notifications.length + " of " + root.notifications.length + " messages"; }
+        MutedText { x: parent.width - 300px; y: parent.height - 30px; width: 286px; height: 24px; text: "Retention: 30 days · 2 000 messages · 1 KiB per body"; horizontal-alignment: right; }
+    }
+
+    detail := SectionPanel {
+        x: parent.width - 300px; y: 18px; width: 282px; height: 535px;
+        PanelTitle { x: 14px; y: 7px; width: parent.width - 100px; height: 27px; text: "Message details"; }
+        PriorityPill { x: parent.width - 83px; y: 10px; width: 67px; height: 20px; priority: root.notifications.length > 0 ? root.notifications[0].priority : 5; label: root.notifications.length > 0 ? (root.notifications[0].priority >= 5 ? "Urgent (5)" : root.notifications[0].priority == 4 ? "High (4)" : "Default (3)") : "Urgent (5)"; }
+        ThinRule { y: 42px; width: parent.width; }
+        Text { x: 14px; y: 53px; width: parent.width - 28px; height: 23px; text: root.notifications.length > 0 ? root.notifications[0].title : "Disk pressure on node-04"; color: Theme.text; font-family: "Segoe UI"; font-size: 12px; font-weight: 600; vertical-alignment: center; overflow: elide; }
+        Text { x: 14px; y: 77px; width: parent.width - 28px; height: 48px; text: root.notifications.length > 0 ? root.notifications[0].message : "/var at 96% — evicting pods. Threshold 90% breached for 6 minutes."; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; wrap: word-wrap; overflow: elide; }
+        for tag[index] in ["🔥 critical", "k8s", "node-04"] : Rectangle { x: 14px + index * 66px; y: 130px; width: index == 0 ? 61px : 52px; height: 19px; border-radius: 5px; background: #3a3c4a;
+            Text { text: tag; color: Theme.text-soft; font-family: "Segoe UI Emoji"; font-size: 8.5px; horizontal-alignment: center; vertical-alignment: center; }
+        }
+        ThinRule { x: 14px; y: 158px; width: parent.width - 28px; }
+        for row[index] in [
+            { label: "Topic", value: root.notifications.length > 0 ? root.notifications[0].topic : "Server Alerts (infra-alerts)" },
+            { label: "Server", value: "ntfy.internal.lan" },
+            { label: "Message ID", value: "msg_n1Kd82nQ" },
+            { label: "Received", value: "2026-07-31 00:07 · 2m ago" },
+            { label: "Sender", value: "alertmanager" },
+            { label: "Click URL", value: "https://grafana.internal.lan/d/n04" },
+            { label: "Attachment", value: "node04-df.txt · 4.1 KiB" },
+            { label: "Actions", value: "Open Grafana · Drain node · Snooze 1h" },
+            { label: "Delivery", value: "Streamed · popup shown · sound Chime" },
+            { label: "Rules hit", value: "Escalate production incidents" }
+        ] : Rectangle {
+            x: 14px; y: 166px + index * 29px; width: parent.width - 28px; height: 28px; background: #00000000;
+            MutedText { x: 0px; width: 82px; height: parent.height; text: row.label; }
+            Text { x: 88px; width: parent.width - 88px; height: parent.height; text: row.value; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 9px; vertical-alignment: center; wrap: word-wrap; overflow: elide; }
+            ThinRule { y: parent.height - 1px; width: parent.width; }
+        }
+        ActionButton { x: 14px; y: parent.height - 48px; width: 72px; primary: true; label: "Reopen"; icon: "↶"; clicked => { root.test-notification(); } }
+        ActionButton { x: 92px; y: parent.height - 48px; width: 62px; ghost: true; label: "Copy"; }
+        ActionButton { x: 160px; y: parent.height - 48px; width: 72px; ghost: true; label: "Archive"; }
+        ActionButton { x: parent.width - 72px; y: parent.height - 48px; width: 60px; ghost: true; danger: true; label: "Delete"; clicked => { root.clear-notifications(); } }
+    }
+}
+
+component RulesPage inherits Rectangle {
+    in-out property <int> selected-rule: 0;
+    in-out property <bool> rule-one: true;
+    in-out property <bool> rule-two: true;
+    in-out property <bool> rule-three: true;
+    in-out property <bool> rule-four: false;
+    in-out property <bool> rule-five: true;
+    callback test-notification();
+
+    background: #00000000;
+
+    list := SectionPanel {
+        x: 18px; y: 18px; width: parent.width - 358px; height: 316px; clip: true;
+        PanelTitle { x: 14px; y: 7px; width: parent.width - 130px; height: 32px; text: "Rules run top to bottom"; }
+        ActionButton { x: parent.width - 94px; y: 6px; width: 80px; label: "New rule"; icon: "+"; }
+        ThinRule { y: 42px; width: parent.width; }
+
+        for rule[index] in [
+            { name: "Escalate production incidents", scope: "Server Alerts", summary: "priority ≥ high AND tag ‘prod’ → urgent style, centre screen, repeat sound", enabled: root.rule-one, warning: false },
+            { name: "Silence noisy build chatter", scope: "CI Builds", summary: "title contains ‘passed’ → suppress popup, keep in history", enabled: root.rule-two, warning: false },
+            { name: "Night shift — home only", scope: "Global", summary: "23:00–07:00 → mute Work group, allow Doorbell", enabled: root.rule-three, warning: true },
+            { name: "Highlight anything from alertmanager", scope: "Global", summary: "sender = alertmanager → red accent, pin in history", enabled: root.rule-four, warning: false },
+            { name: "Forward backups to email", scope: "Backups", summary: "priority ≥ default → forward to ops@acme.dev, no popup", enabled: root.rule-five, warning: false }
+        ] : Rectangle {
+            x: 0px; y: 43px + index * 54px; width: parent.width; height: 54px; background: root.selected-rule == index ? #2b2c3c : rule-touch.has-hover ? #252737 : #00000000;
+            Rectangle { visible: root.selected-rule == index; x: 0px; width: 3px; height: parent.height; background: Theme.accent; }
+            Text { x: 14px; y: 4px; width: 32px; height: parent.height; text: "⌃\n⌄"; color: Theme.muted-dark; font-family: "Segoe UI Symbol"; font-size: 9px; horizontal-alignment: center; vertical-alignment: center; }
+            MutedText { x: 49px; y: 0px; width: 20px; height: parent.height; text: "" + (index + 1); horizontal-alignment: center; }
+            Text { x: 74px; y: 5px; width: parent.width - 240px; height: 20px; text: rule.name; color: root.selected-rule == index ? Theme.text : Theme.text-soft; font-family: "Segoe UI"; font-size: 10.5px; font-weight: 560; vertical-alignment: center; overflow: elide; }
+            Rectangle { x: 74px + (rule.name.character-count * 5px); y: 7px; width: rule.scope.character-count * 5px + 16px; height: 18px; border-radius: 5px; background: #342f50; border-width: 1px; border-color: #594f86;
+                Text { text: rule.scope; color: Theme.accent-bright; font-family: "Segoe UI"; font-size: 8px; horizontal-alignment: center; vertical-alignment: center; }
+            }
+            Text { x: 74px; y: 26px; width: parent.width - 170px; height: 18px; text: rule.summary + (rule.warning ? "   ⚠" : ""); color: Theme.muted; font-family: "Segoe UI"; font-size: 9px; vertical-alignment: center; overflow: elide; }
+            Toggle { x: parent.width - 47px; y: 18px; checked: rule.enabled; toggled(value) => {
+                if index == 0 { root.rule-one = value; }
+                if index == 1 { root.rule-two = value; }
+                if index == 2 { root.rule-three = value; }
+                if index == 3 { root.rule-four = value; }
+                if index == 4 { root.rule-five = value; }
+            } }
+            rule-touch := TouchArea { clicked => { root.selected-rule = index; } }
+            ThinRule { y: parent.height - 1px; width: parent.width; }
+        }
+    }
+
+    editor := SectionPanel {
+        x: parent.width - 325px; y: 18px; width: 307px; height: 548px;
+        PanelTitle { x: 14px; y: 7px; width: parent.width - 28px; height: 30px; text: "Edit rule — Escalate production incidents"; overflow: elide; }
+        ThinRule { y: 42px; width: parent.width; }
+        Text { x: 14px; y: 52px; width: parent.width - 28px; height: 18px; text: "Rule name"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        FieldBox { x: 14px; y: 75px; width: parent.width - 28px; value: "Escalate production incidents"; }
+        Kicker { x: 14px; y: 119px; width: 120px; height: 18px; text: "WHEN"; }
+        ComboBox { x: 14px; y: 141px; width: 132px; height: 34px; model: ["Priority", "Topic", "Tag", "Sender"]; current-index: 0; }
+        FieldBox { x: 152px; y: 141px; width: parent.width - 180px; value: "≥ High (4)"; }
+        ComboBox { x: 14px; y: 181px; width: 132px; height: 34px; model: ["Tag", "Topic", "Sender"]; current-index: 0; }
+        FieldBox { x: 152px; y: 181px; width: parent.width - 180px; value: "prod"; }
+        ActionButton { x: 14px; y: 220px; width: 110px; ghost: true; label: "Add condition"; icon: "+"; }
+        Kicker { x: 14px; y: 261px; width: 120px; height: 18px; text: "THEN"; }
+        for action[index] in ["↑  Raise to Urgent (5)", "⊙  Position: Top centre, monitor 1", "♬  Sound: Alert, repeat 3×", "◷  Duration: 45s, sticky until dismissed"] : Rectangle {
+            x: 14px; y: 285px + index * 38px; width: parent.width - 28px; height: 32px; border-radius: 6px; background: #202230; border-width: 1px; border-color: Theme.border-soft;
+            Text { x: 9px; width: parent.width - 28px; height: parent.height; text: action; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 9.5px; vertical-alignment: center; overflow: elide; }
+            Text { x: parent.width - 25px; width: 18px; height: parent.height; text: "×"; color: Theme.muted-dark; font-family: "Segoe UI"; font-size: 11px; horizontal-alignment: center; vertical-alignment: center; }
+        }
+        ActionButton { x: 14px; y: 443px; width: 92px; ghost: true; label: "Add action"; icon: "+"; }
+        ThinRule { x: 14px; y: 482px; width: parent.width - 28px; }
+        ActionButton { x: 14px; y: 492px; width: 74px; primary: true; label: "Test rule"; icon: "△"; clicked => { root.test-notification(); } }
+        ActionButton { x: 94px; y: 492px; width: 82px; ghost: true; label: "Duplicate"; }
+        ActionButton { x: parent.width - 83px; y: 492px; width: 69px; ghost: true; danger: true; label: "Delete"; }
+        Text { x: 14px; y: 526px; width: parent.width - 28px; height: 42px; text: "First matching rule wins. Add ‘continue evaluating’ as an action to let later rules also apply."; color: Theme.muted; font-family: "Segoe UI"; font-size: 9px; wrap: word-wrap; overflow: elide; }
+    }
+}
+
+component ServerCard inherits SectionPanel {
+    in property <ServerItem> server;
+    in-out property <bool> enabled;
+    callback toggle();
+    callback test();
+
+    height: server.error ? 166px : 124px;
+
+    Rectangle { x: 16px; y: 16px; width: 36px; height: 36px; border-radius: 8px; background: server.error ? Theme.red-soft : Theme.green-soft; border-width: 1px; border-color: server.error ? #714047 : #4d6256;
+        Text { text: "▤"; color: server.error ? Theme.red : Theme.green; font-family: "Segoe UI Symbol"; font-size: 15px; horizontal-alignment: center; vertical-alignment: center; }
+    }
+    Text { x: 62px; y: 10px; width: parent.width - 370px; height: 24px; text: server.host; color: Theme.text; font-family: "Segoe UI"; font-size: 12px; font-weight: 600; vertical-alignment: center; overflow: elide; }
+    Rectangle { x: 62px + server.host.character-count * 6px; y: 13px; width: server.connected ? 70px : 45px; height: 19px; border-radius: 5px; background: server.error ? Theme.red-soft : Theme.green-soft; border-width: 1px; border-color: server.error ? #714047 : #4d6256;
+        Text { text: server.error ? "Error" : "Connected"; color: server.error ? Theme.red : Theme.green; font-family: "Segoe UI"; font-size: 8.5px; horizontal-alignment: center; vertical-alignment: center; }
+    }
+    MutedText { x: 62px; y: 32px; width: parent.width - 280px; height: 20px; text: server.detail; overflow: elide; }
+    ActionButton { x: parent.width - 189px; y: 14px; width: 58px; ghost: true; label: "Test"; icon: "⌁"; clicked => { root.test(); } }
+    ActionButton { x: parent.width - 126px; y: 14px; width: 58px; ghost: true; label: "Edit"; icon: "⌕"; }
+    Toggle { x: parent.width - 48px; y: 18px; checked <=> root.enabled; toggled(_) => { root.toggle(); } }
+    ThinRule { x: 16px; y: 62px; width: parent.width - 32px; }
+
+    for col[index] in [
+        { label: "PROTOCOL", value: server.protocol },
+        { label: "AUTH", value: server.auth },
+        { label: server.last-label, value: server.last-value },
+        { label: "RECONNECTS", value: server.reconnects }
+    ] : Rectangle {
+        x: 16px + index * ((parent.width - 32px) / 4);
+        y: 68px;
+        width: (parent.width - 32px) / 4;
+        height: 45px;
+        background: #00000000;
+        Kicker { x: 0px; y: 0px; width: parent.width - 10px; height: 18px; text: col.label; }
+        BodyText { x: 0px; y: 20px; width: parent.width - 10px; height: 20px; text: col.value; overflow: elide; }
+    }
+    if server.error: Rectangle {
+        x: 16px; y: 119px; width: parent.width - 32px; height: 31px; border-radius: 6px; background: #412b36; border-width: 1px; border-color: #6c3944;
+        Text { x: 10px; width: parent.width - 20px; height: parent.height; text: "ⓘ  TLS handshake failed: certificate signed by unknown authority (retry in 4m)"; color: #e8979d; font-family: "Segoe UI"; font-size: 9.5px; vertical-alignment: center; overflow: elide; }
+    }
+}
+
+component ServersPage inherits Rectangle {
+    in-out property <string> server-url;
+    in property <bool> connected;
+    callback toggle-subscription();
+    callback test-notification();
+
+    in-out property <bool> internal-enabled: true;
+    in-out property <bool> lab-enabled: false;
+
+    background: #00000000;
+
+    ServerCard {
+        x: 18px; y: 18px; width: parent.width - 36px;
+        server: { host: root.server-url == "" ? "https://ntfy.sh" : root.server-url, detail: "Public server · 3 topics · streaming since 07:12 today", protocol: "HTTPS + SSE", auth: "Access token · ntfy_a1…9f", last-label: "LAST MESSAGE", last-value: "2 minutes ago", reconnects: "0 in 24h", connected: root.connected, error: false };
+        enabled: root.connected;
+        toggle => { root.toggle-subscription(); }
+        test => { root.test-notification(); }
+    }
+    ServerCard {
+        x: 18px; y: 155px; width: parent.width - 36px;
+        server: { host: "https://ntfy.internal.lan", detail: "Self-hosted · 3 topics · TLS pinned, proxy bypassed", protocol: "HTTPS + WebSocket", auth: "ops-desktop · Credential Manager", last-label: "LAST MESSAGE", last-value: "28 minutes ago", reconnects: "2 in 24h", connected: true, error: false };
+        enabled <=> root.internal-enabled;
+        test => { root.test-notification(); }
+    }
+    ServerCard {
+        x: 18px; y: 292px; width: parent.width - 36px;
+        server: { host: "https://ntfy.lab.acme.dev", detail: "Staging · disabled after 5 failed attempts", protocol: "HTTPS + SSE", auth: "None", last-label: "LAST SUCCESS", last-value: "Yesterday 19:04", reconnects: "5 failed", connected: false, error: true };
+        enabled <=> root.lab-enabled;
+        test => { root.test-notification(); }
+    }
+    ActionButton { x: 18px; y: 472px; width: 134px; primary: true; label: "Add server profile"; icon: "+"; }
+    ActionButton { x: 160px; y: 472px; width: 136px; ghost: true; label: "TLS & proxy settings"; icon: "♢"; }
+    ActionButton { x: 304px; y: 472px; width: 115px; ghost: true; label: "Connection log"; icon: "▣"; }
+}
+
+component SettingsSection inherits SectionPanel {
+    in property <string> icon;
+    in property <string> title;
+    in property <[SettingItem]> items;
+    callback item-toggled(int, bool);
+
+    height: 43px + items.length * 52px;
+    PanelTitle { x: 14px; y: 6px; width: parent.width - 28px; height: 30px; text: root.icon + "   " + root.title; }
+    ThinRule { y: 42px; width: parent.width; }
+    for item[index] in root.items : SettingRow {
+        x: 0px; y: 43px + index * 52px; width: parent.width;
+        title: item.title; detail: item.detail; note: item.note; enabled: item.enabled; interactive: item.interactive;
+        toggled(value) => { root.item-toggled(index, value); }
+    }
+}
+
+component SettingsPage inherits Rectangle {
+    in-out property <bool> notifications-enabled;
+    in-out property <bool> sound-enabled;
+    in-out property <bool> auto-connect;
+    in-out property <int> placement-index;
+    in-out property <int> audio-output-index;
+    in-out property <int> additional-audio-output-index;
+    in property <[string]> audio-outputs;
+    in property <[string]> additional-audio-outputs;
+    in property <bool> lower-scroll: false;
+    callback save-settings();
+    callback refresh-audio-outputs();
+    callback test-notification();
+
+    in-out property <bool> keep-background: true;
+    in-out property <bool> tray-actions: true;
+    in-out property <bool> unread-badge: true;
+    in-out property <bool> focus-assist: true;
+    in-out property <bool> animations: true;
+    in-out property <bool> keep-history: true;
+    in-out property <bool> suppress-duplicates: true;
+    in-out property <bool> queue-offline: true;
+    in-out property <bool> lock-screen-private: true;
+    in-out property <bool> diagnostics: false;
+    in-out property <bool> global-shortcuts: true;
+    in-out property <int> lab-priority: 4;
+    in-out property <int> lab-layout: 2;
+
+    background: #00000000;
+
+    content-scroll := ScrollView {
+        x: 18px; y: 18px; width: parent.width - 386px; height: parent.height - 36px;
+        viewport-width: self.width - 12px;
+        viewport-height: 1000px;
+        viewport-y: root.lower-scroll ? -250px : 0px;
+
+        SettingsSection {
+            x: 0px; y: 0px; width: content-scroll.viewport-width;
+            icon: "⌘"; title: "Windows integration";
+            items: [
+                { title: "Start with Windows", detail: "Launch minimised to the tray at sign-in", note: "", enabled: root.auto-connect, interactive: true },
+                { title: "Keep running in the background", detail: "Closing the window releases the UI, the listener continues", note: "", enabled: root.keep-background, interactive: true },
+                { title: "System tray icon with quick actions", detail: "Mute, connect, open history", note: "", enabled: root.tray-actions, interactive: true },
+                { title: "Unread count on tray and taskbar", detail: "Badge updates live", note: "19 unread", enabled: root.unread-badge, interactive: true },
+                { title: "Use native Windows notifications", detail: "Falls back to Action Center instead of custom cards", note: "", enabled: root.notifications-enabled, interactive: true },
+                { title: "Respect Focus Assist / Do Not Disturb", detail: "Urgent still breaks through", note: "", enabled: root.focus-assist, interactive: true }
+            ];
+            item-toggled(index, value) => {
+                if index == 0 { root.auto-connect = value; }
+                if index == 1 { root.keep-background = value; }
+                if index == 2 { root.tray-actions = value; }
+                if index == 3 { root.unread-badge = value; }
+                if index == 4 { root.notifications-enabled = value; }
+                if index == 5 { root.focus-assist = value; }
+            }
+        }
+        SettingsSection {
+            x: 0px; y: 371px; width: content-scroll.viewport-width;
+            icon: "◉"; title: "Appearance & sound";
+            items: [
+                { title: "Entrance and exit animations", detail: "Slide + fade, 180 ms, honours reduced motion", note: "", enabled: root.animations, interactive: true },
+                { title: "Play notification sounds", detail: "Routed to the selected output device", note: "Headphones + Speakers", enabled: root.sound-enabled, interactive: true }
+            ];
+            item-toggled(index, value) => {
+                if index == 0 { root.animations = value; }
+                if index == 1 { root.sound-enabled = value; }
+            }
+        }
+        SettingsSection {
+            x: 0px; y: 529px; width: content-scroll.viewport-width;
+            icon: "▤"; title: "History & performance";
+            items: [
+                { title: "Keep local history", detail: "Purge on a schedule", note: "30 days · 2 000 msgs", enabled: root.keep-history, interactive: true },
+                { title: "Suppress duplicate messages", detail: "Same ID within 30 s is dropped", note: "", enabled: root.suppress-duplicates, interactive: true },
+                { title: "Queue during connection loss", detail: "Replays on reconnect, backoff 1s → 60s", note: "0 queued", enabled: root.queue-offline, interactive: true }
+            ];
+            item-toggled(index, value) => {
+                if index == 0 { root.keep-history = value; }
+                if index == 1 { root.suppress-duplicates = value; }
+                if index == 2 { root.queue-offline = value; }
+            }
+        }
+        SettingsSection {
+            x: 0px; y: 739px; width: content-scroll.viewport-width;
+            icon: "♢"; title: "Privacy & security";
+            items: [
+                { title: "Hide message content on the lock screen", detail: "Titles only until unlocked", note: "", enabled: root.lock-screen-private, interactive: true },
+                { title: "Send anonymous diagnostics", detail: "Off by default; tokens never logged", note: "", enabled: root.diagnostics, interactive: true },
+                { title: "Global keyboard shortcuts", detail: "Open, history, mute, dismiss all", note: "Ctrl+Shift+N …", enabled: root.global-shortcuts, interactive: true }
+            ];
+            item-toggled(index, value) => {
+                if index == 0 { root.lock-screen-private = value; }
+                if index == 1 { root.diagnostics = value; }
+                if index == 2 { root.global-shortcuts = value; }
+            }
+        }
+        ActionButton { x: 0px; y: 948px; width: 115px; ghost: true; label: "Import settings"; icon: "↥"; }
+        ActionButton { x: 121px; y: 948px; width: 115px; ghost: true; label: "Export settings"; icon: "↧"; }
+        ActionButton { x: 242px; y: 948px; width: 142px; ghost: true; label: "Export diagnostic log"; icon: "▣"; }
+        ActionButton { x: 390px; y: 948px; width: 112px; ghost: true; danger: true; label: "Reset to defaults"; icon: "↶"; }
+        ActionButton { x: content-scroll.viewport-width - 120px; y: 948px; width: 120px; primary: true; label: "Save settings"; clicked => { root.save-settings(); } }
+    }
+
+    lab := SectionPanel {
+        x: parent.width - 350px; y: 18px; width: 332px; height: 585px; clip: true;
+        PanelTitle { x: 14px; y: 7px; width: parent.width - 28px; height: 25px; text: "Notification lab"; }
+        MutedText { x: 14px; y: 29px; width: parent.width - 28px; height: 17px; text: "Preview every priority, layout and position."; }
+        ThinRule { y: 55px; width: parent.width; }
+        Text { x: 14px; y: 66px; width: parent.width - 28px; height: 18px; text: "Priority"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        for p[index] in [
+            { label: "↓   Min (1)", spec: "240px · 3s · no sound", color: #75798c },
+            { label: "↓   Low (2)", spec: "300px · 4s · soft", color: #9397ab },
+            { label: "♧   Default (3)", spec: "380px · 6s · chime", color: Theme.accent },
+            { label: "♧   High (4)", spec: "420px · 12s · alert", color: Theme.yellow },
+            { label: "△   Urgent (5)", spec: "460px · 30s · pulse + repeat", color: Theme.red }
+        ] : Rectangle {
+            x: 14px; y: 89px + index * 37px; width: parent.width - 28px; height: 32px; border-radius: 6px;
+            background: root.lab-priority == index ? p.color.with-alpha(0.16) : #1a1c2a;
+            border-width: 1px;
+            border-color: root.lab-priority == index ? p.color.with-alpha(0.55) : Theme.border-soft;
+            Text { x: 9px; width: parent.width - 130px; height: parent.height; text: p.label; color: root.lab-priority == index ? Theme.text : Theme.text-soft; font-family: "Segoe UI"; font-size: 9.5px; vertical-alignment: center; }
+            Text { x: parent.width - 126px; width: 116px; height: parent.height; text: p.spec; color: Theme.muted; font-family: "Segoe UI"; font-size: 8.5px; horizontal-alignment: right; vertical-alignment: center; }
+            TouchArea { clicked => { root.lab-priority = index; } }
+        }
+        Text { x: 14px; y: 281px; width: parent.width - 28px; height: 18px; text: "Layout"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        Rectangle { x: 14px; y: 303px; width: 185px; height: 28px; border-radius: 7px; border-width: 1px; border-color: Theme.border; background: #00000000;
+            for label[index] in ["Compact", "Standard", "Expanded"] : Rectangle {
+                x: index * 61px; width: index == 2 ? 63px : 61px; height: parent.height; border-radius: 6px; background: root.lab-layout == index ? #454064 : #00000000;
+                Text { text: label; color: root.lab-layout == index ? Theme.text : Theme.muted; font-family: "Segoe UI"; font-size: 9px; horizontal-alignment: center; vertical-alignment: center; }
+                TouchArea { clicked => { root.lab-layout = index; } }
+            }
+        }
+        Text { x: 14px; y: 342px; width: parent.width - 28px; height: 18px; text: "Position on screen"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+        for position[index] in ["Top left", "Top centre", "Top right", "Bottom left", "Bottom centre", "Bottom right"] : Rectangle {
+            x: 14px + (index.mod(3)) * 99px;
+            y: 366px + (index < 3 ? 0 : 34px);
+            width: 94px;
+            height: 29px;
+            border-radius: 6px;
+            background: root.placement-index == index ? #302c4b : #00000000;
+            border-width: 1px;
+            border-color: root.placement-index == index ? #5b5287 : Theme.border;
+            Text { text: position; color: root.placement-index == index ? Theme.text : Theme.muted; font-family: "Segoe UI"; font-size: 8.5px; horizontal-alignment: center; vertical-alignment: center; }
+            TouchArea { clicked => { root.placement-index = index; } }
+        }
+        Text { x: 14px; y: 443px; width: 140px; height: 18px; text: "Max visible · 4"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 9.5px; vertical-alignment: center; }
+        Text { x: 171px; y: 443px; width: 140px; height: 18px; text: "Stack gap · 10px"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 9.5px; vertical-alignment: center; }
+        Slider { x: 14px; y: 464px; width: 142px; height: 20px; minimum: 1; maximum: 8; value: 4; }
+        Slider { x: 171px; y: 464px; width: 142px; height: 20px; minimum: 4; maximum: 24; value: 10; }
+        ActionButton { x: 14px; y: 495px; width: 205px; primary: true; label: "Show notification"; icon: "♧"; clicked => { root.test-notification(); } }
+        ActionButton { x: 225px; y: 495px; width: 70px; ghost: true; label: "Stack ×3"; clicked => { root.test-notification(); } }
+        ActionButton { x: 298px; y: 495px; width: 24px; ghost: true; label: "⌁"; clicked => { root.refresh-audio-outputs(); } }
+        Text { x: 14px; y: 535px; width: parent.width - 28px; height: 42px; text: "Previews appear over this window at the chosen position, honouring priority duration, size and sound routing."; color: Theme.muted; font-family: "Segoe UI"; font-size: 9px; wrap: word-wrap; overflow: elide; }
+    }
+}
+
+component AboutPage inherits Rectangle {
+    background: #00000000;
+
+    AppMark { x: 18px; y: 18px; mark-size: 52px; }
+    Text { x: 83px; y: 18px; width: 390px; height: 30px; text: "ntfy for Windows"; color: Theme.text; font-family: "Segoe UI"; font-size: 18px; font-weight: 600; vertical-alignment: center; }
+    MutedText { x: 83px; y: 47px; width: 630px; height: 22px; text: "Version 3.0.0 (build 4821) · Windows 11 native shell · WinHTTP streaming listener"; }
+
+    for fact[index] in [
+        { label: "LISTENER", value: "WinHTTP streaming · SSE with WebSocket fallback" },
+        { label: "CREDENTIALS", value: "Windows Credential Manager (DPAPI)" },
+        { label: "MEMORY / CPU", value: "38 MB resident · 0.2% idle CPU" },
+        { label: "MONITORS", value: "2 detected · per-topic targeting enabled" },
+        { label: "ACCESSIBILITY", value: "Screen-reader labels, full keyboard nav, reduced motion honoured" },
+        { label: "UPDATE CHANNEL", value: "Stable · checked 4 hours ago" }
+    ] : SectionPanel {
+        x: 18px + (index.mod(2)) * 320px;
+        y: 84px + (index / 2) * 69px;
+        width: 308px;
+        height: 58px;
+        Kicker { x: 13px; y: 8px; width: parent.width - 26px; height: 18px; text: fact.label; }
+        Text { x: 13px; y: 27px; width: parent.width - 26px; height: 23px; text: fact.value; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10.5px; vertical-alignment: center; wrap: word-wrap; overflow: elide; }
+    }
+    ActionButton { x: 18px; y: 307px; width: 134px; primary: true; label: "Check for updates"; icon: "⊙"; }
+    ActionButton { x: 160px; y: 307px; width: 132px; ghost: true; label: "Keyboard shortcuts"; icon: "⌨"; }
+    ActionButton { x: 300px; y: 307px; width: 133px; ghost: true; label: "ntfy documentation"; icon: "▤"; }
+    ActionButton { x: 441px; y: 307px; width: 117px; ghost: true; label: "Report an issue"; icon: "ⓘ"; }
+    Text { x: 18px; y: 350px; width: 650px; height: 50px; text: "Credentials are stored in Windows Credential Manager and never written to logs. Message bodies can be hidden on the lock screen and purged on a schedule from Settings → Privacy."; color: Theme.muted; font-family: "Segoe UI"; font-size: 10px; wrap: word-wrap; overflow: elide; }
+}
+
+export { NotificationPopup } from "popup_v2.slint";
+
+export component AppWindow inherits Window {
+    title: "ntfy for Windows";
+    icon: @image-url("assets/icon.svg");
+    preferred-width: 1536px;
+    preferred-height: 960px;
+    min-width: 1100px;
+    min-height: 720px;
+    no-frame: true;
+    background: Theme.background;
+
+    in-out property <string> server-url: "https://ntfy.sh";
+    in-out property <string> topic: "ops-deploys";
+    in-out property <string> token: "";
+    in-out property <bool> notifications-enabled: true;
+    in-out property <bool> sound-enabled: true;
+    in-out property <bool> auto-connect: true;
+    in-out property <int> placement-index: 2;
+    in-out property <int> audio-output-index: 0;
+    in-out property <int> additional-audio-output-index: 0;
+    in-out property <bool> connected: false;
+    in-out property <string> status-text: "Ready";
+    in property <[string]> audio-outputs;
+    in property <[string]> additional-audio-outputs;
+    in property <[NotificationItem]> notifications;
+    in-out property <int> page: 0;
+    in-out property <int> unread-count: 0;
+    in-out property <int> topic-count: 1;
+    in-out property <int> server-count: 1;
+
+    callback toggle-subscription();
+    callback publish(string, string);
+    callback save-settings();
+    callback clear-notifications();
+    callback refresh-audio-outputs();
+    callback test-notification();
+    callback quit();
+    callback begin-window-drag();
+    callback minimize-window();
+    callback maximize-window();
+    callback close-window();
+
+    in-out property <bool> subscribe-open: false;
+
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        background: @linear-gradient(150deg, #1b1e2e, #161826 52%, #131522);
+    }
+
+    titlebar := Rectangle {
+        x: 0px; y: 0px; width: parent.width; height: 32px; background: #202230;
+        AppMark { x: 11px; y: 7px; mark-size: 18px; }
+        Text { x: 38px; y: 0px; width: 190px; height: parent.height; text: "ntfy for Windows"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 11.5px; font-weight: 550; vertical-alignment: center; }
+        Text { x: 149px; y: 0px; width: parent.width - 330px; height: parent.height; text: "— " + (root.page == 0 ? "Dashboard" : root.page == 1 ? "Topics" : root.page == 2 ? "Notification history" : root.page == 3 ? "Rules & automation" : root.page == 4 ? "Servers" : root.page == 5 || root.page == 7 ? "Settings" : "About"); color: Theme.muted; font-family: "Segoe UI"; font-size: 10.5px; vertical-alignment: center; overflow: elide; }
+        TouchArea {
+            x: 0px; y: 0px; width: parent.width - 138px; height: parent.height;
+            pointer-event(event) => {
+                if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
+                    root.begin-window-drag();
+                }
+            }
+        }
+        for control[index] in ["—", "□", "×"] : Rectangle {
+            x: parent.width - 138px + index * 46px; y: 0px; width: 46px; height: parent.height;
+            background: title-control.has-hover ? (index == 2 ? #8c3b3f : #2b2d3c) : #00000000;
+            Text { text: control; color: title-control.has-hover && index == 2 ? #f5f4ff : Theme.text-soft; font-family: "Segoe UI Symbol"; font-size: index == 1 ? 10px : 13px; horizontal-alignment: center; vertical-alignment: center; }
+            title-control := TouchArea { clicked => {
+                if index == 0 { root.minimize-window(); }
+                if index == 1 { root.maximize-window(); }
+                if index == 2 { root.close-window(); }
+            } }
+        }
+        ThinRule { y: parent.height - 1px; width: parent.width; }
+    }
+
+    sidebar := Rectangle {
+        x: 0px; y: 32px; width: 215px; height: parent.height - 57px; background: #1d1f2ddd; border-width: 0px;
+        Rectangle { x: parent.width - 1px; width: 1px; height: parent.height; background: Theme.border-soft; }
+        AppMark { x: 17px; y: 18px; mark-size: 28px; }
+        Text { x: 55px; y: 14px; width: parent.width - 70px; height: 22px; text: "ntfy Desktop"; color: Theme.text; font-family: "Segoe UI"; font-size: 12px; font-weight: 600; vertical-alignment: center; }
+        MutedText { x: 55px; y: 35px; width: parent.width - 70px; height: 16px; text: root.server-count + " servers · " + root.topic-count + " topics"; }
+
+        NavRow { x: 10px; y: 61px; width: parent.width - 20px; icon: "◒"; label: "Dashboard"; selected: root.page == 0; activated => { root.page = 0; } }
+        NavRow { x: 10px; y: 95px; width: parent.width - 20px; icon: "◇"; label: "Topics"; badge: "" + root.topic-count; selected: root.page == 1; activated => { root.page = 1; } }
+        NavRow { x: 10px; y: 129px; width: parent.width - 20px; icon: "◷"; label: "History"; badge: "" + root.unread-count; selected: root.page == 2; activated => { root.page = 2; } }
+        NavRow { x: 10px; y: 163px; width: parent.width - 20px; icon: "⌁"; label: "Rules"; badge: "4"; selected: root.page == 3; activated => { root.page = 3; } }
+        NavRow { x: 10px; y: 197px; width: parent.width - 20px; icon: "▤"; label: "Servers"; badge: root.server-count + "/3"; selected: root.page == 4; activated => { root.page = 4; } }
+        NavRow { x: 10px; y: 231px; width: parent.width - 20px; icon: "⚙"; label: "Settings"; selected: root.page == 5 || root.page == 7; activated => { root.page = 5; } }
+        NavRow { x: 10px; y: 265px; width: parent.width - 20px; icon: "ⓘ"; label: "About"; selected: root.page == 6; activated => { root.page = 6; } }
+
+        SectionPanel {
+            x: 10px; y: parent.height - 128px; width: parent.width - 20px; height: 97px;
+            Rectangle { x: 10px; y: 10px; width: 8px; height: 8px; border-radius: 4px; background: root.connected ? Theme.green : Theme.muted-dark; }
+            Text { x: 25px; y: 5px; width: parent.width - 36px; height: 20px; text: root.connected ? "Listening" : "Offline"; color: Theme.text; font-family: "Segoe UI"; font-size: 10px; font-weight: 600; vertical-alignment: center; }
+            Text { x: 10px; y: 27px; width: parent.width - 20px; height: 34px; text: root.connected ? "Streaming on " + root.server-count + " servers · last message 2 minutes ago · 0 queued" : "Listener stopped · choose a server and subscribe"; color: Theme.muted; font-family: "Segoe UI"; font-size: 8.5px; wrap: word-wrap; overflow: elide; }
+            ActionButton { x: 10px; y: 63px; width: parent.width - 48px; height: 26px; label: root.connected ? "Mute all" : "Connect"; icon: root.connected ? "♢" : "⌁"; clicked => { root.toggle-subscription(); } }
+            ActionButton { x: parent.width - 35px; y: 63px; width: 25px; height: 26px; ghost: true; label: "↻"; clicked => { root.toggle-subscription(); } }
+        }
+        MutedText { x: 13px; y: parent.height - 26px; width: 110px; height: 18px; text: "v3.0.0 · tray active"; }
+        MutedText { x: parent.width - 94px; y: parent.height - 26px; width: 82px; height: 18px; text: "Ctrl+Shift+N"; horizontal-alignment: right; }
+    }
+
+    header := Rectangle {
+        x: 215px; y: 32px; width: parent.width - 215px; height: 68px; background: #151725b8;
+        PageTitle { x: 22px; y: 9px; width: parent.width - 380px; height: 28px; text: root.page == 0 ? "Dashboard" : root.page == 1 ? "Topics" : root.page == 2 ? "Notification history" : root.page == 3 ? "Rules & automation" : root.page == 4 ? "Servers" : root.page == 5 || root.page == 7 ? "Settings" : "About"; }
+        PageSubtitle { x: 22px; y: 36px; width: parent.width - 380px; height: 20px; text: root.page == 0 ? (root.server-count + " servers live · " + root.unread-count + " unread across " + root.topic-count + " topics") : root.page == 1 ? "Subscribe, group, tune per-topic appearance and delivery" : root.page == 2 ? "Search, filter and re-open everything received on this PC" : root.page == 3 ? "Conditions evaluated in order — first match wins unless it says continue" : root.page == 4 ? "Public and self-hosted ntfy endpoints with auth and connection state" : root.page == 5 || root.page == 7 ? "Windows integration, appearance, privacy and the notification lab" : "Build information, updates and security posture"; }
+        ActionButton { x: parent.width - 217px; y: 19px; width: 119px; height: 30px; ghost: true; label: "Test notification"; icon: "♧"; clicked => { root.test-notification(); } }
+        ActionButton { x: parent.width - 91px; y: 17px; width: 76px; height: 32px; primary: true; label: "Subscribe"; icon: "+"; clicked => { root.subscribe-open = true; } }
+        ThinRule { y: parent.height - 1px; width: parent.width; }
+    }
+
+    page-host := Rectangle {
+        x: 215px; y: 100px; width: parent.width - 215px; height: parent.height - 125px; background: #00000000; clip: true;
+
+        if root.page == 0: DashboardPage {
+            width: parent.width; height: parent.height;
+            notifications: root.notifications; unread-count: root.unread-count; server-count: root.server-count; connected: root.connected;
+            go-history => { root.page = 2; }
+            subscribe => { root.subscribe-open = true; }
+            test-notification => { root.test-notification(); }
+            toggle-subscription => { root.toggle-subscription(); }
+        }
+        if root.page == 1: TopicsPage {
+            width: parent.width; height: parent.height;
+            server-url <=> root.server-url; topic <=> root.topic; token <=> root.token;
+            placement-index <=> root.placement-index; audio-output-index <=> root.audio-output-index; audio-outputs: root.audio-outputs;
+            save-settings => { root.save-settings(); }
+            subscribe => { root.subscribe-open = true; }
+        }
+        if root.page == 2: HistoryPage {
+            width: parent.width; height: parent.height; notifications: root.notifications;
+            clear-notifications => { root.clear-notifications(); }
+            test-notification => { root.test-notification(); }
+        }
+        if root.page == 3: RulesPage { width: parent.width; height: parent.height; test-notification => { root.test-notification(); } }
+        if root.page == 4: ServersPage { width: parent.width; height: parent.height; server-url <=> root.server-url; connected: root.connected; toggle-subscription => { root.toggle-subscription(); } test-notification => { root.test-notification(); } }
+        if root.page == 5: SettingsPage {
+            width: parent.width; height: parent.height; lower-scroll: false;
+            notifications-enabled <=> root.notifications-enabled; sound-enabled <=> root.sound-enabled; auto-connect <=> root.auto-connect;
+            placement-index <=> root.placement-index; audio-output-index <=> root.audio-output-index; additional-audio-output-index <=> root.additional-audio-output-index;
+            audio-outputs: root.audio-outputs; additional-audio-outputs: root.additional-audio-outputs;
+            save-settings => { root.save-settings(); }
+            refresh-audio-outputs => { root.refresh-audio-outputs(); }
+            test-notification => { root.test-notification(); }
+        }
+        if root.page == 7: SettingsPage {
+            width: parent.width; height: parent.height; lower-scroll: true;
+            notifications-enabled <=> root.notifications-enabled; sound-enabled <=> root.sound-enabled; auto-connect <=> root.auto-connect;
+            placement-index <=> root.placement-index; audio-output-index <=> root.audio-output-index; additional-audio-output-index <=> root.additional-audio-output-index;
+            audio-outputs: root.audio-outputs; additional-audio-outputs: root.additional-audio-outputs;
+            save-settings => { root.save-settings(); }
+            refresh-audio-outputs => { root.refresh-audio-outputs(); }
+            test-notification => { root.test-notification(); }
+        }
+        if root.page == 6: AboutPage { width: parent.width; height: parent.height; }
+    }
+
+    statusbar := Rectangle {
+        x: 0px; y: parent.height - 25px; width: parent.width; height: 25px; background: #161725f0;
+        ThinRule { y: 0px; width: parent.width; }
+        Rectangle { x: 12px; y: 9px; width: 7px; height: 7px; border-radius: 4px; background: root.connected ? Theme.green : Theme.muted-dark; }
+        MutedText { x: 25px; y: 1px; width: 90px; height: parent.height - 1px; text: root.connected ? "Listening" : "Offline"; }
+        MutedText { x: 104px; y: 1px; width: 240px; height: parent.height - 1px; text: root.status-text; overflow: elide; }
+        MutedText { x: parent.width - 350px; y: 1px; width: 75px; height: parent.height - 1px; text: root.unread-count + " unread"; horizontal-alignment: right; }
+        MutedText { x: parent.width - 265px; y: 1px; width: 172px; height: parent.height - 1px; text: "Quiet hours 23:00–07:30 (Work)"; horizontal-alignment: right; }
+        MutedText { x: parent.width - 88px; y: 1px; width: 76px; height: parent.height - 1px; text: "38 MB · 0.2% CPU"; horizontal-alignment: right; }
+    }
+
+    if root.subscribe-open: Rectangle {
+        x: 215px; y: 100px; width: parent.width - 215px; height: parent.height - 125px; background: #0a0b12aa;
+        Rectangle {
+            x: parent.width / 2 - 230px; y: parent.height / 2 - 170px; width: 460px; height: 340px; border-radius: 10px; background: #1c1e2b; border-width: 1px; border-color: #444657;
+            Text { x: 18px; y: 12px; width: parent.width - 70px; height: 25px; text: "Subscribe to a topic"; color: Theme.text; font-family: "Segoe UI"; font-size: 15px; font-weight: 600; vertical-alignment: center; }
+            ActionButton { x: parent.width - 45px; y: 8px; width: 32px; height: 30px; ghost: true; label: "×"; clicked => { root.subscribe-open = false; } }
+            MutedText { x: 18px; y: 39px; width: parent.width - 36px; height: 20px; text: "Messages published to this topic will appear on this PC."; }
+            Text { x: 18px; y: 70px; width: parent.width - 36px; height: 18px; text: "Server"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+            Rectangle { x: 18px; y: 92px; width: parent.width - 36px; height: 35px; border-radius: 7px; background: #232532; border-width: 1px; border-color: #3a3c4d;
+                LineEdit { x: 4px; y: 2px; width: parent.width - 8px; height: parent.height - 4px; text <=> root.server-url; placeholder-text: "https://ntfy.sh"; }
+            }
+            Text { x: 18px; y: 136px; width: parent.width - 36px; height: 18px; text: "Topic"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+            Rectangle { x: 18px; y: 158px; width: parent.width - 36px; height: 35px; border-radius: 7px; background: #232532; border-width: 1px; border-color: #3a3c4d;
+                LineEdit { x: 4px; y: 2px; width: parent.width - 8px; height: parent.height - 4px; text <=> root.topic; placeholder-text: "e.g. ops-deploys"; }
+            }
+            Text { x: 18px; y: 202px; width: parent.width - 36px; height: 18px; text: "Access token (optional)"; color: Theme.text-soft; font-family: "Segoe UI"; font-size: 10px; vertical-alignment: center; }
+            Rectangle { x: 18px; y: 224px; width: parent.width - 36px; height: 35px; border-radius: 7px; background: #232532; border-width: 1px; border-color: #3a3c4d;
+                LineEdit { x: 4px; y: 2px; width: parent.width - 8px; height: parent.height - 4px; text <=> root.token; input-type: password; placeholder-text: "Stored in memory only"; }
+            }
+            MutedText { x: 18px; y: 267px; width: parent.width - 36px; height: 24px; text: "♢  The token is not written to the settings file."; }
+            ActionButton { x: parent.width - 183px; y: parent.height - 46px; width: 76px; ghost: true; label: "Cancel"; clicked => { root.subscribe-open = false; } }
+            ActionButton { x: parent.width - 99px; y: parent.height - 47px; width: 81px; primary: true; label: "Subscribe"; clicked => { root.save-settings(); root.toggle-subscription(); root.subscribe-open = false; } }
+        }
+    }
+}
+
+export component AppTray inherits SystemTrayIcon {
+    icon: @image-url("assets/icon.svg");
+    in-out property <bool> tray-visible <=> root.visible;
+    in-out property <bool> connected: false;
+    tooltip: root.connected ? "ntfy · listening" : "ntfy · offline";
+    title: "ntfy";
+    callback show-window();
+    callback toggle-subscription();
+    callback quit();
+
+    clicked => { root.show-window(); }
+
+    Menu {
+        MenuItem { title: "Open ntfy"; activated => { root.show-window(); } }
+        MenuItem { title: root.connected ? "Disconnect" : "Subscribe"; activated => { root.toggle-subscription(); } }
+        MenuSeparator {}
+        MenuItem { title: "Quit"; activated => { root.quit(); } }
+    }
+}

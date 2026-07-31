@@ -12,6 +12,7 @@ use audio::DEFAULT_OUTPUT_LABEL;
 use config::Settings;
 use notification::Presenter;
 use protocol::{Message, truncate, truncate_owned};
+use slint::winit_030::WinitWindowAccessor;
 use slint::{CloseRequestResponse, ComponentHandle, Model, ModelRc, SharedString, Timer, VecModel};
 use std::{
     cell::RefCell,
@@ -19,7 +20,7 @@ use std::{
     ffi::OsStr,
     rc::Rc,
     sync::{Arc, Mutex},
-    time::Duration,
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 use winhttp::{ClientConfig, Controller, Event};
 
@@ -182,6 +183,17 @@ fn hydrate_ui(ui: &AppWindow, state: &SharedState) {
     ui.set_placement_index(i32::from(state.settings.placement.min(8)));
     ui.set_auto_connect(state.settings.auto_connect);
     ui.set_connected(state.connected);
+    ui.set_unread_count(unread_count(state.history.len()));
+    ui.set_topic_count(if state.settings.topic.is_empty() {
+        0
+    } else {
+        1
+    });
+    ui.set_server_count(if state.settings.server_url.is_empty() {
+        0
+    } else {
+        1
+    });
     ui.set_status_text(state.status.clone().into());
     set_audio_outputs(
         ui,
@@ -281,6 +293,7 @@ fn configure_window(
             if let Some(model) = model.as_any().downcast_ref::<VecModel<NotificationItem>>() {
                 model.clear();
             }
+            ui.set_unread_count(0);
         }
     });
 
@@ -303,20 +316,75 @@ fn configure_window(
     });
 
     let ui_weak = ui.as_weak();
+    ui.on_begin_window_drag(move || {
+        if let Some(ui) = ui_weak.upgrade() {
+            ui.window().with_winit_window(|window| {
+                let _ = window.drag_window();
+            });
+        }
+    });
+
+    let ui_weak = ui.as_weak();
+    ui.on_minimize_window(move || {
+        if let Some(ui) = ui_weak.upgrade() {
+            ui.window()
+                .with_winit_window(|window| window.set_minimized(true));
+        }
+    });
+
+    let ui_weak = ui.as_weak();
+    ui.on_maximize_window(move || {
+        if let Some(ui) = ui_weak.upgrade() {
+            ui.window().with_winit_window(|window| {
+                window.set_maximized(!window.is_maximized());
+            });
+        }
+    });
+
+    let state_for_test = Arc::clone(&state);
+    let bridge_for_test = Arc::clone(&bridge);
+    ui.on_test_notification(move || {
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs();
+        receive_message(
+            &state_for_test,
+            &bridge_for_test,
+            Message {
+                id: format!("test-{timestamp}"),
+                time: i64::try_from(timestamp).unwrap_or(i64::MAX),
+                topic: "notification-lab".to_owned(),
+                title: "Test notification".to_owned(),
+                body: "The native Rust + Slint notification pipeline is working.".to_owned(),
+                priority: 3,
+                tags: vec!["test".to_owned()],
+            },
+        );
+    });
+
+    let owner_for_button = owner.clone();
+    let ui_weak = ui.as_weak();
+    let state_for_button = Arc::clone(&state);
+    let bridge_for_button = Arc::clone(&bridge);
+    ui.on_close_window(move || {
+        if let Some(ui) = ui_weak.upgrade() {
+            release_window(
+                &ui,
+                &owner_for_button,
+                &bridge_for_button,
+                &state_for_button,
+            );
+            let _ = ui.hide();
+        }
+    });
+
+    let ui_weak = ui.as_weak();
     let state_for_close = Arc::clone(&state);
     let bridge_for_close = Arc::clone(&bridge);
     ui.window().on_close_requested(move || {
         if let Some(ui) = ui_weak.upgrade() {
-            capture_all_fields(&ui, &state_for_close);
-        }
-        if let Ok(mut current) = bridge_for_close.lock() {
-            *current = None;
-        }
-        if let Some(owner) = owner.upgrade() {
-            Timer::single_shot(UI_RELEASE_DELAY, move || {
-                owner.borrow_mut().take();
-                memory::trim_working_set();
-            });
+            release_window(&ui, &owner, &bridge_for_close, &state_for_close);
         }
         CloseRequestResponse::HideWindow
     });
@@ -325,6 +393,24 @@ fn configure_window(
         controller.borrow_mut().stop();
         let _ = slint::quit_event_loop();
     });
+}
+
+fn release_window(
+    ui: &AppWindow,
+    owner: &std::rc::Weak<RefCell<Option<AppWindow>>>,
+    bridge: &UiBridge,
+    state: &SharedState,
+) {
+    capture_all_fields(ui, state);
+    if let Ok(mut current) = bridge.lock() {
+        *current = None;
+    }
+    if let Some(owner) = owner.upgrade() {
+        Timer::single_shot(UI_RELEASE_DELAY, move || {
+            owner.borrow_mut().take();
+            memory::trim_working_set();
+        });
+    }
 }
 
 fn configure_tray(
@@ -482,6 +568,9 @@ fn receive_message(state: &SharedState, bridge: &UiBridge, message: Message) {
                 model.remove(HISTORY_LIMIT);
             }
         }
+        ui.set_unread_count(unread_count(
+            state.lock().expect("runtime state poisoned").history.len(),
+        ));
         ui.set_status_text("Message received".into());
     }
 
@@ -500,6 +589,10 @@ fn receive_message(state: &SharedState, bridge: &UiBridge, message: Message) {
             presenter.play_sound(&preferences.audio_outputs);
         }
     });
+}
+
+fn unread_count(history_len: usize) -> i32 {
+    i32::try_from(history_len).unwrap_or(i32::MAX)
 }
 
 struct NotificationPreferences {
@@ -667,7 +760,7 @@ fn notification_item(record: HistoryRecord) -> NotificationItem {
 
 #[cfg(test)]
 mod tests {
-    use super::{HISTORY_BODY_LIMIT, HISTORY_LIMIT};
+    use super::{HISTORY_BODY_LIMIT, HISTORY_LIMIT, unread_count};
 
     #[test]
     fn retained_history_is_small_and_bounded() {
@@ -675,5 +768,12 @@ mod tests {
             assert!(HISTORY_LIMIT <= 32);
             assert!(HISTORY_BODY_LIMIT <= 1024);
         }
+    }
+
+    #[test]
+    fn unread_count_matches_retained_history() {
+        assert_eq!(unread_count(0), 0);
+        assert_eq!(unread_count(HISTORY_LIMIT), HISTORY_LIMIT as i32);
+        assert_eq!(unread_count(usize::MAX), i32::MAX);
     }
 }
